@@ -1,0 +1,207 @@
+Impact of Numerics on Predictive Capabilities of Reacting Flow LES
+------------------------------------------------------------------
+
+--experiment:
+	-- Volvo Flygmotor AB program
+	-- bluff body (BB) in channel
+		-- BB is equilateral triangle, D=40mm per side
+		-- air mass flow rate of 0.6 kg/s
+		-- gaseous propane
+		-- phi = 0.65
+		-- Tin = 288K
+		-- Tad = 1784K
+		-- Re  = 48000 (based on D of BB)
+		-- Channel is 3xD = 3 x 40 = 120mm tall
+		-- Channel is 6xD = 6 x 40 = 240mm wide
+		-- Channel extends 0.682 m downstream
+
+--simulation setup:
+ 	-- OpenFOAM
+ 	-- For reacting flows:
+ 		-- noted under LESLIE3D, it seems to also apply to OpenFOAM?
+		-- third-order MUSCL scheme for spatial discretization of Euler fluxes
+	-- 2nd order accurate, bounded central scheme used for spatial discretization of inviscid terms
+		-- bounded by Sweby limiter
+	-- 2nd order accurate central scheme used for discretization of Laplacian terms in system of equations
+	-- 2nd order accurate implicit (backwards difference) scheme for temporal integration
+	-- PISO (pressure-implicit split-operator) used for pressure-velocity coupling
+	-- Green-Gauss node based method used for gradient calculations
+	-- same schemes used for non-reaction and reaction simulations
+	-- pressure-based solver employed
+
+	-- they use _premixed_ progress variable approach - could be problem?
+	-- Smagorinsky sub-grid model
+		-- closed through use of Boussinesq approximation
+		-- Model constant Cs = 0.2
+		-- Filter width \delta = (cell volume) ^ (1/3)
+	-- To close progress variable transport equation, sub-grid scale combustion model used:
+		-- Flame Surface Density model of Weller et al.
+		-- C_\epsilon = 1.048
+		-- C_k = 0.02
+	-- Adiabatic conditions for thermodynamic coupling for OpenFOAM
+
+
+-- grid:
+	-- boundary layer ~ 1 / \sqrt{Re_D}
+		-- bulk Re, based off D and inflow velocity Uo=17m/s
+	-- filter width ~ 3mm based on 80% of kinetic energy capture in non-reacting, high-Reynolds number flow
+		-- but not a general criteria for reacting-flow
+	-- clustering near walls used to resolve at least log-layer region of turbulent boundary layer
+	-- points clustered near the wall, with minimum wall normal distance equal to 0.3 mm
+	-- gradually streched to free-stream resolution:
+		-- 3 different free-stream grid sizes, 4, 2 & 1 mm
+	-- grids are nearly isotropic
+	-- grid had depth of 2 BB-widths (opposed to 6 in experiment)
+		-- periodic boundary conditions employed in on width-wise walls
+	-- grid startes 0.1m upstread of BB, and extend 0.682 m downstream
+	-- no-slip BC on BB, top & bottom walls of combustor duct
+	-- total cell count:
+		-- 4mm = 0.31 * 10 ^ 6
+		-- 2mm = 1.76 * 10 ^ 6
+		-- 1mm = 10.5 * 10 ^ 6
+	-- time-steps:
+		-- non-reacting = 1e-6s
+		-- reacting 	= 3e-7s
+		-- obtained by CFL-criteria
+
+Comparison of LES Models Applied to a Bluff Body Stabilized Flame
+-----------------------------------------------------------------
+-- two premixed experimental cases
+	1)
+		-- p0 = 101 kpa
+	 	-- v0 = 17.3 m/s
+	 	-- T0 = 288 K
+	 	-- Re ~ 46000
+	 	-- Inflow turbulence ~ 3%
+	 	-- phi ~ 0.6
+	2)
+		-- p0 = 101 kpa
+		-- v0 = 34.3 m/s
+		-- T0 = 600 K
+		-- Re ~ 28000
+		-- Inflow turbulence ~ 3%
+		-- phi ~ 0.6
+
+-- models
+	-- Flamelet level-set G-equation
+		-- not finite-rate chemistry, so I don't care
+	-- finite rate chemistry
+		-- Two-step mechanism from Gri-Mech 2.1
+			-- CH4 fuel
+		-- Thickened Flame Model (TFM)
+			-- applies thickening-scaling such that flame is reslved on LES grid, while laminar flame-speed is unchanged
+		-- Partially Stirred Reactor (PaSR)
+			-- filtered reaction rates re-writtend -> filtered = (filtered / resolved) * resolved
+			-- then (filtered / resolved) ratio is empirically modeled (in this work) as k = the reacting volume fraction
+				-- k estimated from mass flow considerations:
+					k = t_c / (t_c + t_m),
+				where t_c and t_m are chemical and mixing time scale respectively
+			-- t_c ~ \delta_1 / s_u^0 ~ D / \bar{\rho} / (s_u^0)^2
+				where \delta_1 is flame thickness, s_u^0 laminar flame speed
+			-- t_m ~ \Delta \ v^{\prime}
+				v^{\prime} = \sqrt{2k / 3}, the subgrid velocity
+			-- if k = 1 -> quasi-laminar model (QL)
+		-- Eddy Dissipation Concept (EDC)
+			-- flow split into:
+				-- fine structures, where mixing and reactions assumed to take place
+				-- surroundings, dominated by large-scale flow structures
+				-- related via 2-parameters balance equations:
+					-- \tau^{\star} = subgrid residence time
+					-- \gamma^{\star} = intermittency factor
+				-- in this work, the parameters estimated from model of energy cascade (K41 hypothesis):
+					-- model constant \Xi ~ 0.57
+		-- Presumed Probabilility Distribution Density Function (PPDF)
+			-- presumes a joint PDF for \rho, T, Y
+			-- \rho, T, Y assumed independent
+			-- in this study, multivariate \beta-PDF and clipped Gaussian PDFs used
+		-- unresolved transport terms in momentum energy and species for TFM and PaSR closed with Mixed Model (MM)
+			-- one equation eddy viscosity model (OEEVM) subgrid-model
+-- solvers
+	-- in-house
+		-- high-order finite-difference discretizaton
+		-- incrompressivle solver
+		-- momentum and continuity discretized using:
+			-- 5th order weighted essentially non-oscillatory (WENO) scheme for convective terms
+			-- 4th order central difference fro remaining terms
+		-- 2nd order implicittime integration
+		-- G-Equation discretized using 3rd order WENO scheme
+			-- integrated using 3rd order total variation diminishing (TVD) runge-kutta
+	-- openfoam
+		-- finite-rate chemistry LES
+		-- finite volume
+		-- reactive LES code verified using method of manufactured solutions and against DNS / experimental data-sets
+		-- capable of incompressible / compressible, reactive flows
+		-- time integration performed w/ 2nd order semi-implicit Crank Nickelson
+			-- couple with PISO procedure based on Rhie & Chow interpolation for cell-centered data storage
+		-- stability imposed via compact stencils and enforcing conservation of kinetic energy
+		-- fixed CFL number ~ 0.4
+	-- openfoam domain
+		-- extends 0.32m upstream / 0.68m downstream of bluff body trailing edge
+		-- spanwise extent is 0.12 m
+			-- periodic boundary conditions spanwise
+		-- unstructured grid of ~2.2*10^6 cells used
+			-- refined towards upper and lower walls, and bluff body
+			-- increased resolution in shear layers downstreadm of the flamholder
+		-- characterstic spacing ranges from 4mm to 0.5mm
+	-- boundary conditions
+		-- steady inflow for velocity / temperature / combustion variables
+		-- wave-transmissive outflow conditions used on outflow
+		-- no-slip isothermal BC's on upper & lower walls
+			-- Wall temperature = 288 K for case 1, 600K for case 2
+		-- adiabatic no-slip wall boundary conditions on bluff body
+
+OpenFOAM notes
+--------------
+-- ensure Courant number <= 1
+	-- Co = dt |U| / dx
+-- discretization
+	-- gradients
+		-- Cocks
+			-> green-gauss node-based method
+			-> Closest option appears to be "Gauss linear"
+				-- this is cell-based, instead of node-based
+	-- temporal
+		-- Cocks:
+			-- 2nd order accurate implicit backwards difference
+		-- Baudoin:
+			-- 2nd order semi-implicit Crank-Nickleson
+	-- Laplacian
+		-- Cocks:
+			-- 2nd order accurate central scheme
+			-> Gauss linear corrected;
+	-- surface normal gradient schems
+		-- cocks:
+			-- no mention, seemingly "corrected"  as this is the only
+			   second order scheme for the Laplacian
+		-- Baudoin:
+			-- split into orthogonal / non-orthogonal parts
+				-- central difference for orthongal part
+				-- face interpolation of gradients for non-orthogonal parts
+	-- divergence
+		 -- cocks:
+		 	-- 2nd order accurate, bounded, central sceme used for spatial discretization of invisid terms:
+		 		-- this appears to be advection terms
+				-- bounded w/ Sweby limiter
+				-- https://cfd.direct/openfoam/user-guide/fvSchemes/#x19-1450004.4.3
+					--> advective and diffusive terms often treated differently
+					--> "non-advective terms typically use Gauss integration w/ linear interpolation":
+						"limitedLinear and  upwind schemes are commonly used, with the additional appearance of vanLeer, another limited scheme, with less strong limiting than  limitedLinear."
+			--> "bounded Gauss linear"?
+			--> doc's state that you typically place more emphasis on boundedness than accuracy for scalars (rather than velocity)
+				--> limitedLinear?
+				--> limiteLinear01 for mass fractions
+	-- interpolation schemes
+		-- linear
+
+Solvers:
+	-- look into LES examples
+	-- matrix solver
+		???
+		-- preconditioner
+			???
+		-- relaxation factor
+			0.9 - 0.2 ???
+	-- pressure-veclocity coupling
+		-- PISO
+			-- nCorrectors ~ 2 - 3
+			-- nNonOrthogonalCorrectors ~ 0 - 1
