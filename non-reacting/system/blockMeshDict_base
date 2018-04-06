@@ -1,0 +1,278 @@
+  GNU nano 2.0.9                                          File: blockMeshDict
+
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+
+/*
+
+2-mm mesh for Volvo Flygmotor AB bluff body simulation based on Cocks et al.
+
+Nicholas Curtis - 04/06/2018
+
+>>Overview of channel:
+
+
+         15---------14
+         /|        /|
+        / |       / |
+       /  |      /  |
+     11---|-----10  |
+     /|  12----/|---13
+    7-|--/----6 |  /                   (y)
+   /| | /    /| | /                     |
+  / | |/    / | |/                      |
+ /  | 8----/--|-9----bluff-body         |
+3---|-----2   |/       trailing edge    |
+|   4-----|---5----bluff body           |_________(x)
+|  /      |  /     leading-edge        /
+| /       | /                         /
+|/        |/                         /
+0---------1                         /
+   inlet                          (z)
+
+Channel dimensions:
+   Origin at vertex 0
+   Bluff body is equilateral triangle w/ side length D=40mm
+   width  = 2D, periodic
+   height = 3D, walls
+
+
+>>Side view:
+
+   3--------------------------------------15
+  /|                                     /|                (y)
+ / |       </|                          / |                 |
+2--|-------//--------------------------14 |                 |
+|  0------//---------------------------|--12       (z)______|
+| /     <|/                            | /                  /
+|/                                     |/                  /
+1--------------------------------------13                 /
+                                                        (x)
+<------->|<---------------------------->
+  0.1m   ^           0.682 m
+         |
+ bluff-body trailing edge
+<------L_total------------------------->
+
+
+Upstream of Bluff Body (y-z planar slice at x=0)
+
+3----------------------7----11       ^
+                       |<-D>|       |
+                       |    17 ^    |
+                       |  / |  |    |              (y)
+                       18   |  D   3D               |
+                       |  \ |  |    |               |
+                       |    16 v    |               |
+                       |    |       |               |
+0----------------------4----9       v    (z)________|
+                       |    |
+<---L_LE_upstream ---->|    |
+                            |
+<-----------0.1m----------->|
+      L_TE_upstream
+
+
+>>Isometric view of Bluff Body
+
+     11                         10
+   * |                        * |
+ 7   |                     6    |
+ |   |                     |    |
+ |   |                     |    |
+ |  17---------------------|---20  ^
+ |  /                      |  / |  |
+ |                         |    |  |
+ |/                        |/   |  |            (y)
+ |                         |    |  |             |
+18------------------------21    |  D             |
+ |                         |    |  |             |
+ |\                        | \  |  |             |
+ |                         |    |  |             |
+ |  \                      |   \|  |             |
+ |  16---------------------|---19  v             |_____________(x)
+ |   |<----------2D--------|--->|               /
+ |   |                     |    |              /
+ |   |                     |    |             /
+ |   8                     |    9            /
+ | *                       |  *            (z)
+ 4                         5
+
+This mesh is designed to be generated in two parts:
+
+1) This file, blockMeshDict_base should be run through blockMesh to generate
+   a basic mesh with the desired resolution
+
+2) The resulting mesh should then be run through snappyHexMesh to refine near the
+   walls & shear layers -- see file _________
+*/
+
+// specify in millimeters
+convertToMeters 0.001;
+
+// mesh size
+mesh_size = 2; //mm
+
+// define bluff body dimension
+D              40; // mm
+half_D         #     "$D / 2";   //mm
+two_D          #calc "2 * $D";   //mm
+three_D        #calc "3 * $D";   //mm
+three_halves_D #calc "1.5 * $D"; //mm
+
+// and channel dimensions
+width          $two_D;
+height         $three_D;
+
+// total channel length
+L              782; // mm
+// up/down-stream of bluff-body (from trailing edge)
+L_TE_upstream       100; // mm
+L_TE_downstream     682; // mm
+L_total             #calc "$L_TE_upstream + $L_TE_downstream";     // mm
+L_LE_upstream       #calc "$L_TE_upstream - $D * sqrt(3.0) / 2.0"; //mm
+
+verticies
+(
+    // inlet face
+    (0          0                 0)            // vertex 0
+    ($two_D     0                 0)            // vertex 1
+    ($two_D     $three_D          0)            // vertex 2
+    (0          $three_D          0)            // vertex 3
+    // leading edge face
+    (0          0                 -$L_LE_upstream)  // vertex 4
+    ($two_D     0                 -$L_LE_upstream)  // vertex 5
+    ($two_D     $three_D          -$L_LE_upstream)  // vertex 6
+    (0          $three_D          -$L_LE_upstream)  // vertex 7
+    // trailing edge face
+    (0          0                 -$L_TE_upstream)  // vertex 8
+    ($two_D     0                 -$L_TE_upstream)  // vertex 9
+    ($two_D     $three_D          -$L_TE_upstream)  // vertex 10
+    (0          $three_D          -$L_TE_upstream)  // vertex 11
+    //outlet face
+    (0          0                -$L_total)     // vertex 12
+    ($two_D     0                -$L_total)     // vertex 13
+    ($two_D     $three_D         -$L_total)     // vertex 14
+    (0          $three_D         -$L_total)     // vertex 15
+    //bluff body
+    (0          $D               -$L_TE_upstream)   //vertex 16
+    (0          $two_D           -$L_TE_upstream)   //vertex 17
+    (0          $three_halves_D  -$L_LE_upstream)   //vertex 18
+    ($two_D     $D               -$L_TE_upstream)   //vertex 19
+    ($two_D     $two_D           -$L_TE_upstream)   //vertex 20
+    ($two_D     $three_halves_D  -$L_LE_upstream)   //vertex 21
+);
+
+// all edges are straight lines --> no edge object required
+
+blocks
+(
+    // block 1, inlet to BB-leading edge
+    //    --> for simplicity, we will always use the global coordinate system
+    //    --> in order to be consistent & right-handed, first vertex is 4
+    hex (4 5 6 7 0 1 2 3)
+    // number of cells -> ceiling of number of cells required in each dimension to
+    // meet mesh size
+    (
+        //x
+        #calc ceil($width / $mesh_size)
+        //y
+        #calc ceil($height / $mesh_size)
+        //z
+        #calc ceil($L_LE_upstream / $mesh_size)
+    )
+    // refinement done in snappyHexMesh
+    simpleGrading (1 1 1);
+
+    // block 2 -> top of BB
+    //    --> origin of block is vertex 17
+    hex (17 20 10 11 18 21 6 7)
+    (
+        //x
+        #calc ceil($width / $mesh_size)
+        //y -- TODO: unclear whether this refers to the short or long end of the BB -- assume long, and double check
+        #calc ceil($three_halves_D / $mesh_size)
+        //z
+        #calc ceil($D / $mesh_size)
+    )
+    simpleGrading (1 1 1)
+
+    // block 3 -> bottom of BB
+    //    --> origin at 8
+    hex (8 9 19 16 4 5 21 18)
+    (
+        //x
+        #calc ceil($width / $mesh_size)
+        //y -- TODO: unclear whether this refers to the short or long end of the BB -- assume long, and double check
+        #calc ceil($three_halves_D / $mesh_size)
+        //z
+        #calc ceil($D / $mesh_size)
+    )
+    simpleGrading (1 1 1);
+
+    // block 4 -- trailing edge of BB to outlet
+    hex (12 13 14 15 8 9 10 11)
+    (
+        //x
+        #calc ceil($width / $mesh_size)
+        //y
+        #calc ceil($height / $mesh_size)
+        //z
+        #calc ceil($D / $L_TE_downstream)
+    )
+    simpleGrading (1 1 1);
+);
+
+// boundaries
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces ((0 1 2 3));
+    }
+    outlet
+    {
+        type patch;
+        faces ((12 13 14 15));
+    }
+    left_wall
+    {
+        type symmetryPlane;
+        // clock-wise traversal
+        faces ((0 3 7 4) (4 7 11 8) (8 11 15 12));
+    }
+    right_wall
+    {
+        type symmetryPlane;
+        // clock-wise traversal
+        faces ((0 3 7 4) (4 7 11 8) (8 11 15 12));
+    }
+    top_wall
+    {
+        type wall;
+        faces ((2 3 6 7) (6 7 11 10) (10 11 15 14));
+    }
+    bluff_body
+    {
+        type wall;
+        faces ((17 20 21 18) (18 21 19 16) (20 17 16 19))
+    }
+    bottom_wall
+    {
+        type wall;
+        faces ((4 5 0 1) (8 9 5 4) (12 13 9 8));
+    }
+)
