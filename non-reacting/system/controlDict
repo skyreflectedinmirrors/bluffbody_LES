@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+/*
+
+Setup for simulation of Volvo flygmotor AB non-reacting flow LES
+
+Nicholas Curtis - 04/05/2018
+
+*/
+
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          controlDict;
+}
+
+// use same settings for both non-reacting & reacting simulations per Cocks et al.
+application     reactingFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+// integral time scale from Cocks et al., may need to be revised
+endTime         1e-4;
+
+// non-reacting time-step from Cocks et al.
+deltaT          1e-6;
+
+// output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
+writeControl    timeStep;
+writeInterval   100;
+purgeWrite      0;
+writeFormat     binary;
+writePrecision  10;
+writeCompression no;
+timeFormat      general;
+timePrecision   6;
+runTimeModifiable true;

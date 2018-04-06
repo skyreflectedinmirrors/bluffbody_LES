@@ -1,0 +1,37 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+
+
+/*
+
+Setup for simulation of Volvo flygmotor AB non-reacting flow LES
+
+Nicholas Curtis - 04/05/2018
+
+*/
+
+// time
+ddtSchemes
+{
+    // 2nd ord implicit, backward diff -- from Cocks et al.
+    default         backward;
+}
+
+
+laplacianSchemes
+{
+    //
+}
