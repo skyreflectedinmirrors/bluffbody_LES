@@ -177,7 +177,8 @@ height         $three_D;
 L_TE_upstream       100.0; // mm
 L_TE_downstream     682.0; // mm
 L_total             782.0; // mm
-L_LE_upstream       #calc "($L_TE_upstream - $D * sqrt(3.0) / 2.0)"; //mm
+BB_height           #calc "$D * sqrt(3.0) / 2.0"; // mm
+L_LE_upstream       #calc "$L_TE_upstream - $BB_height"; //mm
 
 vertices
 (
@@ -231,26 +232,32 @@ blocks
     // meet mesh size
     (
         //x
-        #calc "ceil($width / $mesh_size)"
+        #calc "(int)ceil($width / $mesh_size)"
         //y
-        #calc "ceil($height / $mesh_size)"
+        #calc "(int)ceil($height / $mesh_size)"
         //z
-        #calc "ceil($L_LE_upstream / $mesh_size)"
+        #calc "(int)ceil($L_LE_upstream / $mesh_size)"
     )
     // refinement done in snappyHexMesh
     simpleGrading (1 1 1)
 
     // block 1 -> top of BB
-    //    --> origin of block is vertex 17
-    hex (17 20 10 11 18 21 6 7)
+    //    --> for this one block, we get slightly different results depending on
+    //        whether we the starting vertex at an exact point (i.e., L_TE_upstream)
+    //        or an calculated vertex (i.e., L_LE_upstream)
+    //    --> When using the exact point, we get a grid resolution slightly < 2mm
+    //    --> When using the calculated point, the resolution is slight > 2mm
+    //    --> hence, we use the exact point as a starting vertex, and no not use
+    //        the global coordinate system, just for this one block
+    hex (10 11 17 20 6 7 18 21)
     (
         //x
-        #calc "ceil($width / $mesh_size)"
+        #calc "(int)ceil($width / $mesh_size)"
         //y -- TODO: unclear whether this refers to the short or long end of the BB -- assume long, and double check
         //after checking -- it appears this is the short side
-        #calc "ceil($D / $mesh_size)"
+        #calc "(int)ceil($D / $mesh_size)"
         //z
-        #calc "ceil($D / $mesh_size)"
+        #calc "(int)ceil($BB_height / $mesh_size)"
     )
     simpleGrading (1 1 1)
 
@@ -259,12 +266,12 @@ blocks
     hex (8 9 19 16 4 5 21 18)
     (
         //x
-        #calc "ceil($width / $mesh_size)"
+        #calc "(int)ceil($width / $mesh_size)"
         //y -- TODO: unclear whether this refers to the short or long end of the BB -- assume long, and double check
         //after checking -- it appears this is the short side
-        #calc "ceil($D / $mesh_size)"
+        #calc "(int)ceil($D / $mesh_size)"
         //z
-        #calc "ceil($D / $mesh_size)"
+        #calc "(int)ceil($BB_height / $mesh_size)"
     )
     simpleGrading (1 1 1)
 
@@ -272,11 +279,11 @@ blocks
     hex (23 24 14 15 17 20 10 11)
     (
         //x
-        #calc "ceil($width / $mesh_size)"
+        #calc "(int)ceil($width / $mesh_size)"
         //y
-        #calc "ceil($D / $mesh_size)"
+        #calc "(int)ceil($D / $mesh_size)"
         //z
-        #calc "ceil($L_TE_downstream / $mesh_size)"
+        #calc "(int)ceil($L_TE_downstream / $mesh_size)"
     )
     simpleGrading (1 1 1)
 
@@ -284,11 +291,11 @@ blocks
     hex (22 25 24 23 16 19 20 17)
     (
         //x
-        #calc "ceil($width / $mesh_size)"
+        #calc "(int)ceil($width / $mesh_size)"
         //y
-        #calc "ceil($D / $mesh_size)"
+        #calc "(int)ceil($D / $mesh_size)"
         //z
-        #calc "ceil($L_TE_downstream / $mesh_size)"
+        #calc "(int)ceil($L_TE_downstream / $mesh_size)"
     )
     simpleGrading (1 1 1)
 
@@ -296,11 +303,11 @@ blocks
     hex (12 13 25 22 8 9 19 16)
     (
         //x
-        #calc "ceil($width / $mesh_size)"
+        #calc "(int)ceil($width / $mesh_size)"
         //y
-        #calc "ceil($D / $mesh_size)"
+        #calc "(int)ceil($D / $mesh_size)"
         //z
-        #calc "ceil($L_TE_downstream / $mesh_size)"
+        #calc "(int)ceil($L_TE_downstream / $mesh_size)"
     )
     simpleGrading (1 1 1)
 );
