@@ -1,5 +1,3 @@
-  GNU nano 2.0.9                                          File: blockMeshDict
-
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
@@ -26,9 +24,9 @@ Nicholas Curtis - 04/06/2018
 
          15---------14
          /|        /|
-        / |       / |
-       /  |      /  |
-     11---|-----10  |
+     22-/>x       / x<-23  <- note not to scale, these must be in place such that we can
+    21-/->x      /  x<-24     define a block for the back of the bluff-body (such
+     11---|-----10  |           that we can label it a wall)
      /|  12----/|---13
     7-|--/----6 |  /                   (y)
    /| | /    /| | /                     |
@@ -93,15 +91,15 @@ Upstream of Bluff Body (y-z planar slice at x=0)
  |   |                     |    |
  |   |                     |    |
  |  17---------------------|---20  ^
- |  /                      |  / |  |
+ |  /|                     |  / |  |
  |                         |    |  |
- |/                        |/   |  |            (y)
+ |/  |                     |/   |  |            (y)
  |                         |    |  |             |
-18------------------------21    |  D             |
+18---|--------------------21    |  D             |
  |                         |    |  |             |
- |\                        | \  |  |             |
+ |\  |                     | \  |  |             |
  |                         |    |  |             |
- |  \                      |   \|  |             |
+ |  \|                     |   \|  |             |
  |  16---------------------|---19  v             |_____________(x)
  |   |<----------2D--------|--->|               /
  |   |                     |    |              /
@@ -109,6 +107,44 @@ Upstream of Bluff Body (y-z planar slice at x=0)
  |   8                     |    9            /
  | *                       |  *            (z)
  4                         5
+
+
+front view of back wall
+
+  <----------2D---------->
+15-----------------------14
+ | ^                    ^ |
+ | |                    | |
+ | D                    D |
+ | |                    | |
+23 v                    v 24
+ | ^                    ^ |
+ | |                    | |
+ | D                    D |
+ | |                    | |                (y)
+22 v                    v 25                |
+ | ^                    ^ |                 |
+ | |                    | |                 |
+ | D                    D |                 |
+ | |                    | |                 |
+ | v                    v |                 |______________(x)
+12 ----------------------13
+
+
+Final Blocks:
+
+______________________________________________________                    (y)
+|             |                                       |                    |
+|                1 |                 3                |                    |
+|             |    *----------------------------------|                    |
+|                *                                    |                    |
+|     0       |* BB*                 4                |                    |
+|                *                                    |                    |
+|             |    *----------------------------------|     (z)____________|
+|                2 |                 5                |
+|_____________|_______________________________________|
+
+
 
 This mesh is designed to be generated in two parts:
 
@@ -123,13 +159,13 @@ This mesh is designed to be generated in two parts:
 convertToMeters 0.001;
 
 // mesh size
-mesh_size = 2; //mm
+mesh_size      2.0; //mm
 
 // define bluff body dimension
-D              40; // mm
-half_D         #     "$D / 2";   //mm
-two_D          #calc "2 * $D";   //mm
-three_D        #calc "3 * $D";   //mm
+D              40.0; // mm
+half_D         #     "$D / 2.0";   //mm
+two_D          #calc "2.0 * $D";   //mm
+three_D        #calc "3.0 * $D";   //mm
 three_halves_D #calc "1.5 * $D"; //mm
 
 // and channel dimensions
@@ -137,49 +173,57 @@ width          $two_D;
 height         $three_D;
 
 // total channel length
-L              782; // mm
 // up/down-stream of bluff-body (from trailing edge)
-L_TE_upstream       100; // mm
-L_TE_downstream     682; // mm
-L_total             #calc "$L_TE_upstream + $L_TE_downstream";     // mm
-L_LE_upstream       #calc "$L_TE_upstream - $D * sqrt(3.0) / 2.0"; //mm
+L_TE_upstream       100.0; // mm
+L_TE_downstream     682.0; // mm
+L_total             782.0; // mm
+L_LE_upstream       #calc "($L_TE_upstream - $D * sqrt(3.0) / 2.0)"; //mm
 
-verticies
+vertices
 (
     // inlet face
     (0          0                 0)            // vertex 0
-    ($two_D     0                 0)            // vertex 1
-    ($two_D     $three_D          0)            // vertex 2
-    (0          $three_D          0)            // vertex 3
+    ($width     0                 0)            // vertex 1
+    ($width     $height           0)            // vertex 2
+    (0          $height           0)            // vertex 3
     // leading edge face
-    (0          0                 -$L_LE_upstream)  // vertex 4
-    ($two_D     0                 -$L_LE_upstream)  // vertex 5
-    ($two_D     $three_D          -$L_LE_upstream)  // vertex 6
-    (0          $three_D          -$L_LE_upstream)  // vertex 7
+    (0          0                 #calc "-1 * $L_LE_upstream")  // vertex 4
+    ($width     0                 #calc "-1 * $L_LE_upstream")  // vertex 5
+    ($width     $height           #calc "-1 * $L_LE_upstream")  // vertex 6
+    (0          $height           #calc "-1 * $L_LE_upstream")  // vertex 7
     // trailing edge face
-    (0          0                 -$L_TE_upstream)  // vertex 8
-    ($two_D     0                 -$L_TE_upstream)  // vertex 9
-    ($two_D     $three_D          -$L_TE_upstream)  // vertex 10
-    (0          $three_D          -$L_TE_upstream)  // vertex 11
+    (0          0                 #calc "-1 * $L_TE_upstream")  // vertex 8
+    ($width     0                 #calc "-1 * $L_TE_upstream")  // vertex 9
+    ($width     $height           #calc "-1 * $L_TE_upstream")  // vertex 10
+    (0          $height           #calc "-1 * $L_TE_upstream")  // vertex 11
     //outlet face
-    (0          0                -$L_total)     // vertex 12
-    ($two_D     0                -$L_total)     // vertex 13
-    ($two_D     $three_D         -$L_total)     // vertex 14
-    (0          $three_D         -$L_total)     // vertex 15
+    (0          0                #calc "-1 * $L_total")     // vertex 12
+    ($width     0                #calc "-1 * $L_total")     // vertex 13
+    ($width     $height          #calc "-1 * $L_total")     // vertex 14
+    (0          $height          #calc "-1 * $L_total")     // vertex 15
     //bluff body
-    (0          $D               -$L_TE_upstream)   //vertex 16
-    (0          $two_D           -$L_TE_upstream)   //vertex 17
-    (0          $three_halves_D  -$L_LE_upstream)   //vertex 18
-    ($two_D     $D               -$L_TE_upstream)   //vertex 19
-    ($two_D     $two_D           -$L_TE_upstream)   //vertex 20
-    ($two_D     $three_halves_D  -$L_LE_upstream)   //vertex 21
+    (0          $D               #calc "-1 * $L_TE_upstream")   //vertex 16
+    (0          $two_D           #calc "-1 * $L_TE_upstream")   //vertex 17
+    (0          $three_halves_D  #calc "-1 * $L_LE_upstream")   //vertex 18
+    ($width     $D               #calc "-1 * $L_TE_upstream")   //vertex 19
+    ($width     $two_D           #calc "-1 * $L_TE_upstream")   //vertex 20
+    ($width     $three_halves_D  #calc "-1 * $L_LE_upstream")   //vertex 21
+    // midpoints on back wall
+    (0          $D               #calc "-1 * $L_total")   // vertex 22
+    (0          $two_D           #calc "-1 * $L_total")   // vertex 23
+    ($width     $two_D           #calc "-1 * $L_total")   // vertex 24
+    ($width     $D               #calc "-1 * $L_total")   // vertex 25
+
 );
 
 // all edges are straight lines --> no edge object required
+edges
+(
+);
 
 blocks
 (
-    // block 1, inlet to BB-leading edge
+    // block 0, inlet to BB-leading edge
     //    --> for simplicity, we will always use the global coordinate system
     //    --> in order to be consistent & right-handed, first vertex is 4
     hex (4 5 6 7 0 1 2 3)
@@ -187,52 +231,78 @@ blocks
     // meet mesh size
     (
         //x
-        #calc ceil($width / $mesh_size)
+        #calc "ceil($width / $mesh_size)"
         //y
-        #calc ceil($height / $mesh_size)
+        #calc "ceil($height / $mesh_size)"
         //z
-        #calc ceil($L_LE_upstream / $mesh_size)
+        #calc "ceil($L_LE_upstream / $mesh_size)"
     )
     // refinement done in snappyHexMesh
-    simpleGrading (1 1 1);
+    simpleGrading (1 1 1)
 
-    // block 2 -> top of BB
+    // block 1 -> top of BB
     //    --> origin of block is vertex 17
     hex (17 20 10 11 18 21 6 7)
     (
         //x
-        #calc ceil($width / $mesh_size)
+        #calc "ceil($width / $mesh_size)"
         //y -- TODO: unclear whether this refers to the short or long end of the BB -- assume long, and double check
-        #calc ceil($three_halves_D / $mesh_size)
+        //after checking -- it appears this is the short side
+        #calc "ceil($D / $mesh_size)"
         //z
-        #calc ceil($D / $mesh_size)
+        #calc "ceil($D / $mesh_size)"
     )
     simpleGrading (1 1 1)
 
-    // block 3 -> bottom of BB
+    // block 2 -> bottom of BB
     //    --> origin at 8
     hex (8 9 19 16 4 5 21 18)
     (
         //x
-        #calc ceil($width / $mesh_size)
+        #calc "ceil($width / $mesh_size)"
         //y -- TODO: unclear whether this refers to the short or long end of the BB -- assume long, and double check
-        #calc ceil($three_halves_D / $mesh_size)
+        //after checking -- it appears this is the short side
+        #calc "ceil($D / $mesh_size)"
         //z
-        #calc ceil($D / $mesh_size)
+        #calc "ceil($D / $mesh_size)"
     )
-    simpleGrading (1 1 1);
+    simpleGrading (1 1 1)
 
-    // block 4 -- trailing edge of BB to outlet
-    hex (12 13 14 15 8 9 10 11)
+    // block 3 -- trailing edge of BB to outlet [top]
+    hex (23 24 14 15 17 20 10 11)
     (
         //x
-        #calc ceil($width / $mesh_size)
+        #calc "ceil($width / $mesh_size)"
         //y
-        #calc ceil($height / $mesh_size)
+        #calc "ceil($D / $mesh_size)"
         //z
-        #calc ceil($D / $L_TE_downstream)
+        #calc "ceil($L_TE_downstream / $mesh_size)"
     )
-    simpleGrading (1 1 1);
+    simpleGrading (1 1 1)
+
+    // block 4 -- trailing edge of BB to outlet [middle]
+    hex (22 25 24 23 16 19 20 17)
+    (
+        //x
+        #calc "ceil($width / $mesh_size)"
+        //y
+        #calc "ceil($D / $mesh_size)"
+        //z
+        #calc "ceil($L_TE_downstream / $mesh_size)"
+    )
+    simpleGrading (1 1 1)
+
+    // block 5 -- trailing edge of BB to outlet [bottom]
+    hex (12 13 25 22 8 9 19 16)
+    (
+        //x
+        #calc "ceil($width / $mesh_size)"
+        //y
+        #calc "ceil($D / $mesh_size)"
+        //z
+        #calc "ceil($L_TE_downstream / $mesh_size)"
+    )
+    simpleGrading (1 1 1)
 );
 
 // boundaries
@@ -246,33 +316,60 @@ boundary
     outlet
     {
         type patch;
-        faces ((12 13 14 15));
+        faces ((12 22 25 13)
+               (22 23 24 25)
+               (23 15 14 24));
     }
     left_wall
     {
         type symmetryPlane;
         // clock-wise traversal
-        faces ((0 3 7 4) (4 7 11 8) (8 11 15 12));
+        faces ((0 3 7 4)
+               (8 4 18 16)
+               (17 18 7 11)
+               (17 11 15 23)
+               (16 17 23 22)
+               (8 16 22 12));
     }
     right_wall
     {
         type symmetryPlane;
         // clock-wise traversal
-        faces ((0 3 7 4) (4 7 11 8) (8 11 15 12));
+        faces ((5 1 2 6)
+               (9 5 21 19)
+               (20 21 6 10)
+               (20 10 14 24)
+               (19 20 24 25)
+               (9 19 25 13));
     }
     top_wall
     {
         type wall;
-        faces ((2 3 6 7) (6 7 11 10) (10 11 15 14));
+        faces ((2 3 7 6)
+               (6 7 11 10)
+               (10 11 15 14));
     }
     bluff_body
     {
         type wall;
-        faces ((17 20 21 18) (18 21 19 16) (20 17 16 19))
+        faces ((17 20 21 18)
+               (18 21 19 16)
+               (17 16 19 20));
     }
     bottom_wall
     {
         type wall;
-        faces ((4 5 0 1) (8 9 5 4) (12 13 9 8));
+        faces ((4 5 1 0)
+               (8 9 5 4)
+               (12 13 9 8));
     }
-)
+    // and finally, just to avoid warnings from blockMesh we explicitly create
+    // empty faces joining blocks 0 1 & 2
+    empty_faces
+    {
+        type empty;
+        faces ((4 18 21 5)
+               (18 7 6 21)
+               (4 7 6 5));
+    }
+);
