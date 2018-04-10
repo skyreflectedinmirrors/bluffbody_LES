@@ -156,9 +156,6 @@ This mesh is designed to be generated in two parts:
    walls & shear layers -- see file _________
 */
 
-// specify in millimeters
-convertToMeters 0.001;
-
 #include "meshDims"
 
 vertices

@@ -22,6 +22,9 @@ Nick Curtis - 04/10/2018
 
 */
 
+// specify in millimeters
+convertToMeters 0.001;
+
 // mesh size
 mesh_size      2.0; //mm
 
