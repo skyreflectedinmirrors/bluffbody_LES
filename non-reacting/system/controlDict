@@ -5,6 +5,14 @@
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          controlDict;
+}
 
 /*
 
@@ -14,14 +22,6 @@ Nicholas Curtis - 04/05/2018
 
 */
 
-FoamFile
-{
-    version         2;
-    format          ascii;
-    class           dictionary;
-    location        "system";
-    object          controlDict;
-}
 
 // use same settings for both non-reacting & reacting simulations per Cocks et al.
 application     reactingFoam;
