@@ -19,7 +19,7 @@ FoamFile
 
 Setup for simulation of Volvo flygmotor AB non-reacting flow LES
 
-Nicholas Curtis - 04/05/2018
+Nicholas Curtis - 04/10/2018
 
 Based on:
 
@@ -27,7 +27,6 @@ Chalmers: http://www.tfd.chalmers.se/~hani/kurser/OS_CFD_2015/HrvojeJasak/Discre
 Cocks et al: https://arc.aiaa.org/doi/abs/10.2514/6.2013-170
 Wolf: http://www.wolfdynamics.com/wiki/OFtipsandtricks.pdf
 Manual: https://cfd.direct/openfoam/user-guide/fvSchemes/
-
 
 */
 
@@ -96,7 +95,7 @@ divSchemes
 	// Wolf: accurate & stabel numerical scheme -- 2nd order accurate
 	div(phi,U) 		bounded Gauss linearUpwind grad(U);
 	div((nuEff*dev2(T(grad(U))))) bounded Gauss linear;
-	div(phi,Yi_h)   Gauss multivariateSelection;
+	div(phi,Yi_h)   Gauss multivariateSelection
     {
     	// in non-reacting case, all we need is air
         O2              limitedLinear01 1;
