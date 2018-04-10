@@ -1,0 +1,44 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+
+/*
+
+Mesh dimensions for Volvo Flygmotor AB bluff body simulation based on Cocks et al.
+
+Nick Curtis - 04/10/2018
+
+*/
+
+// mesh size
+mesh_size      2.0; //mm
+
+// define bluff body dimension
+D              40.0; // mm
+half_D         #     "$D / 2.0";   //mm
+two_D          #calc "2.0 * $D";   //mm
+three_D        #calc "3.0 * $D";   //mm
+three_halves_D #calc "1.5 * $D"; //mm
+
+// and channel dimensions
+width          $two_D;
+height         $three_D;
+
+// total channel length
+// up/down-stream of bluff-body (from trailing edge)
+L_TE_upstream       100.0; // mm
+L_TE_downstream     682.0; // mm
+L_total             782.0; // mm
+BB_height           #calc "$D * sqrt(3.0) / 2.0"; // mm
+L_LE_upstream       #calc "$L_TE_upstream - $BB_height"; //mm
