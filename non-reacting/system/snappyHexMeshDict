@@ -29,18 +29,22 @@ Nicholas Curtis - 04/09/2018
 // expansion ratio of cells
 e_ratio 1.05;
 // wall normal distance from Cocks et al.
-wall_normal 0.03; // mm
-
+wall_normal #calc "0.03 * $convertToMeters"; // mm
+// number of layers to insert near wall
+num_layers 25;
+// refinement (normal) distance from wall as a percentage of the normal length
+n_dist 0.125;
+// refinement level
+r_level 2;
 
 geometry
 {
-	// simply put a bounding box around the entire grid, since we are only applying
-	// layer refinement to patches
+	// bounding box for top wall refinment
 	bounding_box
 	{
-		  type    searchableBox;       // region defined by bounding box
-          min     (0 0 #calc "-1 * $L_total");
-          max     ($width $height 0);
+		  type    searchableBox;	// region defined by bounding box
+          min     (0 0 -0.782);
+          max     (0.08 0.12 0);
 	};
 
 };
@@ -48,11 +52,20 @@ geometry
 // we only really need add-layers, as we don't want to introduce non-isometric
 // refinement
 castellatedMesh false;
+snap false;
+addLayers true;
+mergeTolerance 1e-6;
+
 castellatedMeshControls
 {
 	refinementRegions
 	{
-
+		// create region near top wall
+		top_wall_refinement
+		{
+			mode inside;
+			levels ((1.0 $r_level));
+		}
 	};
 	refinementSurfaces
 	{
@@ -67,11 +80,10 @@ castellatedMeshControls
 	maxLocalCells #calc "(int) 1e6";
 	minRefinementCells 0;
 	resolveFeatureAngle 30;
-	nCellsBetweenLevels 3;
-	locationInMesh (0.1 0.1 0.1);
+	nCellsBetweenLevels 1;
+	locationInMesh (#calc "0.001 * $width / 2.0"	#calc "0.001 * $height"		#calc "0.001 * -0.5 * $L_total");
 	allowFreeStandingZoneFaces false;
 };
-snap false;
 snapControls
 {
 	// defaults just to get openfoam to be quiet, we don't actually want to run this
@@ -84,26 +96,26 @@ snapControls
 meshQualityControls
 {
 	// base mesh is ~30, so limit to say 40
-	maxNonOrtho 40;
-	// no skewed boundary cells
-	maxBoundarySkewness 1.5;
+	maxNonOrtho 45;
+	// minimal skewed boundary cells
+	maxBoundarySkewness 1.0;
 	// base mesh is ~ 0.66
 	maxInternalSkewness 1.5;
 	// some small number
-	maxConcave 1e-6;
+	maxConcave 0;
 	// all cells are flat
 	minFlatness 1;
 	// large negative number
-	minTetQuality -1e6;
+	minTetQuality -1e30;
 	// minumum volume -- turn off
 	minVol -1e-6;
 	minArea -1;
 	// base mesh is ~0.5
-	minDeterminant 0.25;
+	minDeterminant 0.0001;
 	// base mesh is ~0.5
-	minFaceWeight 0.45;
+	minFaceWeight 0.05;
 	// base mesh is ~0.97
-	minVolRatio 0.9;
+	minVolRatio 0.75;
 	// turn off
 	minTwist -1;
 	minTriangleTwist -1;
@@ -111,10 +123,6 @@ meshQualityControls
 	nSmoothScale 4;
 	errorReduction 0.75;
 };
-
-addLayers true;
-// don't merge anything I don't tell you to
-mergeTolerance 1.0;
 
 addLayersControls
 {
@@ -124,28 +132,31 @@ addLayersControls
 	expansionRatio $e_ratio;
 	// finalLayerThickness $mesh_size; // mm
 	minThickness $wall_normal; // mm
-	nRelaxIter 5;
-	nSmoothSurfaceNormals 1;
-	nSmoothNormals 3;
-	nSmoothThickness 10;
-	maxFaceThicknessRatio 0.5;
-	maxThicknessToMedialRatio 0.3;
+	nSmoothSurfaceNormals 50;
+    nSmoothNormals 50;
+    nSmoothThickness 100;
+    maxFaceThicknessRatio 0.8;
+    maxThicknessToMedialRatio 0.9;
 	minMedianAxisAngle 90;
 	nBufferCellsNoExtrude 0;
 	nLayerIter 50;
 	nRelaxedIter 20;
+	nRelaxIter 20;
 
-	// not really sure what to put here, probably have to play around
-	nGrow 3;
+	// want growth right at the edge of the boundary
+	nGrow 0;
 
 	// our feature angle is 45 degrees for the BB
-	featureAngle 75;
+	featureAngle 130;
 
 	layers
 	{
 		top_wall
 		{
-          nSurfaceLayers 10; 
+          nSurfaceLayers $num_layers;
       	};
 	}
+
+	debug 0;
+
 };
