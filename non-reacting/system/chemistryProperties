@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    location        "constant";
+    object          chemistryProperties;
+}
+
+/*
+
+Chemistry properties for non-reacting
+
+*/
+
+chemistryType
+{
+    chemistrySolver ode;
+    chemistryThermo psi;
+    TDAC            off;
+    reduction       off;
+}
+
+chemistry       off;
+
+importantSpecies
+{
+    CO2             ;
+    H2O             ;
+    CH4             ;
+    O2              ;
+}
+
+initialChemicalTimeStep 1e-07;
+
+odeCoeffs
+{
+    solver          seulex;
+    absTol          1e-10;
+    relTol          1e-06;
+}
+
+// ************************************************************************* //

@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// Based on suggestions from MVP2:
+// https://community.apan.org/cfs-file/__key/widgetcontainerfiles/3fc3f82483d14ec485ef92e206116d49-g-_2D00_tM6tEO4PkenM5KsnY8ctg-page-0cases/MVP2_5F00_Validation_5F00_Case_5F00_Final.pdf
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+// from MVP2
+internalField   uniform 100000;
+
+boundaryField
+{
+	inlet
+	{
+		type 			fixedValue;
+		value  			uniform $internalField;
+	}
+    outlet
+    {
+    	// MVP2 recommends transmissive BC w/ target P = 100kPa
+        type            waveTransmissive;
+        // from pitz daily & PDRFoam examples
+        gamma			1.3;
+        fieldInf		$internalField;
+        // a measure of how far away the far-field condition should be
+        // this corresponds to ~ 10% of the downstream of the outlet
+        lInf            0.07;
+        value           uniform $internalField;
+    }
+}
+
+
+// ************************************************************************* //

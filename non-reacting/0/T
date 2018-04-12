@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// Based on suggestions from MVP2:
+// https://community.apan.org/cfs-file/__key/widgetcontainerfiles/3fc3f82483d14ec485ef92e206116d49-g-_2D00_tM6tEO4PkenM5KsnY8ctg-page-0cases/MVP2_5F00_Validation_5F00_Case_5F00_Final.pdf
+
+dimensions      [0 0 0 1 0 0 0];
+
+// from MVP2
+internalField   uniform 288;
+
+boundaryField
+{
+    inlet
+    {
+        // MVP2
+        type            totalTemperature;
+        value           uniform $internalField;
+    }
+    bluff_body
+    {
+        // adidabatic from MVP2
+        type            zeroGradient;
+    }
+    top_wall
+    {
+        // adidabatic from MVP2
+        type            zeroGradient;
+    }
+    bottom_wall
+    {
+        // adidabatic from MVP2
+        type            zeroGradient;
+    }
+}
+
+
+// ************************************************************************* //
