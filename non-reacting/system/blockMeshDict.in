@@ -212,12 +212,24 @@ blocks
         //x
         #calc "(int)ceil($width / $mesh_size)"
         //y
-        #calc "(int)ceil($height / $mesh_size)"
+        // transition to python script
+        //#calc "(int)ceil($height / $mesh_size)"
+        ${block_0_y_cells}
         //z
-        #calc "(int)ceil($L_LE_upstream / $mesh_size)"
+        //#calc "(int)ceil($L_LE_upstream / $mesh_size)"
+        ${block_0_z_cells}
     )
     // refinement done in snappyHexMesh
-    simpleGrading (1 1 1)
+    simpleGrading
+    (
+        1
+        (
+            ${block_0_y_grading}
+        )
+        (
+            ${block_0_z_grading}
+        )
+    )
 
     // block 1 -> top of BB
     //    --> for this one block, we get slightly different results depending on
@@ -231,13 +243,21 @@ blocks
     (
         //x
         #calc "(int)ceil($width / $mesh_size)"
-        //y -- TODO: unclear whether this refers to the short or long end of the BB -- assume long, and double check
-        //after checking -- it appears this is the short side
-        #calc "(int)ceil($D / $mesh_size)"
+        //y -- //after checking -- it appears this is the short side
+        //#calc "(int)ceil($D / $mesh_size)"
+        ${block_1_y_cells}
         //z
-        #calc "(int)ceil($BB_height / $mesh_size)"
+        //#calc "(int)ceil($BB_height / $mesh_size)"
+        ${block_1_z_cells}
     )
-    simpleGrading (1 1 1)
+    simpleGrading (
+        1
+        (
+            ${block_1_y_grading}
+        )
+        (
+            ${block_1_z_grading}
+        ))
 
     // block 2 -> bottom of BB
     //    --> origin at 8
@@ -245,13 +265,20 @@ blocks
     (
         //x
         #calc "(int)ceil($width / $mesh_size)"
-        //y -- TODO: unclear whether this refers to the short or long end of the BB -- assume long, and double check
-        //after checking -- it appears this is the short side
-        #calc "(int)ceil($D / $mesh_size)"
+        //y -- //after checking -- it appears this is the short side
+        //#calc "(int)ceil($D / $mesh_size)"
+        ${block_2_y_cells}
         //z
-        #calc "(int)ceil($BB_height / $mesh_size)"
+        //#calc "(int)ceil($BB_height / $mesh_size)"
+        ${block_2_z_cells}
     )
-    simpleGrading (1 1 1)
+    simpleGrading (1
+        (
+            ${block_2_y_grading}
+        )
+        (
+            ${block_2_z_grading}
+        ))
 
     // block 3 -- trailing edge of BB to outlet [top]
     hex (23 24 14 15 17 20 10 11)
@@ -259,11 +286,21 @@ blocks
         //x
         #calc "(int)ceil($width / $mesh_size)"
         //y
-        #calc "(int)ceil($D / $mesh_size)"
+        //#calc "(int)ceil($D / $mesh_size)"
+        ${block_3_y_cells}
         //z
-        #calc "(int)ceil($L_TE_downstream / $mesh_size)"
+        //#calc "(int)ceil($L_TE_downstream / $mesh_size)"
+        ${block_3_z_cells}
     )
-    simpleGrading (1 1 1)
+    simpleGrading (
+        1
+            (
+                ${block_3_y_grading}
+            )
+            (
+                ${block_3_z_grading}
+            )
+        )
 
     // block 4 -- trailing edge of BB to outlet [middle]
     hex (22 25 24 23 16 19 20 17)
@@ -271,11 +308,20 @@ blocks
         //x
         #calc "(int)ceil($width / $mesh_size)"
         //y
-        #calc "(int)ceil($D / $mesh_size)"
+        //#calc "(int)ceil($D / $mesh_size)"
+        ${block_4_y_cells}
         //z
-        #calc "(int)ceil($L_TE_downstream / $mesh_size)"
+        //#calc "(int)ceil($L_TE_downstream / $mesh_size)"
+        ${block_4_z_cells}
     )
-    simpleGrading (1 1 1)
+    simpleGrading (
+        1
+        (
+            ${block_4_y_grading}
+        )
+        (
+            ${block_4_z_grading}
+        ))
 
     // block 5 -- trailing edge of BB to outlet [bottom]
     hex (12 13 25 22 8 9 19 16)
@@ -283,11 +329,22 @@ blocks
         //x
         #calc "(int)ceil($width / $mesh_size)"
         //y
-        #calc "(int)ceil($D / $mesh_size)"
+        //#calc "(int)ceil($D / $mesh_size)"
+        ${block_5_y_cells}
         //z
-        #calc "(int)ceil($L_TE_downstream / $mesh_size)"
+        //#calc "(int)ceil($L_TE_downstream / $mesh_size)"
+        ${block_5_z_cells}
     )
-    simpleGrading (1 1 1)
+    simpleGrading (
+        1
+            (
+                ${block_5_y_grading}
+            )
+            (
+                ${block_5_z_grading}
+            )
+        )
+
 );
 
 // boundaries
