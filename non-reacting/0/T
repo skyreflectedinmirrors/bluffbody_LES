@@ -30,6 +30,14 @@ boundaryField
         type            totalTemperature;
         value           uniform $internalField;
     }
+    left_wall
+    {
+        type            symmetryPlane;
+    }
+    right_wall
+    {
+        type            symmetryPlane;
+    }
     bluff_body
     {
         // adidabatic from MVP2

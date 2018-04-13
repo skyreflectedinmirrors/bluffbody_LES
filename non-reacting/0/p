@@ -24,11 +24,22 @@ internalField   uniform 100000;
 
 boundaryField
 {
-	inlet
-	{
-		type 			fixedValue;
-		value  			uniform $internalField;
-	}
+    top_wall
+    {
+        type            zeroGradient;
+    }
+    bottom_wall
+    {
+        type            zeroGradient;
+    }
+    left_wall
+    {
+        type            symmetryPlane;
+    }
+    right_wall
+    {
+        type            symmetryPlane;
+    }
     outlet
     {
     	// MVP2 recommends transmissive BC w/ target P = 100kPa

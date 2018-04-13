@@ -19,7 +19,8 @@ FoamFile
 
 dimensions      [0 1 -1 0 0 0 0];
 
-// from MVP2, 17.6 m/s
+// from MVP2, 0.62 kg/s -> 17.6 m/s
+// from cocks, specified mass flow rate of 0.6 kg/s
 internalField   uniform 17.6;
 
 boundaryField
@@ -36,11 +37,23 @@ boundaryField
     {
         type            noSlip;
     }
+    left_wall
+    {
+        type            symmetryPlane;
+    }
+    right_wall
+    {
+        type            symmetryPlane;
+    }
     inlet
     {
         type            fixedValue;
         value           $internalField;
 
+    }
+    outlet
+    {
+        type            zeroGradient;
     }
 }
 
