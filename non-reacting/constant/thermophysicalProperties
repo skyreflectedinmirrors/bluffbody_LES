@@ -37,7 +37,8 @@ inertSpecie N2;
 fuel        C2H4;
 
 chemistryReader chemkinChemistryReader;
-foamChemistryFile "$FOAM_CASE/constant/grimech30.dat";
-foamChemistryThermoFile "$FOAM_CASE/constant/thermo30.dat";
+CHEMKINFile "$FOAM_CASE/constant/uscd.dat";
+CHEMKINThermoFile "$FOAM_CASE/constant/uscdtherm.dat";
+CHEMKINTransportFile "$FOAM_CASE/chemkin/uscdtrans.dat";
 
 // ************************************************************************* //
