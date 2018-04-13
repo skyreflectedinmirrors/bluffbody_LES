@@ -32,8 +32,8 @@ startTime       0;
 
 stopAt          endTime;
 
-// integral time scale from Cocks et al., may need to be revised
-endTime         1e-4;
+// ~ equivalent to 4 residence times
+endTime         0.2;
 
 // non-reacting time-step from Cocks et al.
 deltaT          1e-6;
