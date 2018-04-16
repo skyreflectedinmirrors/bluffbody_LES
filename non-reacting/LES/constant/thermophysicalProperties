@@ -36,11 +36,8 @@ thermoType
 inertSpecie N2;
 fuel        C2H4;
 
-chemistryReader chemkinReader;
-CHEMKINFile "$FOAM_CASE/chemkin/grimech30.dat";
-CHEMKINThermoFile "$FOAM_CASE/chemkin/thermo30.dat";
-// annoyingly, openfoam doesn't support a chemkin/cantera-like transport model
-CHEMKINTransportFile "FOAM_CASE/constant/transportProperties"
-//CHEMKINTransportFile "$FOAM_CASE/chemkin/ucsdtrans.dat";
+chemistryReader foamChemistryReader;
+foamChemistryThermoFile "$FOAM_CASE/chemkin/thermo30_foam.dat";
+foamChemistryFile "$FOAM_CASE/chemkin/grimech30_foam.dat";
 
 // ************************************************************************* //
