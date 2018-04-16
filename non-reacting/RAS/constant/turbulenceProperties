@@ -1,0 +1,36 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      turbulenceProperties;
+}
+/*
+
+ turbulenceProperties for non-reacting volvo flygmotor AB
+
+ This file sets up a RANS non-reacting simulation, to be used as an initial condition
+ / validation for our LES simulation
+
+ Nick Curtis -- 04/16/18
+
+*/
+
+simulationType   RAS;
+
+RAS
+{
+    RASModel        kEpsilon;
+    turbulence      on;
+    printCoeffs     on;
+}
+
+// ************************************************************************* //

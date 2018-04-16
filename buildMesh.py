@@ -29,11 +29,11 @@ width = 2 * D  # mm
 # total channel length
 length = 782.0  # mm
 # up/down-stream of bluff-body (from trailing edge)
-L_TE_upstream    = 100.0  # mm
-L_TE_downstream  = 682.0  # mm
-L_total          = 782.0  # mm
-BB_height        = D * np.sqrt(3.) / 2.  # mm
-L_LE_upstream    = L_TE_upstream - BB_height  # mm
+L_TE_upstream = 100.0  # mm
+L_TE_downstream = 682.0  # mm
+L_total = 782.0  # mm
+BB_height = D * np.sqrt(3.) / 2.  # mm
+L_LE_upstream = L_TE_upstream - BB_height  # mm
 
 
 class grading(object):
@@ -60,7 +60,6 @@ class grading(object):
         dict = self.__dict__.copy()
         dict.update(**kwargs)
         return grading(**dict)
-
 
 
 class blockGrader(object):
@@ -213,7 +212,6 @@ class blockGrader(object):
         assert np.isclose(np.sum(grad.distance for grad in self.gradings),
                           self.dim)
 
-
     def solve_geo_progression(self):
         """
         Returns the number of cells required to get from a starting mesh size of
@@ -248,7 +246,6 @@ class blockGrader(object):
             raise NotImplementedError
 
         return int(n_steps)
-
 
     def solve_geo_series(self, n_steps):
         """
@@ -339,10 +336,10 @@ def main(mesh_size, wall_normal, geometric_ratio, long_geometric_ratio,
 
         # block 4
         graders.append(blockGrader(4, 'y', D, wall_normal, mesh_size,
-                           geometric_ratio, expansion_distance))
+                                   geometric_ratio, expansion_distance))
         graders.append(blockGrader(4, 'z', L_TE_downstream, wall_normal, mesh_size,
-                           long_geometric_ratio, expansion_distance,
-                           grade_start=False))
+                                   long_geometric_ratio, expansion_distance,
+                                   grade_start=False))
 
         # block 5
         graders.append(blockGrader(5, 'y', D, wall_normal, mesh_size,
@@ -351,11 +348,9 @@ def main(mesh_size, wall_normal, geometric_ratio, long_geometric_ratio,
                                    long_geometric_ratio, expansion_distance,
                                    grade_start=False))
 
-
         for grader in graders:
             mydict.update(grader.get_subst_dict())
         file.write(src.safe_substitute(**mydict))
-
 
 
 if __name__ == '__main__':

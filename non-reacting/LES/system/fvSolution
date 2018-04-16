@@ -60,7 +60,7 @@ solvers
 		mergeLevels 1;
 	}
 
-    "(U|Yi|k|h|omega)"
+    "(U|Yi|h)"
     {
         solver          PBiCGStab;
         preconditioner  DILU;
@@ -70,19 +70,21 @@ solvers
         nSweeps         1;
     };
 
-    "(U|Yi|k|h|omega)Final"
+    "(U|Yi|h)Final"
     {
         $U;
         relTol          0.0;
     };
 }
 
-PISO
+PIMPLE
 {
 	// manual - PISO, SIMPLE and PIMPLE algorithms
 	// neither low RE nor multi-phase
     momentumPredictor yes;
+    nOuterCorrectors  1;
     nCorrectors       2;
     // wolf p.g., 43
 	nNonOrthogonalCorrectors 1;
+	maxDeltaT		  1e-6;
 }

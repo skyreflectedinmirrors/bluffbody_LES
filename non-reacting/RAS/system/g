@@ -9,19 +9,13 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
+    class       uniformDimensionedVectorField;
     location    "constant";
-    object      combustionProperties;
+    object      g;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-combustionModel  EDC<psiChemistryCombustion>;
-
-active  False;
-
-EDCCoeffs
-{
-    version v2005;
-}
+dimensions      [0 1 -2 0 0 0 0];
+value           (0 0 -9.8);
 
 // ************************************************************************* //

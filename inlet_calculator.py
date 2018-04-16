@@ -85,6 +85,8 @@ gas.set_equivalence_ratio(phi, 'C3H8', 'O2:1.0, N2:3.76')
 
 print('Inlet mass fractions:')
 print(gas[['C3H8', 'O2', 'N2']].mass_fraction_dict())
+
+print('Inlet gamma: {}'.format(gas.cp / gas.cv))
 # get velocity
 
 # mass flow rate from MVP2
