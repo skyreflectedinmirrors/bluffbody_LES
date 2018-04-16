@@ -32,11 +32,11 @@ startTime       0;
 
 stopAt          endTime;
 
-// ~ equivalent to 4 residence times
-endTime         0.2;
+// ~ equivalent to 40 residence times
+endTime         2;
 
-// non-reacting time-step from Cocks et al.
-deltaT          1e-6;
+// larger time step
+deltaT          1e-4;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
 writeControl    timeStep;

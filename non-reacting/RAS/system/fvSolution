@@ -60,7 +60,7 @@ solvers
 		mergeLevels 1;
 	}
 
-    "(U|Yi|h)"
+    "(U|Yi|h|k|epsilon)"
     {
         solver          PBiCGStab;
         preconditioner  DILU;
@@ -70,7 +70,7 @@ solvers
         nSweeps         1;
     };
 
-    "(U|Yi|h)Final"
+    "(U|Yi|h|k|epsilon)Final"
     {
         $U;
         relTol          0.0;
@@ -86,5 +86,8 @@ PIMPLE
     nCorrectors       2;
     // wolf p.g., 43
 	nNonOrthogonalCorrectors 1;
-	maxDeltaT		  1e-6;
+
+	// RANS specific
+	maxDeltaT           1e-4;
+    maxCo               0.25;
 }
