@@ -11,4 +11,5 @@
 #SBATCH --mail-user=nicholas.curtis@uconn.edu
 #SBATCH --dependency=singleton
 
-mpirun -np 24 reactingFoam -case /home/njc07003/OpenFOAM/njc07003-5.x/run/volvo_flygmotor_AB/non-reacting/RAS -parallel
+
+mpirun reactingFoam -case /home/njc07003/OpenFOAM/njc07003-5.x/run/volvo_flygmotor_AB/non-reacting/RAS -parallel
