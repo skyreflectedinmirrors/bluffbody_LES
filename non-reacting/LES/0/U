@@ -23,7 +23,8 @@ dimensions      [0 1 -1 0 0 0 0];
 // answers w/ their other BC's (see inlet_calculator.py)
 // Wu used 16.6 for non-reacting & 17.3 for reacting
 // cocks uses 17 m/s for all cases
-internalField   uniform 16.6;
+Ubulk = 16.6
+internalField   uniform (0, 0, #calc "-1 * $Ubulk");
 
 boundaryField
 {
@@ -50,7 +51,7 @@ boundaryField
     inlet
     {
         type            fixedValue;
-        value           $internalField;
+        value           uniform (0, 0, #calc "-1 * $Ubulk");
 
     }
     outlet
