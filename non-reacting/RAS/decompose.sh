@@ -1,4 +1,4 @@
 cp -r 0.orig 0
-setFields -overwr
+setFields
 decomposePar
-renumberMesh -latestTime
+renumberMesh -latestTime -overwrite
