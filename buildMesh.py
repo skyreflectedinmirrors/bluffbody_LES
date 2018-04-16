@@ -287,23 +287,24 @@ class blockGrader(object):
         return np.power((self.mesh_size / self.start_size), 1. / (n_steps))
 
 
-def get_template(filename):
-    with open(join('system', '{}.in'.format(filename)), 'r') as file:
+def get_template(case, filename):
+    with open(join(case, 'system', '{}.in'.format(filename)), 'r') as file:
         src = Template(file.read())
     return src
 
 
-def main(mesh_size, wall_normal, geometric_ratio, long_geometric_ratio,
+def main(case, mesh_size, wall_normal, geometric_ratio, long_geometric_ratio,
          expansion_distance, upstream_center_line=True):
     # populate mesh dims
-    with open(join('system', 'meshDims'), 'w') as file:
-        file.write(get_template('meshDims').safe_substitute(mesh_size=mesh_size))
+    with open(join(case, 'system', 'meshDims'), 'w') as file:
+        file.write(get_template(case, 'meshDims').safe_substitute(
+            mesh_size=mesh_size))
 
     # get blockMesh
-    src = get_template('blockMeshDict')
+    src = get_template(case, 'blockMeshDict')
 
     # and write to file
-    with open(join('system', 'blockMeshDict'), 'w') as file:
+    with open(join(case, 'system', 'blockMeshDict'), 'w') as file:
 
         mydict = {}
         graders = []
@@ -356,6 +357,11 @@ def main(mesh_size, wall_normal, geometric_ratio, long_geometric_ratio,
 if __name__ == '__main__':
     parser = ArgumentParser('buildMesh.py -- set up blockMeshDict for Volvo '
                             'Flygmotor LES simulation.')
+    parser.add_argument('-c', '--case',
+                        required=True,
+                        type=str,
+                        help='The path to the OpenFOAM case to build the block mesh'
+                             ' for.')
     parser.add_argument('-m', '--mesh_size',
                         type=float,
                         default=2.,
@@ -395,6 +401,6 @@ if __name__ == '__main__':
                              'body')
     parser.set_defaults(upstream_center_line=True)
     args = parser.parse_args()
-    main(args.mesh_size, args.wall_normal, args.geometric_ratio,
+    main(args.case, args.mesh_size, args.wall_normal, args.geometric_ratio,
          args.long_geometric_ratio, args.expansion_distance,
          args.upstream_center_line)
