@@ -25,7 +25,23 @@ boundaryField
     {
         // see inlet_calculator.py
         type            fixedValue;
-        value           uniform $internalField;
+        value           $internalField;
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+    top_wall
+    {
+        type            zeroGradient;
+    }
+    bottom_wall
+    {
+        type            zeroGradient;
+    }
+    bluff_body
+    {
+        type            zeroGradient;
     }
     left_wall
     {
