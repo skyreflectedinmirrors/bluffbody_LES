@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-numberOfSubdomains	$NUM_PROCESSES;
+numberOfSubdomains	24;
 
 method          	scotch;
 

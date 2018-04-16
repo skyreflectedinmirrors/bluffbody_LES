@@ -1,2 +1,4 @@
-NUM_PROCESSES=24 decomposePar
+cp -r 0.orig 0
+setFields -overwr
+decomposePar
 renumberMesh -latestTime

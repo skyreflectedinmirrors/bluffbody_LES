@@ -26,7 +26,7 @@ Nicholas Curtis - 04/05/2018
 // use same settings for both non-reacting & reacting simulations per Cocks et al.
 application     reactingFoam;
 
-startFrom       startTime;
+startFrom       latestTime;
 
 startTime       0;
 
