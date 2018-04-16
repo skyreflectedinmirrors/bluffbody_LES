@@ -40,7 +40,7 @@ deltaT          1e-4;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
 writeControl    timeStep;
-writeInterval   100;
+writeInterval   10;
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;
