@@ -18,7 +18,8 @@ FoamFile
 // From Sandia Flame D case, we can set the walls ot nutkWallFunction w/ value 0
 // and inlets / outlets as calculated
 
-internalField           0;
+dimensions              [0 2 -1 0 0 0 0];
+internalField           uniform 0;
 
 boundaryField
 {

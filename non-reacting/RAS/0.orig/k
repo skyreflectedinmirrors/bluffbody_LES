@@ -13,18 +13,13 @@ FoamFile
     location    "0";
     object      k;
 }
-//obtain Ubulk
-#include "U";
-#remove "(?!Ubulk)";
-
 
 // Initializer for TKE for RANS
-// Assume -- a turblence intensity of ~ 0.05
 dimensions      [0 2 -2 0 0 0 0];
 
-intensity       0.05;
-kguess          #calc "1.5 * ($Ubulk * $intensity)**2";
-internalField   uniform $kguess;
+//obtain Ubulk
+#include                "ransInitialValues";
+internalField           uniform $kguess;
 
 boundaryField
 {
@@ -33,7 +28,7 @@ boundaryField
     // a wall treatment
     top_wall
     {
-        type            epsilonWall;
+        type            kqRWallFunction;
         value           $internalField;
     }
     bottom_wall
@@ -58,7 +53,7 @@ boundaryField
     {
         // no turbulence at inlet
         type            fixedValue;
-        value           0;
+        value           uniform 0;
     }
     outlet
     {

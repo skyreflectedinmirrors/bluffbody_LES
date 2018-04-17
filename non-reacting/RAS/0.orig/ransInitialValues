@@ -1,0 +1,28 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "0";
+    object      ransInitialValues;
+}
+
+
+// a collection of initial values specifically for RANS
+#include 		"initialValues";
+
+// Assume -- a turblence intensity of ~ 0.05
+intensity       0.05;
+kguess          #calc "1.5 * pow($Ubulk * $intensity, 2.0)";
+
+// turbulent length scale from Cocks et al.
+tl              0.005; // 5mm
+Cmu             0.9; // default
+epsilon_guess   #calc "(pow($Cmu, 0.75) * pow($kguess, 1.5)) / $tl";
