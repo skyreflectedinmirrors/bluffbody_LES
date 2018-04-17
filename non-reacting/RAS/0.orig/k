@@ -13,35 +13,38 @@ FoamFile
     location    "0";
     object      k;
 }
-// Initializer for TKE for RANS -- based on SANDIA Flame D OpenFOAM example //
+//obtain Ubulk
+#include "U";
+#remove "(?!Ubulk)";
 
+
+// Initializer for TKE for RANS
+// Assume -- a turblence intensity of ~ 0.05
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform 30;
+intensity       0.05;
+kguess          #calc "1.5 * ($Ubulk * $intensity)**2";
+internalField   uniform $kguess;
 
 boundaryField
 {
-    // since our mesh is refined for LES - we don't really need wall functions
+    // the maximum wall normal distance is < 0.3mm, and from
+    // http://www.pointwise.com/yplus/, the expected y+ is ~0.0166 mm, hence we need
+    // a wall treatment
     top_wall
     {
-        type            zeroGradient;
+        type            epsilonWall;
+        value           $internalField;
     }
     bottom_wall
     {
-        type            zeroGradient;
+        type            kqRWallFunction;
+        value           $internalField;
     }
     bluff_body
     {
-        type            calculated;
+        type            kqRWallFunction;
         value           $internalField;
-    }
-    inlet
-    {
-        type            zeroGradient;
-    }
-    outlet
-    {
-        type            zeroGradient;
     }
     left_wall
     {
@@ -50,5 +53,15 @@ boundaryField
     right_wall
     {
         type            symmetryPlane;
+    }
+    inlet
+    {
+        // no turbulence at inlet
+        type            fixedValue;
+        value           0;
+    }
+    outlet
+    {
+        type            zeroGradient;
     }
 }

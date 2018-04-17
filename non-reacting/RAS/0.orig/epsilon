@@ -13,31 +13,47 @@ FoamFile
     location    "0";
     object      epsilon;
 }
+
 // Initializer for TKE for RANS -- based on SANDIA Flame D OpenFOAM example //
 
-dimensions      [0 2 -3 0 0 0 0];
+//obtain kguess
+#include "k";
+#remove "(?!kguess)";
 
-internalField   uniform 30000;
+dimensions      [0 2 -1 0 0 0 0];
+
+// turbulent length scale from Cocks et al.
+tl              0.005; // 5mm
+Cmu             0.9; // default
+epsilon_guess   #calc "($Cmu**(0.75) * $kguess**(1.5)) / $tl";
+internalField   uniform $epsilon_guess;
+
+
+dimensions      [0 2 -3 0 0 0 0];
 
 boundaryField
 {
     // since our mesh is refined for LES - we don't really need wall functions
     top_wall
     {
-        type            zeroGradient;
+        type            epsilonWallFunction;
+        value           $internalField;
     }
     bottom_wall
     {
-        type            zeroGradient;
+        type            epsilonWallFunction;
+        value           $internalField;
     }
     bluff_body
     {
-        type            calculated;
+        type            epsilonWallFunction;
         value           $internalField;
     }
     inlet
     {
-        type            zeroGradient;
+        // don't set to zero to avoid division by zero
+        type            fixedValue;
+        value           $internalField;
     }
     outlet
     {

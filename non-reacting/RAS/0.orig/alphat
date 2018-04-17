@@ -17,24 +17,26 @@ FoamFile
 
 dimensions      [1 -1 -1 0 0 0 0];
 
+// again from Sandia Flame-D case, set walls to alphatWallFunction w/ default prandtl # of 0.95
+
 internalField   uniform 0;
 
 boundaryField
 {
     top_wall
     {
-        type            calculated;
-        value           $internalField;
+        type            compressible::alphatWallFunction;
+        Prt             0.85;
     }
     bottom_wall
     {
-        type            calculated;
-        value           $internalField;
+        type            compressible::alphatWallFunction;
+        Prt             0.85;
     }
     bluff_body
     {
-        type            calculated;
-        value           $internalField;
+        type            compressible::alphatWallFunction;
+        Prt             0.85;
     }
     left_wall
     {

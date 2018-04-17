@@ -15,26 +15,29 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -1 0 0 0 0];
+// From Sandia Flame D case, we can set the walls ot nutkWallFunction w/ value 0
+// and inlets / outlets as calculated
 
-internalField   uniform 0;
+internalField           0;
 
 boundaryField
 {
-    // since our mesh is refined for LES - we don't really need wall functions
+    // the maximum wall normal distance is < 0.3mm, and from
+    // http://www.pointwise.com/yplus/, the expected y+ is ~0.0166 mm, hence we need
+    // a wall treatment
     top_wall
     {
-        type            calculated;
+        type            nutkWallFunction;
         value           $internalField;
     }
     bottom_wall
     {
-        type            calculated;
+        type            nutkWallFunction;
         value           $internalField;
     }
     bluff_body
     {
-        type            calculated;
+        type            nutkWallFunction;
         value           $internalField;
     }
     inlet
