@@ -1,0 +1,5 @@
+Notes
+-----
+
+- http://www.pointwise.com/yplus/, the expected y+ is ~0.0166 mm, hence we need a wall treatment
+- Mesh is different from LES case, place first cell at y+ ~ 30, or 0.498mm -> 0.5mm
