@@ -20,8 +20,8 @@ FoamFile
 dimensions      [0 0 0 1 0 0 0];
 
 // from MVP2
-Tref 288;
-internalField   uniform $Tref;
+#include                "initialValues";
+internalField           uniform $Tref;
 
 boundaryField
 {

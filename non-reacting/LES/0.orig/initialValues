@@ -1,0 +1,29 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "0";
+    object      initialValues;
+}
+
+
+// a collection of initial values, importable to other files
+
+// operating pressure, 1 bar
+Pref  		100000;
+// mass fraction of N2 of air, for non-reacting
+N2_init		0.7669924994868982;
+// mass fraction of O2 of air, for non-reacting
+O2_init		0.23300750051310173;
+// inlet temperature
+Tref        288;
+// inlet velocity
+Ubulk 		16.6;

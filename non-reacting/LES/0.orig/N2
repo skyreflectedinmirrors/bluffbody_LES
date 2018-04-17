@@ -17,7 +17,8 @@ FoamFile
 
 dimensions      [0 0 0 0 0 0 0];
 
-internalField   uniform 0.7669924994868982;
+#include                "initialValues";
+internalField           uniform $N2_init;
 
 boundaryField
 {
