@@ -379,7 +379,7 @@ if __name__ == '__main__':
                              'Incompatible with expansion_distance option.')
     parser.add_argument('-l', '--long_geometric_ratio',
                         type=float,
-                        default=1.03,
+                        default=1.05,
                         help='The geometric-ratio of (slow) cell size increases.'
                              'Incompatible with expansion_distance option.')
     parser.add_argument('-e', '--expansion_distance',
