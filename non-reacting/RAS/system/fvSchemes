@@ -154,5 +154,6 @@ divSchemes
     };
     // from SANDIA combustion tutorial for K-epsilon
     div(phi,K)          Gauss limitedLinear 1;
+    div(phi,k)          Gauss limitedLinear 1;
     div(phi,epsilon)    Gauss limitedLinear 1;
 }

@@ -37,6 +37,7 @@ endTime         2;
 
 // larger time step
 deltaT          1e-4;
+maxCo			0.25
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
 writeControl    timeStep;

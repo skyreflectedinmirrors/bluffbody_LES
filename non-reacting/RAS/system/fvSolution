@@ -36,50 +36,39 @@ solvers
         solver          diagonal;
     }
 
-	// PISO solver from wolf, pages 56-57
+	// solver based on Sandia Flame-D example
     p
 	{
-		solver GAMG;
-		// Wolf: may want 1e-5 / 1e-2 for startup
-		tolerance 1e-5
-		relTol 0.05;
-		smoother GaussSeidel;
-		nPreSweeps 0;
-		nPostSweeps 2;
-		cacheAgglomeration on;
-		agglomerator faceAreaPair;
-		nCellsInCoarsestLevel 1000;
-		mergeLevels 1;
+		solver PCG;
+		preconditioner    DIC;
+        tolerance         1e-06;
+        relTol            0.01;
 	}
 	pFinal
 	{
-		solver GAMG;
-		tolerance 1e-06;
-		relTol 0.0;
-		smoother GaussSeidel;
-		nPreSweeps 0;
-		nPostSweeps 2;
-		cacheAgglomeration on;
-		agglomerator faceAreaPair;
-		nCellsInCoarsestLevel 1000;
-		mergeLevels 1;
+        $p
+		relTol            0;
 	}
 
-    "(U|Yi|h|k|epsilon)"
+    "(U|h|k|epsilon)"
     {
         solver          PBiCGStab;
         preconditioner  DILU;
-        // from fireFoam LES example -- relTol bumped down to 0.05 from 0.01
 		tolerance       1e-6;
-        relTol          0.05;
-        nSweeps         1;
+        relTol          0.1;
     };
-
-    "(U|Yi|h|k|epsilon)Final"
+    "(U|h|k|epsilon)Final"
     {
         $U;
-        relTol          0.0;
     };
+
+    Yi
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-8;
+        relTol          0.1;
+    }
 }
 
 PIMPLE
@@ -95,4 +84,22 @@ PIMPLE
 	// RANS specific
 	maxDeltaT           1e-4;
     maxCo               0.25;
+    // from SANDIA Flame-D
+    alphaTemp           0.05;
+    alphaY              0.05;
+    Yref
+    {
+        O2                  0.1;
+        CH4                 0.1;
+    }
+    rDeltaTSmoothingCoeff   0.025;
+    rDeltaTDampingCoeff     1;
+}
+
+relaxationFactors
+{
+    equations
+    {
+        ".*"            1;
+    }
 }
