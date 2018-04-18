@@ -32,16 +32,17 @@ startTime       0;
 
 stopAt          endTime;
 
-// ~ equivalent to 40 residence times
-endTime         2;
+// ~ equivalent to 10 residence times
+endTime         0.5;
 
 // larger time step
-deltaT          1e-4;
-maxCo			0.25
+adjustTimeStep  yes;
+deltaT			1e-6;
+maxCo			0.5;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
-writeControl    timeStep;
-writeInterval   10;
+writeControl    adjustableRunTime;
+writeInterval   1e-4;
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;
