@@ -19,6 +19,10 @@ from __future__ import division, print_function
 from os.path import join
 from argparse import ArgumentParser
 from string import Template
+import re
+from textwrap import dedent
+import itertools as it
+
 import numpy as np
 
 
@@ -64,8 +68,7 @@ class grading(object):
 
 class blockGrader(object):
     def __init__(self, number, axis, dim, start_size, mesh_size, geometric_ratio,
-                 expansion_distance, grade_at_midpoint=False, grade_start=True,
-                 grade_end=True):
+                 grade_start=True, grade_end=True):
         """
         Parameters
         ----------
@@ -82,14 +85,12 @@ class blockGrader(object):
         geometric_ratio: float
             The ratio of cell-size growth in this dimension.  Cannot be specified
             at the same time as :param:`expansion_distance`
-        expansion_distance: float
-            The percent of :param:`dim` that should be taken up by one grading
-        grade_at_midpoint: bool [False]
-            If true, add grading in both directions at midpoint
         grade_start: bool [True]
+            If true, grade at the start of this axis
+        grade_end: bool [True]
+            If true, grade at the end of this axis
         """
         self.num = number
-        assert axis in ['x', 'y', 'z']
         self.axis = axis
         self.dim = dim
         self.start_size = start_size
@@ -97,22 +98,24 @@ class blockGrader(object):
         # OpenFOAM treats the expansion ratio as the ratio of the largest cell /
         # to smallest cell,
         self.expansion_ratio = self.mesh_size / self.start_size
-        if expansion_distance and geometric_ratio:
-            raise Exception('Cannot specify both expansion_distance and '
-                            'geometric_ratio')
-        if geometric_ratio:
-            # the geometric ratio is the cell-growth between any two neighbors
-            self.geometric_ratio = geometric_ratio
-            self.expansion_distance = None
-        else:
-            # the expansion distance is the % of dim that should be taken by
-            # one grading
-            self.expansion_distance = expansion_distance * self.dim
-            self.geometric_ratio = None
+
+        # the geometric ratio is the cell-growth between any two neighbors
+        self.geometric_ratio = geometric_ratio
+        self.expansion_distance = None
         self.gradings = []
-        self.grade_at_midpoint = grade_at_midpoint
         self.grade_start = grade_start
         self.grade_end = grade_end
+        self.children = []
+        self.owner = None
+
+    def add_child(self, other):
+        assert other.owner is None
+        self.children.append(other)
+        other.owner = self
+
+    def add_children(self, others):
+        for other in others:
+            self.add_child(other)
 
     @property
     def name(self):
@@ -120,7 +123,16 @@ class blockGrader(object):
 
     @property
     def cell_name(self):
-        return 'block_{num}_{axis}_cells'.format(num=self.num, axis=self.axis)
+        axis = self.axis
+        if self.owner:
+            axis = ''.join(el[0] for el in it.takewhile(
+                lambda t: t[0] == t[1], zip(self.axis, self.owner.axis)))
+            if axis.endswith('_'):
+                axis = axis[:-1]
+            if not axis:
+                axis = self.axis
+
+        return 'block_{num}_{axis}_cells'.format(num=self.num, axis=axis)
 
     @property
     def n_cells(self):
@@ -146,8 +158,12 @@ class blockGrader(object):
         Returns a substitution dictionary for template subs
         """
 
+        n_cells = self.n_cells
+        if self.owner:
+            n_cells = self.owner.n_cells
+
         return {self.name: self,
-                self.cell_name: self.n_cells}
+                self.cell_name: n_cells}
 
     def __check_interior(self, interior):
         if interior < 0:
@@ -179,14 +195,9 @@ class blockGrader(object):
             num_gradings += 1
         if self.grade_end:
             num_gradings += 1
-        if self.grade_at_midpoint:
-            num_gradings += 2
 
         # create dummy interior grading
         interior = self.dim - num_gradings * geo_dist
-        if self.grade_at_midpoint:
-            # interior is split
-            interior /= 2.
         self.__check_interior(interior)
         interior_n_cells = int(np.ceil(interior / self.last_geo_size(n_steps)))
         interior = grading(interior, interior_n_cells, 1.0)
@@ -198,12 +209,6 @@ class blockGrader(object):
             self.gradings.append(expansion.copy())
         # interior #1
         self.gradings.append(interior.copy())
-        if self.grade_at_midpoint:
-            # contraction / expansion
-            self.gradings.append(expansion.copy_with(contraction=True))
-            self.gradings.append(expansion.copy())
-            # and interior # 2
-            self.gradings.append(interior.copy())
         # and final contraction
         if self.grade_end:
             self.gradings.append(expansion.copy_with(contraction=True))
@@ -287,71 +292,107 @@ class blockGrader(object):
         return np.power((self.mesh_size / self.start_size), 1. / (n_steps))
 
 
-def get_template(case, filename):
+def get_src(case, filename):
     with open(join(case, 'system', '{}.in'.format(filename)), 'r') as file:
-        src = Template(file.read())
+        src = file.read()
     return src
 
 
-def main(case, mesh_size, wall_normal, geometric_ratio, long_geometric_ratio,
-         expansion_distance, upstream_center_line=True):
+def get_template(case, filename):
+    return Template(get_src(case, filename))
+
+
+def _find_indent(template_str, key, value):
+    whitespace = None
+    for i, line in enumerate(template_str.split('\n')):
+        if key in line:
+            # get whitespace
+            whitespace = re.match(r'\s*', line).group()
+            break
+    result = [line if i == 0 else whitespace + line for i, line in
+              enumerate(dedent(value).splitlines())]
+    return '\n'.join(result)
+
+
+def subs_at_indent(template_str, **kwargs):
+    return Template(template_str).safe_substitute(
+        **{key: _find_indent(template_str, '${{{key}}}'.format(key=key),
+                             value if isinstance(value, str) else str(value))
+            for key, value in kwargs.items()})
+
+
+def main(case, mesh_size, wall_normal, geometric_ratio, long_geometric_ratio):
     # populate mesh dims
     with open(join(case, 'system', 'meshDims'), 'w') as file:
         file.write(get_template(case, 'meshDims').safe_substitute(
             mesh_size=mesh_size))
 
     # get blockMesh
-    src = get_template(case, 'blockMeshDict')
+    src = get_src(case, 'blockMeshDict')
 
     # and write to file
     with open(join(case, 'system', 'blockMeshDict'), 'w') as file:
-
         mydict = {}
         graders = []
         # block 0
-        graders.append(blockGrader(0, 'y', height, wall_normal, mesh_size,
-                                   geometric_ratio, expansion_distance,
-                                   upstream_center_line))
+        block0y = blockGrader(0, 'y', height / 2., wall_normal, mesh_size,
+                              geometric_ratio)
+        graders.append(block0y)
         graders.append(blockGrader(0, 'z', L_LE_upstream, wall_normal, mesh_size,
-                                   geometric_ratio, expansion_distance, False,
-                                   True, False))
-
+                                   geometric_ratio, grade_start=False))
         # block 1
-        graders.append(blockGrader(1, 'y', D, wall_normal, mesh_size,
-                                   geometric_ratio, expansion_distance))
-        graders.append(blockGrader(1, 'z', BB_height, wall_normal, mesh_size,
-                                   geometric_ratio, expansion_distance))
-
+        block1y = blockGrader(1, 'y', height / 2., wall_normal, mesh_size,
+                              geometric_ratio)
+        graders.append(block1y)
+        graders.append(blockGrader(1, 'z', L_LE_upstream, wall_normal, mesh_size,
+                                   geometric_ratio, grade_start=False))
         # block 2
-        graders.append(blockGrader(2, 'y', D, wall_normal, mesh_size,
-                                   geometric_ratio, expansion_distance))
+        block2y_short = blockGrader(2, 'y_short', D, wall_normal, mesh_size,
+                                    geometric_ratio)
+        block2y_long = blockGrader(2, 'y_long', D * 1.5, wall_normal, mesh_size,
+                                   geometric_ratio)
+        graders.append(block2y_short)
+        graders.append(block2y_long)
         graders.append(blockGrader(2, 'z', BB_height, wall_normal, mesh_size,
-                                   geometric_ratio, expansion_distance))
+                                   geometric_ratio))
 
         # block 3
-        graders.append(blockGrader(3, 'y', D, wall_normal, mesh_size,
-                                   geometric_ratio, expansion_distance))
-        graders.append(blockGrader(3, 'z', L_TE_downstream, wall_normal, mesh_size,
-                                   long_geometric_ratio, expansion_distance,
-                                   grade_start=False))
+        block3y_short = blockGrader(3, 'y_short', D, wall_normal, mesh_size,
+                                    geometric_ratio)
+        block3y_long = blockGrader(3, 'y_long', D * 1.5, wall_normal, mesh_size,
+                                   geometric_ratio)
+        graders.append(block3y_short)
+        graders.append(block3y_long)
+        graders.append(blockGrader(3, 'z', BB_height, wall_normal, mesh_size,
+                                   geometric_ratio))
 
         # block 4
-        graders.append(blockGrader(4, 'y', D, wall_normal, mesh_size,
-                                   geometric_ratio, expansion_distance))
+        block4y = blockGrader(4, 'y', D, wall_normal, mesh_size,
+                              geometric_ratio)
+        graders.append(block4y)
         graders.append(blockGrader(4, 'z', L_TE_downstream, wall_normal, mesh_size,
-                                   long_geometric_ratio, expansion_distance,
-                                   grade_start=False))
+                                   long_geometric_ratio, grade_start=False))
 
         # block 5
         graders.append(blockGrader(5, 'y', D, wall_normal, mesh_size,
-                                   geometric_ratio, expansion_distance))
+                                   geometric_ratio))
         graders.append(blockGrader(5, 'z', L_TE_downstream, wall_normal, mesh_size,
-                                   long_geometric_ratio, expansion_distance,
-                                   grade_start=False))
+                                   long_geometric_ratio, grade_start=False))
+
+        # block 6
+        block6y = blockGrader(6, 'y', D, wall_normal, mesh_size,
+                              geometric_ratio)
+        graders.append(block6y)
+        graders.append(blockGrader(6, 'z', L_TE_downstream, wall_normal, mesh_size,
+                                   long_geometric_ratio, grade_start=False))
+
+        # setup children
+        block2y_short.add_children([block2y_long, block0y, block4y])
+        block3y_short.add_children([block3y_long, block1y, block6y])
 
         for grader in graders:
             mydict.update(grader.get_subst_dict())
-        file.write(src.safe_substitute(**mydict))
+        file.write(subs_at_indent(src, **mydict))
 
 
 if __name__ == '__main__':
@@ -382,25 +423,6 @@ if __name__ == '__main__':
                         default=1.05,
                         help='The geometric-ratio of (slow) cell size increases.'
                              'Incompatible with expansion_distance option.')
-    parser.add_argument('-e', '--expansion_distance',
-                        type=float,
-                        default=None,
-                        required=False,
-                        help='The percent of the dimension dedicated to '
-                             'cell-expansion. Incompatible with geometric_ratio '
-                             'option.')
-    parser.add_argument('-ruc', '--refine_upstream_centerline',
-                        dest='upstream_center_line',
-                        action='store_true',
-                        help='Refine the centerline upstream of the bluff-'
-                             'body')
-    parser.add_argument('-nruc', '--no_refine_upstream_centerline',
-                        dest='upstream_center_line',
-                        action='store_false',
-                        help='Do not refine the centerline upstream of the bluff-'
-                             'body')
-    parser.set_defaults(upstream_center_line=True)
     args = parser.parse_args()
     main(args.case, args.mesh_size, args.wall_normal, args.geometric_ratio,
-         args.long_geometric_ratio, args.expansion_distance,
-         args.upstream_center_line)
+         args.long_geometric_ratio)

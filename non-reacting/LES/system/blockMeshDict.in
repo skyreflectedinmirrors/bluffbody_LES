@@ -25,8 +25,8 @@ Nicholas Curtis - 04/06/2018
 
          15---------14
          /|        /|
-     22-/>x       / x<-23  <- note not to scale, these must be in place such that we can
-    21-/->x      /  x<-24     define a block for the back of the bluff-body (such
+     23-/>x       / x<-24  <- note not to scale, these must be in place such that we can
+    22-/->x      /  x<-25     define a block for the back of the bluff-body (such
      11---|-----10  |           that we can label it a wall)
      /|  12----/|---13
     7-|--/----6 |  /                   (y)
@@ -36,7 +36,7 @@ Nicholas Curtis - 04/06/2018
 3---|-----2   |/       trailing edge    |
 |   4-----|---5----bluff body           |_________(x)
 |  /      |  /     leading-edge        /
-| /       | /                         /
+26/       27/                         /
 |/        |/                         /
 0---------1                         /
    inlet                          (z)
@@ -52,10 +52,10 @@ Channel dimensions:
 
    3--------------------------------------15
   /|                                     /|                (y)
- / |       </|                          / |                 |
+ / 26       </|                         / |                 |
 2--|-------//--------------------------14 |                 |
 |  0------//---------------------------|--12       (z)______|
-| /     <|/                            | /                  /
+27/     <|/                            | /                  /
 |/                                     |/                  /
 1--------------------------------------13                 /
                                                         (x)
@@ -68,11 +68,11 @@ Channel dimensions:
 
 Upstream of Bluff Body (y-z planar slice at x=0)
 
-3----------------------7----11       ^
+3----------------------7----11      ^
                        |<-D>|       |
                        |    17 ^    |
                        |  / |  |    |              (y)
-                       18   |  D   3D               |
+26                     18   |  D   3D               |
                        |  \ |  |    |               |
                        |    16 v    |               |
                        |    |       |               |
@@ -136,13 +136,13 @@ Final Blocks:
 
 ______________________________________________________                    (y)
 |             |                                       |                    |
-|                1 |                 3                |                    |
-|             |    *----------------------------------|                    |
+|                2 |                 4                |                    |
+|      0      |    *----------------------------------|                    |
 |                *                                    |                    |
-|     0       |* BB*                 4                |                    |
+|-------------|* BB*                 5                |                    |
 |                *                                    |                    |
 |             |    *----------------------------------|     (z)____________|
-|                2 |                 5                |
+|     1          3 |                 6                |
 |_____________|_______________________________________|
 
 
@@ -192,7 +192,9 @@ vertices
     (0          $two_D           #calc "-1 * $L_total")   // vertex 23
     ($width     $two_D           #calc "-1 * $L_total")   // vertex 24
     ($width     $D               #calc "-1 * $L_total")   // vertex 25
-
+    // midpoint on front wall
+    (0          $three_halves_D  0)             // vertex 26
+    ($width     $three_halves_D  0)             // vertex 27
 );
 
 // all edges are straight lines --> no edge object required
@@ -202,10 +204,10 @@ edges
 
 blocks
 (
-    // block 0, inlet to BB-leading edge
+    // block 0, inlet to BB-leading edge TOP
     //    --> for simplicity, we will always use the global coordinate system
     //    --> in order to be consistent & right-handed, first vertex is 4
-    hex (4 5 6 7 0 1 2 3)
+    hex (18 21 6 7 26 27 2 3)
     // number of cells -> ceiling of number of cells required in each dimension to
     // meet mesh size
     (
@@ -231,37 +233,44 @@ blocks
         )
     )
 
-    // block 1 -> top of BB
-    //    --> for this one block, we get slightly different results depending on
-    //        whether we the starting vertex at an exact point (i.e., L_TE_upstream)
-    //        or an calculated vertex (i.e., L_LE_upstream)
-    //    --> When using the exact point, we get a grid resolution slightly < 2mm
-    //    --> When using the calculated point, the resolution is slight > 2mm
-    //    --> hence, we use the exact point as a starting vertex, and no not use
-    //        the global coordinate system, just for this one block
-    hex (10 11 17 20 6 7 18 21)
+    // block 1, inlet to BB-leading edge BOTTOM
+    //    --> for simplicity, we will always use the global coordinate system
+    //    --> in order to be consistent & right-handed, first vertex is 4
+    hex (4 5 21 18 0 1 27 26)
+    // number of cells -> ceiling of number of cells required in each dimension to
+    // meet mesh size
     (
         //x
         #calc "(int)ceil($width / $mesh_size)"
-        //y -- //after checking -- it appears this is the short side
-        //#calc "(int)ceil($D / $mesh_size)"
+        //y
+        // transition to python script
+        //#calc "(int)ceil($height / $mesh_size)"
         ${block_1_y_cells}
         //z
-        //#calc "(int)ceil($BB_height / $mesh_size)"
+        //#calc "(int)ceil($L_LE_upstream / $mesh_size)"
         ${block_1_z_cells}
     )
-    simpleGrading (
+    // refinement done in snappyHexMesh
+    simpleGrading
+    (
         1
         (
             ${block_1_y_grading}
         )
         (
             ${block_1_z_grading}
-        ))
+        )
+    )
 
-    // block 2 -> bottom of BB
-    //    --> origin at 8
-    hex (8 9 19 16 4 5 21 18)
+    // block 2 -> top of BB
+    //    --> for this one block, we get slightly different results depending on
+    //        whether we the starting vertex at an exact point (i.e., L_TE_upstream)
+    //        or an calculated vertex (i.e., L_LE_upstream)
+    //    --> When using the exact point, we get a grid resolution slightly < 2mm
+    //    --> When using the calculated point, the resolution is slightly > 2mm
+    //    --> hence, we use the exact point as a starting vertex, and no not use
+    //        the global coordinate system, just for this one block
+    hex (17 20 10 11 18 21 6 7)
     (
         //x
         #calc "(int)ceil($width / $mesh_size)"
@@ -272,38 +281,97 @@ blocks
         //#calc "(int)ceil($BB_height / $mesh_size)"
         ${block_2_z_cells}
     )
-    simpleGrading (1
+    edgeGrading
+    (
+        // first four edges are in x-direction, no grading
+        1
+        1
+        1
+        1
+        //edge 4, from 17->11 in y
         (
-            ${block_2_y_grading}
+            ${block_2_y_short_grading}
+        )
+        //edge 5, from 20->10 in y
+        (
+            ${block_2_y_short_grading}
+        )
+        //edge 6, from 21->6 in y
+        (
+            ${block_2_y_long_grading}
+        )
+        //edge 7, from 18->7 in y
+        (
+            ${block_2_y_long_grading}
+        )
+        //edges 8-11 are in z-direction, which has the same grading
+        (
+            ${block_2_z_grading}
         )
         (
             ${block_2_z_grading}
-        ))
+        )
+        (
+            ${block_2_z_grading}
+        )
+        (
+            ${block_2_z_grading}
+        )
+    )
 
-    // block 3 -- trailing edge of BB to outlet [top]
-    hex (23 24 14 15 17 20 10 11)
+    // block 3 -> bottom of BB
+    //    --> origin at 8
+    hex (8 9 19 16 4 5 21 18)
     (
         //x
         #calc "(int)ceil($width / $mesh_size)"
-        //y
+        //y -- //after checking -- it appears this is the short side
         //#calc "(int)ceil($D / $mesh_size)"
         ${block_3_y_cells}
         //z
-        //#calc "(int)ceil($L_TE_downstream / $mesh_size)"
+        //#calc "(int)ceil($BB_height / $mesh_size)"
         ${block_3_z_cells}
     )
-    simpleGrading (
+    edgeGrading
+    (
+       // first four edges are in x-direction, no grading
         1
-            (
-                ${block_3_y_grading}
-            )
-            (
-                ${block_3_z_grading}
-            )
+        1
+        1
+        1
+        //edge 4, from 8->16 in y
+        (
+            ${block_3_y_short_grading}
         )
+        //edge 5, from 9->19 in y
+        (
+            ${block_3_y_short_grading}
+        )
+        //edge 6, from 4->18 in y
+        (
+            ${block_3_y_long_grading}
+        )
+        //edge 7, from 5->21 in y
+        (
+            ${block_3_y_long_grading}
+        )
+        //edges 8-11 are in z-direction, which has the same grading
+        (
+            ${block_3_z_grading}
+        )
+        (
+            ${block_3_z_grading}
+        )
+        (
+            ${block_3_z_grading}
+        )
+        (
+            ${block_3_z_grading}
+        )
+    )
 
-    // block 4 -- trailing edge of BB to outlet [middle]
-    hex (22 25 24 23 16 19 20 17)
+    // block 4 -- trailing edge of BB to outlet [top]
+    hex (23 24 14 15 17 20 10 11)
     (
         //x
         #calc "(int)ceil($width / $mesh_size)"
@@ -316,15 +384,16 @@ blocks
     )
     simpleGrading (
         1
-        (
-            ${block_4_y_grading}
+            (
+                ${block_4_y_grading}
+            )
+            (
+                ${block_4_z_grading}
+            )
         )
-        (
-            ${block_4_z_grading}
-        ))
 
-    // block 5 -- trailing edge of BB to outlet [bottom]
-    hex (12 13 25 22 8 9 19 16)
+    // block 5 -- trailing edge of BB to outlet [middle]
+    hex (22 25 24 23 16 19 20 17)
     (
         //x
         #calc "(int)ceil($width / $mesh_size)"
@@ -337,11 +406,32 @@ blocks
     )
     simpleGrading (
         1
+        (
+            ${block_5_y_grading}
+        )
+        (
+            ${block_5_z_grading}
+        ))
+
+    // block 6 -- trailing edge of BB to outlet [bottom]
+    hex (12 13 25 22 8 9 19 16)
+    (
+        //x
+        #calc "(int)ceil($width / $mesh_size)"
+        //y
+        //#calc "(int)ceil($D / $mesh_size)"
+        ${block_6_y_cells}
+        //z
+        //#calc "(int)ceil($L_TE_downstream / $mesh_size)"
+        ${block_6_z_cells}
+    )
+    simpleGrading (
+        1
             (
-                ${block_5_y_grading}
+                ${block_6_y_grading}
             )
             (
-                ${block_5_z_grading}
+                ${block_6_z_grading}
             )
         )
 
@@ -353,7 +443,8 @@ boundary
     inlet
     {
         type patch;
-        faces ((0 1 2 3));
+        faces ((0 1 27 26)
+               (26 27 2 3));
     }
     outlet
     {
@@ -366,7 +457,8 @@ boundary
     {
         type symmetryPlane;
         // clock-wise traversal
-        faces ((0 3 7 4)
+        faces ((0 26 18 4)
+               (26 3 7 18)
                (8 4 18 16)
                (17 18 7 11)
                (17 11 15 23)
@@ -377,7 +469,8 @@ boundary
     {
         type symmetryPlane;
         // clock-wise traversal
-        faces ((5 1 2 6)
+        faces ((5 1 27 21)
+               (21 27 2 6)
                (9 5 21 19)
                (20 21 6 10)
                (20 10 14 24)
@@ -404,14 +497,5 @@ boundary
         faces ((4 5 1 0)
                (8 9 5 4)
                (12 13 9 8));
-    }
-    // and finally, just to avoid warnings from blockMesh we explicitly create
-    // empty faces joining blocks 0 1 & 2
-    empty_faces
-    {
-        type empty;
-        faces ((4 18 21 5)
-               (18 7 6 21)
-               (4 7 6 5));
     }
 );
