@@ -34,7 +34,7 @@ Manual: https://cfd.direct/openfoam/user-guide/fvSchemes/
 ddtSchemes
 {
     // 2nd ord implicit, backward diff -- from Cocks et al.
-    default         backward;
+    default         steadyState;
 }
 
 // gradients

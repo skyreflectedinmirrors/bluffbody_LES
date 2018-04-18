@@ -25,22 +25,16 @@ Nicholas Curtis - 04/05/2018
 
 // use same settings for both non-reacting & reacting simulations per Cocks et al.
 application     potentialFoam;
-
 startFrom       startTime;
-
 startTime       0;
 
-stopAt          endTime;
-
-// ~ equivalent to 10 residence times
-endTime         1;
-
 // potential foam -> steady state
+stopAt          endTime;
+endTime         1;
 deltaT          1;
-
-// output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
-writeControl    timeStep;
 writeInterval   1;
+
+writeControl    timeStep;
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;

@@ -31,31 +31,12 @@ PRM: https://github.com/ParticulateFlow/OSCCAR-doc/blob/master/openFoamUserManua
 
 solvers
 {
-	"rho.*"
-    {
-        solver          diagonal;
-    }
-
-	// solver based on Sandia Flame-D example
-    p
-	{
-		solver PCG;
-		preconditioner    DIC;
-        tolerance         1e-06;
-        relTol            0.01;
-	}
-	pFinal
-	{
-        $p
-		relTol            0;
-	}
-
     Phi
     {
         solver          PBiCGStab;
         preconditioner  DIC;
-		tolerance       1e-6;
-        relTol          0.1;
+		tolerance       1e-8;
+        relTol          1e-4;
     };
     PhiFinal
     {
