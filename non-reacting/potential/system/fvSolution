@@ -50,28 +50,20 @@ solvers
 		relTol            0;
 	}
 
-    "(U|h)"
+    Phi
     {
         solver          PBiCGStab;
-        preconditioner  DILU;
+        preconditioner  DIC;
 		tolerance       1e-6;
         relTol          0.1;
     };
-    "(U|h)Final"
+    PhiFinal
     {
-        $U;
+        $phi;
     };
-
-    Yi
-    {
-        solver          PBiCGStab;
-        preconditioner  DILU;
-        tolerance       1e-8;
-        relTol          0.1;
-    }
 }
 
-potentialFoam
+potentialFlow
 {
 	nNonOrthogonalCorrectors 3;
 }
