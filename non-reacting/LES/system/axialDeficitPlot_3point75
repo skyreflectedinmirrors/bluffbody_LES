@@ -15,7 +15,7 @@ Description
 
 // axial velocity varying along y-direction, useful for monitoring solution
 start   (#calc "0.5 * $width"	#calc "0"		#calc "-1 * $L_TE_upstream - 3.75 * $D");
-end     (#calc "0.5 * $width"	#calc "$height"	#calc "-1 * $L_total - 3.75 * $D");
+end     (#calc "0.5 * $width"	#calc "$height"	#calc "-1 * $L_total");
 fields  (U);
 
 // Sampling and I/O settings
