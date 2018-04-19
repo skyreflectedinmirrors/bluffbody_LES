@@ -50,3 +50,12 @@ writeCompression no;
 timeFormat      general;
 timePrecision   6;
 runTimeModifiable true;
+
+functions
+{
+	#includeFunc 	meanAxialVelocity
+	#includeFunc    axialDeficitPlot_point375
+	#includeFunc    axialDeficitPlot_0point95
+	#includeFunc    axialDeficitPlot_1point53
+	#includeFunc    axialDeficitPlot_3point75
+}
