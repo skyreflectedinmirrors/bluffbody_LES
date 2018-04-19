@@ -42,7 +42,7 @@ maxCo			0.5;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
 writeControl    adjustableRunTime;
-writeInterval   1e-4;
+writeInterval   5e-3;
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;
