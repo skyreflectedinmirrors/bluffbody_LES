@@ -14,15 +14,19 @@ Description
 #include   "meshDims"
 
 // mean axial velocity along midline
-start   (#calc "0.5 * $width"	#calc "0.5 * $height"	#calc "-1 * $L_TE_upstream");
-end     (#calc "0.5 * $width"	#calc "0.5 * $height"	#calc "-1 * $L_total");
+start   (#calc "0.5 * $width * $convertToMeters"	#calc "0.5 * $height * $convertToMeters"	#calc "-1 * $L_TE_upstream * $convertToMeters");
+end     (#calc "0.5 * $width * $convertToMeters"	#calc "0.5 * $height * $convertToMeters"	#calc "-1 * $L_total * $convertToMeters");
 fields  (U);
 
 // Sampling and I/O settings
 #includeEtc "caseDicts/postProcessing/graphs/sampleDict.cfg"
 
 // Override settings here, e.g.
-// setConfig { type midPoint; }
+setConfig
+{
+	type midPoint;
+	axis z;
+}
 
 // Must be last entry
 #includeEtc "caseDicts/postProcessing/graphs/graph.cfg"

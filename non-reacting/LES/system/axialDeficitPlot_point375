@@ -14,8 +14,8 @@ Description
 #include   "meshDims"
 
 // axial velocity varying along y-direction, useful for monitoring solution
-start   (#calc "0.5 * $width"	#calc "0"		#calc "-1 * $L_TE_upstream - 0.375 * $D");
-end     (#calc "0.5 * $width"	#calc "$height"	#calc "-1 * $L_total");
+start   (#calc "0.5 * $width * $convertToMeters"	#calc "0 * $convertToMeters"		#calc "-1 * $L_TE_upstream - 0.375 * $D * $convertToMeters");
+end     (#calc "0.5 * $width * $convertToMeters"	#calc "$height * $convertToMeters"	#calc "-1 * $L_total * $convertToMeters");
 fields  (U);
 
 // Sampling and I/O settings
