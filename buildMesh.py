@@ -166,14 +166,15 @@ class blockGrader(object):
                 self.cell_name: n_cells}
 
     def __check_interior(self, interior):
-        if interior < 0:
+        if interior < self.mesh_size:
             raise Exception(
-                'Interior distance for blockGrading {} along axis {} '
+                'blockGrading {} along axis {} '
                 'with dimension ({}mm) cannot be implemented -- grading '
-                'starting with size ({}mm) and geometric ratio {} is '
-                'larger than dimension! Try increasing geometric_ratio'
+                'starting with size ({}mm) and geometric ratio {} leaves only '
+                '({}mm) the interior mesh, which is smaller than specified mesh '
+                'size ({}mm)! Try increasing geometric_ratio'
                 ''.format(self.num, self.axis, self.dim, self.start_size,
-                          self.geometric_ratio))
+                          self.geometric_ratio, interior, self.mesh_size))
 
     def __call__(self, repopulate=False):
         if len(self.gradings) and not repopulate:
