@@ -1,0 +1,47 @@
+# MVP Workshop SciTech 2017 Case 
+# Volvo Bluff-Body, Non-Reacting 
+# phi=0, Ubulk=16.6m/s, Tin=288K, D=0.04m 
+#
+# All dimensions are normalized by the flameholder dimension (0.04m). 
+# The coordinate system is centered on the downstream face of the bluff 
+# body (triangular flameholder). X is the axial (streamwise) dimension 
+# and Y is the transverse direction.
+#
+# All velocities and velocity RMS values are normalized by the bulk 
+# velocity (16.6 m/s). For ease of distinguishing between components, 
+# the following re-labeling has been used: u_x = U and u_y = V.
+#
+# All axial profiles are along the centerline. The normalized x- 
+# locations of the transverse profiles are in the file name. 
+#
+#
+# AVG(U'V')/(Ubulk)^2 (Reynolds Stress Approx), Y
+-2.4602e-3, -1.4046
+-3.0059e-3, -1.2726
+-2.4753e-3, -1.151
+-1.9621e-3, -1.0252
+-4.3313e-4, -0.8952
+8.8791e-5, -0.7715
+5.8537e-3, -0.6665
+0.0634, -0.5946
+0.1159, -0.5499
+0.0588, -0.471
+0.0337, -0.3979
+-0.037, -0.2919
+-0.0457, -0.1997
+-0.044, -0.0928
+-0.0207, 8.1254e-3
+0.0678, 0.1015
+0.0632, 0.1979
+0.0556, 0.3005
+0.0665, 0.3971
+-0.0319, 0.4692
+-0.1219, 0.5121
+-0.0685, 0.5694
+1.4466e-3, 0.6499
+-1.0438e-3, 0.7526
+5.2841e-4, 0.8721
+1.0503e-3, 0.9958
+1.5636e-3, 1.1216
+1.0438e-3, 1.2474
+1.5657e-3, 1.3711

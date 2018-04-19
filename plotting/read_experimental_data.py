@@ -1,0 +1,72 @@
+import os
+import re
+import numpy as np
+
+from common import dataset
+
+script_dir = os.path.abspath(os.path.dirname(__file__))
+non_reacting_path = os.path.join(script_dir, 'Experimental', 'Non-Reacting')
+reacting_path = os.path.join(script_dir, 'Experimental', 'Reacting')
+
+
+def read_file(filename, reacting=False):
+    """
+    Reads experimental from a file
+
+    Parameters
+    ----------
+    file: str
+        The filename to read
+    reacting: bool [False]
+        If true, look in the Reacting folder, else in the Non-Reacting folder
+
+    Returns
+    -------
+    data: :class:`dataset`
+        The resulting dataset
+    """
+
+    path = reacting_path if reacting else non_reacting_path
+    data = np.loadtxt(os.path.join(path, filename), delimiter=',')[:, [1, 0]]
+
+    # read column names
+    comment = re.compile(r'^\s*#')
+    column_names = re.compile(r'^\s*#\s*(.+)\s*,\s*(.+)\s*$')
+    with open(os.path.join(path, filename)) as file:
+        file = file.readlines()
+
+    for i in range(1, len(file) - 1):
+        if comment.search(file[i - 1]) and column_names.search(file[i]) and \
+                not comment.search(file[i + 1]):
+            # this is the column header
+            columns = column_names.search(file[i]).groups()
+            break
+
+    return dataset(columns, data, filename[filename.index('_') + 1:])
+
+
+def read_experimental_data(graph_name, reacting=False):
+    """
+    Returns the experimental dataset for a given graph / reacting combination
+
+    Parameters
+    ----------
+    case: str
+        RAS, LES, potential, etc., -- the case to plot
+    graph_name: str
+        The graph to plot, e.g., meanAxialVelocity
+    reacting: bool [False]
+        Whether to plot the reacting case or not
+
+    Returns
+    -------
+    expdata: :class:`dataset`
+        The experimental dataset
+    """
+
+    if graph_name == 'meanAxialVelocity':
+        file = 'Exp_UvsX.txt'
+    else:
+        raise NotImplementedError
+
+    return read_file(file, reacting)
