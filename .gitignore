@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# data
+processor*/
+*0/
+*0.*/
+dynamicCode/
+*/system/blockMeshDict
+*/system/meshDims
+*/constant/polyMesh
+*/constant/cellToRegion
