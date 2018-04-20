@@ -1,1 +1,1 @@
-postProcess -funcs "(meanAxialVelocity axialDeficitPlot_0point95 axialDeficitPlot_1point53 axialDeficitPlot_3point75 axialDeficitPlot_9point4 axialDeficitPlot_point375)"
+postProcess -funcs "(meanAxialVelocity axialDeficitPlot_0p95 axialDeficitPlot_1p53 axialDeficitPlot_3p75 axialDeficitPlot_9p4 axialDeficitPlot_0p375)"
