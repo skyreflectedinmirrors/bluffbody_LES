@@ -29,8 +29,8 @@ def get_graph_columns(graph_name):
 
     if graph_name == 'meanAxialVelocity':
         return 'line_U.xy', ('z', 'Uz'), (0, 3)
-    else:
-        raise NotImplementedError
+    elif 'axialDeficitPlot' in graph_name:
+        return 'line_U.xy', ('y', 'Uz'), (0, 3)
 
 
 def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,

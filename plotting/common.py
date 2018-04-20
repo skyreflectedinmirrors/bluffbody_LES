@@ -6,6 +6,9 @@ Nick Curtis
 
 04/19/2018
 """
+from __future__ import division
+
+from argparse import ArgumentParser
 import os
 from os.path import join as pjoin
 from os.path import pardir as ppardir
@@ -13,6 +16,18 @@ from os.path import isdir as pisdir
 import numpy as np
 
 script_dir = os.path.abspath(os.path.dirname(__file__))
+
+
+class dimensions(object):
+    def __init__(self, reacting=False):
+        self.D = 40 / 1000  # mm
+        self.height = 3 * self.D
+        self.width = 2 * self.D
+        self.Ubulk = 16.6 if not reacting else 17.6  # m/s
+        self.trailing_edge = -100 / 1000  # mm
+        self.z_offset = self.trailing_edge  # mm
+        self.y_offset = self.height / 2  # mm
+        self.z_flip = -1
 
 
 class dataset(object):
@@ -26,11 +41,14 @@ class dataset(object):
             The data in the experimental data set
         name: str
             The experimental data filename, describing the data within
+        is_simulation: bool [False]
+            Whether the data is from a simulation or not
         """
 
         self.columns = columns[:]
         self.data = np.copy(data)
         self.name = name
+        self.is_simulation = name == 'Simulation'
 
         assert len(columns) == data.shape[1]
 
@@ -51,6 +69,28 @@ class dataset(object):
     def __setitem__(self, key, value):
         self.data[key] = value
 
+    def normalize(self, reacting=False):
+        assert self.is_simulation, "I don't know how to normalize experimental data"
+
+        dims = dimensions(reacting)
+        for i, col in enumerate(self.columns):
+            if col in ['y', 'z']:
+                # correct dimensions
+                offset = getattr(dims, '{}_offset'.format(col), 0)
+                self.data[:, i] -= offset
+                # flip axes?
+                flip = getattr(dims, '{}_flip'.format(col), 1)
+                self.data[:, i] *= flip
+                # normalize
+                self.data[:, i] /= dims.D
+            elif col in ['Ux', 'Uy', 'Uz']:
+                axis = col[-1]
+                # flip axes?
+                flip = getattr(dims, '{}_flip'.format(axis), 1)
+                self.data[:, 1] *= flip
+                # and normalize
+                self.data[:, i] /= dims.Ubulk
+
 
 def get_simulation_path(case, graph_name, reacting=False):
     """
@@ -66,3 +106,34 @@ def get_simulation_path(case, graph_name, reacting=False):
                         'directory'.format(graph_name, react_str, case, path))
 
     return path
+
+
+def get_default_parsing_args(name, description):
+    parser = ArgumentParser('{name}: {description}'.format(
+        name=name, description=description))
+    parser.add_argument('-r', '--reacting',
+                        help='Plot the reacting-flow data.',
+                        action='store_true',
+                        dest='reacting',
+                        default=False,
+                        required=False)
+    parser.add_argument('-n', '--non_reacting',
+                        help='Plot the reacting-flow data.',
+                        action='store_false',
+                        dest='reacting',
+                        required=False)
+    parser.add_argument('-c', '--case',
+                        help='The simulation to plot',
+                        choices=['LES', 'RAS'],
+                        required=True)
+    parser.add_argument('-t_start', '--start_time',
+                        help='The start time for simulation averaging in seconds.',
+                        required=False,
+                        type=float,
+                        default=0)
+    parser.add_argument('-t_end', '--end_time',
+                        help='The end time for simulation averaging in seconds.',
+                        required=False,
+                        type=float,
+                        default=-1)
+    return parser

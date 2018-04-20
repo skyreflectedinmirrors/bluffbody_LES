@@ -27,7 +27,7 @@ def read_file(filename, reacting=False):
     """
 
     path = reacting_path if reacting else non_reacting_path
-    data = np.loadtxt(os.path.join(path, filename), delimiter=',')[:, [1, 0]]
+    data = np.loadtxt(os.path.join(path, filename), delimiter=',')[:, ::-1]
 
     # read column names
     comment = re.compile(r'^\s*#')
@@ -39,7 +39,7 @@ def read_file(filename, reacting=False):
         if comment.search(file[i - 1]) and column_names.search(file[i]) and \
                 not comment.search(file[i + 1]):
             # this is the column header
-            columns = column_names.search(file[i]).groups()
+            columns = column_names.search(file[i]).groups()[::-1]
             break
 
     return dataset(columns, data, filename[filename.index('_') + 1:])
