@@ -12,4 +12,4 @@ Which corresponds to a 2mm mesh, w/ wall spacing of 0.3mm.
 The geometric expansion ratio in the y-direction is 1.15, while in the z-direction (downstream of the BB)
 it is 1.05
 
-This yields a mesh of 225720 cells, which is nice and cheap for simulation
+This yields a mesh of 1833720 cells, which is similar to Cocks et al.

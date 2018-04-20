@@ -65,14 +65,14 @@ solvers
     Yi
     {
     	$U
-    	tolerance		1e-8
+    	tolerance		1e-8;
     };
 
     YiFinal
     {
     	$Yi
     	relTol          0;
-    }
+    };
 }
 
 PIMPLE

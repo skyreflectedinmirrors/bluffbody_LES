@@ -94,7 +94,7 @@ divSchemes
 	// 		bounded by "Sweby limiter"
 	// Wolf: accurate & stable numerical scheme -- 2nd order accurate
 	div(phi,U) 		bounded Gauss linearUpwind grad(U);
-	div((nuEff*dev2(T(grad(U))))) bounded Gauss linear;
+	div(((rho*nuEff)*dev2(T(grad(U))))) bounded Gauss linear;
 	// use same as U, as inviscid term
 	div(phi,K)      bounded Gauss linearUpwind grad(U);
 	div(phi,Yi_h)   Gauss multivariateSelection
