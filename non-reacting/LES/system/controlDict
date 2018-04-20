@@ -26,21 +26,21 @@ Nicholas Curtis - 04/05/2018
 // use same settings for both non-reacting & reacting simulations per Cocks et al.
 application     reactingFoam;
 
-startFrom       startTime;
+startFrom       latestTime;
 
 startTime       0;
 
 stopAt          endTime;
 
-// ~ equivalent to 4 residence times
-endTime         0.2;
+// ~ equivalent to 10 residence times
+endTime         0.5;
 
 // non-reacting time-step from Cocks et al.
 deltaT          1e-6;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
-writeControl    timeStep;
-writeInterval   100;
+writeControl    adjustableRunTime;
+writeInterval   5e-3;
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;

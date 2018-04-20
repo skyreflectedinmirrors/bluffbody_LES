@@ -34,7 +34,7 @@ thermoType
 }
 
 inertSpecie N2;
-fuel        C2H4;
+fuel        CH4;
 
 chemistryReader foamChemistryReader;
 foamChemistryThermoFile "$FOAM_CASE/chemkin/thermo30_foam.dat";

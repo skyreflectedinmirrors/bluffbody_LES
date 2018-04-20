@@ -92,14 +92,66 @@ divSchemes
 	default			none;
 	// Cocks et al. used a 2nd order *bounded* central scheme for inviscid terms
 	// 		bounded by "Sweby limiter"
-	// Wolf: accurate & stabel numerical scheme -- 2nd order accurate
+	// Wolf: accurate & stable numerical scheme -- 2nd order accurate
 	div(phi,U) 		bounded Gauss linearUpwind grad(U);
 	div((nuEff*dev2(T(grad(U))))) bounded Gauss linear;
+	// use same as U, as inviscid term
+	div(phi,K)      bounded Gauss linearUpwind grad(U);
 	div(phi,Yi_h)   Gauss multivariateSelection
     {
-    	// in non-reacting case, all we need is air
-        O2              limitedLinear01 1;
-        N2              limitedLinear01 1;
+    	H2              limitedLinear01 1;
+		H               limitedLinear01 1;
+		O               limitedLinear01 1;
+		O2              limitedLinear01 1;
+		OH              limitedLinear01 1;
+		H2O             limitedLinear01 1;
+		HO2             limitedLinear01 1;
+		H2O2            limitedLinear01 1;
+		C               limitedLinear01 1;
+		CH              limitedLinear01 1;
+		CH2             limitedLinear01 1;
+		CH2S            limitedLinear01 1;
+		CH3             limitedLinear01 1;
+		CH4             limitedLinear01 1;
+		CO              limitedLinear01 1;
+		CO2             limitedLinear01 1;
+		HCO             limitedLinear01 1;
+		CH2O            limitedLinear01 1;
+		CH2OH           limitedLinear01 1;
+		CH3O            limitedLinear01 1;
+		CH3OH           limitedLinear01 1;
+		C2H             limitedLinear01 1;
+		C2H2            limitedLinear01 1;
+		C2H3            limitedLinear01 1;
+		C2H4            limitedLinear01 1;
+		C2H5            limitedLinear01 1;
+		C2H6            limitedLinear01 1;
+		HCCO            limitedLinear01 1;
+		CH2CO           limitedLinear01 1;
+		HCCOH           limitedLinear01 1;
+		N               limitedLinear01 1;
+		NH              limitedLinear01 1;
+		NH2             limitedLinear01 1;
+		NH3             limitedLinear01 1;
+		NNH             limitedLinear01 1;
+		NO              limitedLinear01 1;
+		NO2             limitedLinear01 1;
+		N2O             limitedLinear01 1;
+		HNO             limitedLinear01 1;
+		CN              limitedLinear01 1;
+		HCN             limitedLinear01 1;
+		H2CN            limitedLinear01 1;
+		HCNN            limitedLinear01 1;
+		HCNO            limitedLinear01 1;
+		HOCN            limitedLinear01 1;
+		HNCO            limitedLinear01 1;
+		NCO             limitedLinear01 1;
+		AR              limitedLinear01 1;
+		C3H7            limitedLinear01 1;
+		C3H8            limitedLinear01 1;
+		CH2CHO          limitedLinear01 1;
+		CH3CHO          limitedLinear01 1;
+		N2              limitedLinear01 1;
         h               limitedLinear 1;
     };
 }
