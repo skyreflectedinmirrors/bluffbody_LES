@@ -1,4 +1,4 @@
 cp -r 0.orig 0
-mapFields ../RAS -consistent
-decomposePar
+mapFieldsPar ../RAS -fields "(U T p)" -sourceTime latestTime -consistent -mapMethod mapNearest
 renumberMesh -latestTime -overwrite
+decomposePar
