@@ -66,7 +66,8 @@ def read_experimental_data(graph_name, reacting=False):
 
     if graph_name == 'meanAxialVelocity':
         file = 'Exp_UvsX.txt'
-    else:
-        raise NotImplementedError
+    elif 'axialDeficitPlot' in graph_name:
+        point = graph_name[graph_name.index('_') + 1:]
+        file = 'Exp_UvsY_x={}.txt'.format(point)
 
     return read_file(file, reacting)

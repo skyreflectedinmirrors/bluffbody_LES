@@ -15,12 +15,13 @@ def plot(case, reacting, t_start=0, t_end=-1):
         # normalize / convert simulation data
         simdata.normalize(reacting)
 
-        plt.plot(expdata[:, 0], expdata[:, 1], label=expdata.name)
-        plt.plot(simdata[:, 0], simdata[:, 1], label=simdata.name)
+        plt.plot(expdata[:, 1], expdata[:, 0], label=expdata.name)
+        plt.plot(simdata[:, 1], simdata[:, 0], label=simdata.name)
         plt.xlabel(expdata.columns[1])
         plt.ylabel(expdata.columns[0])
         plt.legend(loc=0)
         plt.savefig('axial_deficit_plot_{point}.pdf'.format(point=point))
+        plt.close()
 
 
 if __name__ == '__main__':

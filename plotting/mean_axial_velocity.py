@@ -15,8 +15,8 @@ def plot(case, reacting, t_start=0, t_end=-1):
 
     plt.plot(expdata[:, 0], expdata[:, 1], label=expdata.name)
     plt.plot(simdata[:, 0], simdata[:, 1], label=simdata.name)
-    plt.xlabel(expdata.columns[1])
-    plt.ylabel(expdata.columns[0])
+    plt.xlabel(expdata.columns[0])
+    plt.ylabel(expdata.columns[1])
     plt.legend(loc=0)
     plt.savefig('mean_axial_velocity.pdf')
 
