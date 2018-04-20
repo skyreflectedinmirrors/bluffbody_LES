@@ -52,8 +52,9 @@ runTimeModifiable true;
 functions
 {
 	#includeFunc 	meanAxialVelocity
-	#includeFunc    axialDeficitPlot_point375
-	#includeFunc    axialDeficitPlot_0point95
-	#includeFunc    axialDeficitPlot_1point53
-	#includeFunc    axialDeficitPlot_3point75
+	#includeFunc    axialDeficitPlot_0p375
+	#includeFunc    axialDeficitPlot_0p95
+	#includeFunc    axialDeficitPlot_1p53
+	#includeFunc    axialDeficitPlot_3p75
+	#includeFunc    axialDeficitPlot_9p4
 }
