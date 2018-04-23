@@ -33,6 +33,9 @@ startTime       0;
 stopAt          endTime;
 
 // ~ equivalent to 10 residence times
+endTime         0.5;
+
+// ~ equivalent to 10 residence times
 // larger time step
 adjustTimeStep  yes;
 maxCo			0.5;
