@@ -33,10 +33,12 @@ startTime       0;
 stopAt          endTime;
 
 // ~ equivalent to 10 residence times
-endTime         0.5;
-
+// larger time step
+adjustTimeStep  yes;
+maxCo			0.5;
 // non-reacting time-step from Cocks et al.
 deltaT          1e-6;
+
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
 writeControl    adjustableRunTime;

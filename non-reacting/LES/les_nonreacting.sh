@@ -5,8 +5,8 @@
 #SBATCH --ntasks=24                  # 24 cores
 #SBATCH --exclude=cn[01-136,325-328] # only run on haswell
 #SBATCH --mem 100G                   # up to 100 gigs
-#SBATCH -o rans_nonreacting.out
-#SBATCH -e rans_nonreacting.err
+#SBATCH -o les_nonreacting.out
+#SBATCH -e les_nonreacting.err
 #SBATCH --mail-type=END              # mail
 #SBATCH --mail-user=nicholas.curtis@uconn.edu
 #SBATCH --dependency=singleton
