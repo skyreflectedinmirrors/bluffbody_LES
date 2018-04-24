@@ -36,7 +36,9 @@ boundaryField
     }
     inlet
     {
-        type            zeroGradient;
+        // no turbulence at inlet
+        type            fixedValue;
+        value           $internalField;
     }
     outlet
     {
