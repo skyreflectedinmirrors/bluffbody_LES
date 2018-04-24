@@ -61,7 +61,7 @@ boundaryField
     {
         type            advective;
         gamma           1.3;
-        fieldInf        #calc $Ubulk_field;
+        fieldInf        $Ubulk_field;
         // a measure of how far away the far-field condition should be
         // this corresponds to ~ 10% of the downstream of the outlet
         lInf            #calc "0.1 * $L_TE_downstream * $convertToMeters";
