@@ -45,7 +45,7 @@ def read_file(filename, reacting=False):
     return dataset(columns, data, filename[filename.index('_') + 1:])
 
 
-def read_experimental_data(graph_name, reacting=False):
+def read_experimental_data(graph_name, reacting=False, **kwargs):
     """
     Returns the experimental dataset for a given graph / reacting combination
 
@@ -67,7 +67,10 @@ def read_experimental_data(graph_name, reacting=False):
     if graph_name == 'meanAxialVelocity':
         file = 'Exp_UvsX.txt'
     elif 'axialDeficitPlot' in graph_name:
-        point = graph_name[graph_name.index('_') + 1:]
-        file = 'Exp_UvsY_x={}.txt'.format(point)
+        point = kwargs.pop('point')
+        vc = kwargs.pop('velocity_compoment')
+        # translate our coordinate system into experimental
+        vc = 'U' if vc == 'z' else 'V'
+        file = 'Exp_{}vsY_x={}.txt'.format(vc, point)
 
     return read_file(file, reacting)

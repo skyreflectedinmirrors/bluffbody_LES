@@ -22,7 +22,7 @@ from common import dataset, get_simulation_path
 script_dir = os.path.abspath(os.path.dirname(__file__))
 
 
-def get_graph_columns(graph_name):
+def get_graph_columns(graph_name, **kwargs):
     """
     Returns the expected filename, and column names for a given graph
     """
@@ -30,11 +30,15 @@ def get_graph_columns(graph_name):
     if graph_name == 'meanAxialVelocity':
         return 'line_U.xy', ('z', 'Uz'), (0, 3)
     elif 'axialDeficitPlot' in graph_name:
-        return 'line_U.xy', ('y', 'Uz'), (0, 3)
+        # translate experimental componentn
+        vc = kwargs.pop('velocity_component')
+        vc = 'U{}'.format(vc)
+        index = ['Ux', 'Uy', 'Uz'].index(vc)
+        return 'line_U.xy', ('y', vc), (0, index)
 
 
 def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
-                         averaging_type='simps'):
+                         averaging_type='simps', **kwargs):
     """
     Read and process data for a given case, graph and reacting/non-reacting
     simulation.
@@ -76,7 +80,7 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
         raise Exception('Unknown averaging type: {}'.format(averaging_type))
 
     path = get_simulation_path(case, graph_name, reacting)
-    efile, columns, use_columns = get_graph_columns(graph_name)
+    efile, columns, use_columns = get_graph_columns(graph_name, **kwargs)
 
     datalist = []
     timelist = []

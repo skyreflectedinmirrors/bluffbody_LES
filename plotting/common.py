@@ -108,6 +108,12 @@ def get_simulation_path(case, graph_name, reacting=False):
     return path
 
 
+def make_dir(case):
+    import os
+    if not os.path.exists(pjoin(script_dir, case)):
+        os.makedirs(pjoin(script_dir, case))
+
+
 def get_default_parsing_args(name, description):
     parser = ArgumentParser('{name}: {description}'.format(
         name=name, description=description))
