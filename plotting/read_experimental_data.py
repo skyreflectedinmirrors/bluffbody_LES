@@ -68,7 +68,7 @@ def read_experimental_data(graph_name, reacting=False, **kwargs):
         file = 'Exp_UvsX.txt'
     elif 'axialDeficitPlot' in graph_name:
         point = kwargs.pop('point')
-        vc = kwargs.pop('velocity_compoment')
+        vc = kwargs.pop('velocity_component')
         # translate our coordinate system into experimental
         vc = 'U' if vc == 'z' else 'V'
         file = 'Exp_{}vsY_x={}.txt'.format(vc, point)

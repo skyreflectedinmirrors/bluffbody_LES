@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 from read_simulation_data import read_simulation_data
 from read_experimental_data import read_experimental_data
 from common import get_default_parsing_args, make_dir
+from os.path import join as pjoin
 
-graph_name = 'axialDeficitPlot'
+graph_name = 'axialDeficitPlot_{point}'
 
 
 def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both'):
@@ -16,19 +17,23 @@ def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both'):
     make_dir(case)
     for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
         for vc in velocity_component:
-            expdata = read_experimental_data(graph_name, args.reacting,
+            name = graph_name.format(point=point)
+            expdata = read_experimental_data(name, args.reacting,
                                              velocity_component=vc, point=point)
-            simdata = read_simulation_data(case, graph_name, reacting, t_start,
-                                           t_end)
+            simdata = read_simulation_data(case, name, reacting, t_start,
+                                           t_end, velocity_component=vc)
             # normalize / convert simulation data
             simdata.normalize(reacting)
 
-            plt.plot(expdata[:, 1], expdata[:, 0], label=expdata.name)
+            plt.scatter(expdata[:, 1], expdata[:, 0], label=expdata.name,
+                        color='r')
             plt.plot(simdata[:, 1], simdata[:, 0], label=simdata.name)
-            plt.xlabel(expdata.columns[0])
-            plt.ylabel(expdata.columns[1])
+            plt.xlabel(expdata.columns[1])
+            plt.ylabel(expdata.columns[0])
             plt.legend(loc=0)
-            plt.savefig('axial_deficit_plot_{point}.pdf'.format(point=point))
+            plt.savefig(pjoin(case,
+                        'axial_deficit_plot_{vc}_{point}.pdf'.format(
+                            vc=vc, point=point)))
             plt.close()
 
 

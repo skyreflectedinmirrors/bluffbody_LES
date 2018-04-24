@@ -49,7 +49,7 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
         The case name, e.g., LES, RAS, potential
     graph_name: str
         The graph to produce, corresponding to the OpenFOAM function objects, e.g.,
-        meanAxialVelocity or axialDeficitPlot_0point95
+        meanAxialVelocity or axialDeficitPlot_0p95
     reacting: bool [False]
         Whether to produce the reacting or non-reacting
     t_start: float

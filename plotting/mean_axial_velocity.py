@@ -1,3 +1,5 @@
+from os.path import join as pjoin
+
 import matplotlib.pyplot as plt
 
 from read_simulation_data import read_simulation_data
@@ -14,12 +16,12 @@ def plot(case, reacting, t_start=0, t_end=-1):
     # normalize / convert simulation data
     simdata.normalize(reacting)
 
-    plt.plot(expdata[:, 0], expdata[:, 1], label=expdata.name)
+    plt.scatter(expdata[:, 0], expdata[:, 1], label=expdata.name, color='r')
     plt.plot(simdata[:, 0], simdata[:, 1], label=simdata.name)
     plt.xlabel(expdata.columns[0])
     plt.ylabel(expdata.columns[1])
     plt.legend(loc=0)
-    plt.savefig('mean_axial_velocity.pdf')
+    plt.savefig(pjoin(case, 'mean_axial_velocity.pdf'))
 
 
 if __name__ == '__main__':
