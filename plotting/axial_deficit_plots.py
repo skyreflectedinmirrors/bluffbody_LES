@@ -30,6 +30,8 @@ def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both'):
             plt.plot(simdata[:, 1], simdata[:, 0], label=simdata.name)
             plt.xlabel(expdata.columns[1])
             plt.ylabel(expdata.columns[0])
+            plt.gca().set_xlim([-1, 1] if velocity_component == 'y' else
+                               [-1, 2])
             plt.legend(loc=0)
             plt.savefig(pjoin(case,
                         'axial_deficit_plot_{vc}_{point}.pdf'.format(
