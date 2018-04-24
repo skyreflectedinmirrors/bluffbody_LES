@@ -15,8 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// from fireFoam / pitz-daily cases, these appear to be zeroGradient at walls and
-// calculated at inlet / outlet
+// from fireFoam / pitz-daily cases, these appear to be zeroGradient everywhere
 
 dimensions              [0 2 -1 0 0 0 0];
 internalField           uniform 0;
@@ -37,13 +36,11 @@ boundaryField
     }
     inlet
     {
-        type            calculated;
-        value           $internalField;
+        type            zeroGradient;
     }
     outlet
     {
-        type            calculated;
-        value           $internalField;
+        type            zeroGradient;
     }
     left_wall
     {
