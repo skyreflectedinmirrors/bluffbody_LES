@@ -67,10 +67,14 @@ def read_experimental_data(graph_name, reacting=False, **kwargs):
     if graph_name == 'meanAxialVelocity':
         file = 'Exp_UvsX.txt'
     elif 'axialDeficitPlot' in graph_name:
-        point = kwargs.pop('point')
-        vc = kwargs.pop('velocity_component')
-        # translate our coordinate system into experimental
-        vc = 'U' if vc == 'z' else 'V'
-        file = 'Exp_{}vsY_x={}.txt'.format(vc, point)
+        file = 'Exp_{}vsY_x={}.txt'
+    elif 'fluctuationVelocity' in graph_name:
+        file = 'Exp_{}prmsvsY_x={}.txt'
+
+    # translate our coordinate system into experimental
+    point = kwargs.pop('point', '')
+    vc = kwargs.pop('velocity_component', '')
+    vc = 'U' if vc == 'z' else 'V'
+    file = file.format(vc, point)
 
     return read_file(file, reacting)

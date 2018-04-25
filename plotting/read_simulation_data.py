@@ -7,6 +7,8 @@ Nick Curtis
 04/19/2018
 """
 
+from __future__ import division
+
 import os as os
 from os.path import join as pjoin
 from os import listdir as plistdir
@@ -30,15 +32,64 @@ def get_graph_columns(graph_name, **kwargs):
     if graph_name == 'meanAxialVelocity':
         return 'line_U.xy', ('z', 'Uz'), (0, 3)
     elif 'axialDeficitPlot' in graph_name:
-        # translate experimental componentn
+        # translate experimental component
         vc = kwargs.pop('velocity_component')
         vc = 'U{}'.format(vc)
-        index = ['Ux', 'Uy', 'Uz'].index(vc)
+        index = ['axis', 'Ux', 'Uy', 'Uz'].index(vc)
         return 'line_U.xy', ('y', vc), (0, index)
 
 
+class integration_averager(object):
+    """
+    Computes the time-average of a quantity via numerical integration
+    """
+
+    def __init__(self, method='simps'):
+        if method == 'simps':
+            self.method = simps
+        elif method == 'trapz':
+            self.method = trapz
+        else:
+            raise NotImplementedError()
+
+    def __call__(self, data, time, axis=0):
+        # integrate
+        integrated = self.method(data, time, axis=axis)
+        # and average
+        return integrated / (time[-1] - time[0])
+
+
+class RMS(object):
+    """
+    Compute the RMS of a quantity, possibly with respect to baseline data (i.e.,
+    a fluctuation velocity)
+    """
+
+    def __init__(self, baseline=None):
+        self.baseline = baseline
+
+    def __call__(self, data, time, axis=0):
+
+        # the axis supplied corresponds to different time-increments, however unlike
+        # in averaging we want to take the difference over all times
+
+        assert axis == 0
+
+        # number of time-samples
+        num_samples = data.shape[0]
+        # fluctuation across space
+        fluct = data - self.baseline[:, 1]
+        # square all samples
+        fluct = fluct * fluct
+        # mean across time
+        fluct = np.mean(fluct / num_samples, axis=0)
+        # root
+        return np.sqrt(fluct)
+
+
 def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
-                         averaging_type='simps', **kwargs):
+                         collection_type='mean', collection_method='simps',
+                         baseline=None, **kwargs):
     """
     Read and process data for a given case, graph and reacting/non-reacting
     simulation.
@@ -57,8 +108,20 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
     t_end: float
         The end time, in seconds of the simulation window to read.
         If < 0, end time is disabled.
-    averaging_type: str ['simps', 'trapz']
-        Average the simulation data using this scipy method
+    collection_type: {'mean', 'fluct'}
+        The type of data to collect:
+            - mean: compute the time-averaged value of the simulation velocities
+                    Note: :param:`collection_method` must be 'simps' or 'trapz'
+            - fluct: compute the fluctuation velocity relative to the time-averaged
+                     value.  Note: :param:`collection_method` must be 'rms', and
+                     :param:`baseline` should be supplied
+    collection_method: {'simps', 'trapz', 'rms'}
+        The method to use while processing the simulation data:
+            - 'simps': use the scipy simps function to integrate the data,
+            corresponds to :param:`collection_type` == 'mean'
+            - 'trapz': use the scipy trapz function to integrate the data,
+            corresponds to :param:`collection_type` == 'mean'
+            - 'rms': compute the root-mean-square value of the simulation data
 
     Returns
     -------
@@ -70,14 +133,17 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
     assert t_end < 0 or t_end > t_end, (
         'End time must be disabled or greater than start time')
 
-    # integrator type
-    integrator = None
-    if averaging_type == 'simps':
-        integrator = simps
-    elif averaging_type == 'trapz':
-        integrator = trapz
+    # collection type
+    collector = None
+    if collection_method in ['simps', 'trapz']:
+        collector = integration_averager(collection_method)
+        assert collection_type == 'mean'
+    elif collection_method == 'rms':
+        assert collection_type == 'fluct'
+        assert baseline is not None
+        collector = RMS(baseline)
     else:
-        raise Exception('Unknown averaging type: {}'.format(averaging_type))
+        raise Exception('Unknown collection method: {}'.format(collection_method))
 
     path = get_simulation_path(case, graph_name, reacting)
     efile, columns, use_columns = get_graph_columns(graph_name, **kwargs)
@@ -137,9 +203,7 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
     final_data[:, 0] = complete_data[0, :, 0]
 
     for var in range(1, complete_data.shape[2]):
-        # integrate
-        final_data[:, var] = integrator(complete_data[:, :, var], time, axis=0)
-        # and average
-        final_data[:, var] /= (time[-1] - time[0])
+        # get collected data
+        final_data[:, var] = collector(complete_data[:, :, var], time, axis=0)
 
-    return dataset(columns, final_data, 'Simulation')
+    return dataset(columns, final_data, collection_type, is_simulation=True)

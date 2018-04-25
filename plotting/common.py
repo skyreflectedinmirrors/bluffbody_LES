@@ -31,7 +31,7 @@ class dimensions(object):
 
 
 class dataset(object):
-    def __init__(self, columns, data, name):
+    def __init__(self, columns, data, name, is_simulation=False):
         """
         Attributes
         ----------
@@ -48,7 +48,7 @@ class dataset(object):
         self.columns = columns[:]
         self.data = np.copy(data)
         self.name = name
-        self.is_simulation = name == 'Simulation'
+        self.is_simulation = is_simulation
 
         assert len(columns) == data.shape[1]
 
@@ -85,11 +85,17 @@ class dataset(object):
                 self.data[:, i] /= dims.D
             elif col in ['Ux', 'Uy', 'Uz']:
                 axis = col[-1]
-                # flip axes?
-                flip = getattr(dims, '{}_flip'.format(axis), 1)
-                self.data[:, 1] *= flip
+                if 'fluct' not in self.name:
+                    # flip axes?
+                    flip = getattr(dims, '{}_flip'.format(axis), 1)
+                    self.data[:, i] *= flip
+                Ubulk = dims.Ubulk
+                if 'fluct' in self.name:
+                    # we've taken the sqrt, hence we should be normalizing by the
+                    # sqrt of Ubulk
+                    Ubulk = np.sqrt(Ubulk)
                 # and normalize
-                self.data[:, i] /= dims.Ubulk
+                self.data[:, i] /= Ubulk
 
 
 def get_simulation_path(case, graph_name, reacting=False):
