@@ -63,8 +63,8 @@ boundaryField
         gamma           1.3;
         fieldInf        $Ubulk_field;
         // a measure of how far away the far-field condition should be
-        // this corresponds to ~ 10% of the downstream of the outlet
-        lInf            #calc "0.1 * $L_TE_downstream * $convertToMeters";
+        // this corresponds to the downstream of the outlet
+        lInf            #calc "$L_TE_downstream * $convertToMeters";
         value           $internalField;
 
     }
