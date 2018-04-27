@@ -24,12 +24,15 @@ gas = ct.Solution('chemkin/ucsd.cti')
 # T0 = 288 k
 # P0 = 100 kPa
 # mdot = 0.2079 kg/s
-T0 = 288 # K
-P0 = 1e5 # kpa
-mass_flow_rate = 0.2079 # kg/s
+T0 = 288  # K
+P0 = 1e5  # kpa
+# from the experimental data _this_ appears to be fixed, rather than the mass flow rate
+U_bulk = 16.6 if not reacting else 17.2
+
+# mass_flow_rate = 0.2079  # kg/s
 
 # dimensions
-D = 40 / 1000 # mm
+D = 40 / 1000  # mm
 width = 2 * D
 height = 3 * D
 area = width * height
@@ -39,6 +42,8 @@ phi = 0.62 if reacting else 0
 
 # iterate to find static conditions
 print('Non-reacting' if not reacting else 'Reacting')
+
+
 def static_deviation(xs):
     """
     Takes a test static temperature / pressure & computes the deviation
@@ -52,7 +57,7 @@ def static_deviation(xs):
     gas.set_equivalence_ratio(phi, 'C3H8', 'O2:1.0, N2:3.76')
 
     # now we have the density
-    U_test = mass_flow_rate / (gas.density * area)
+    U_test = U_bulk
 
     # specific heat ratio
     gamma = gas.cp / gas.cv
@@ -90,8 +95,8 @@ print('Inlet gamma: {}'.format(gas.cp / gas.cv))
 # get velocity
 
 # mass flow rate from MVP2
-U_bulk = mass_flow_rate / (gas.density * area)
-print('Inlet velocity: {} m/s'.format(U_bulk))
+mass_flow_rate = (gas.density * area) * U_bulk
+print('Inlet mass flow rate: {} kg/s'.format(mass_flow_rate))
 
 a = np.sqrt((gas.cp / gas.cv) * ct.gas_constant * gas.T)
 print('Inlet mach: ', U_bulk / a)
