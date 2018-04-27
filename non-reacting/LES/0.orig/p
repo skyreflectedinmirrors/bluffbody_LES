@@ -55,8 +55,8 @@ boundaryField
     {
     	// MVP2 recommends transmissive BC w/ target P = 100kPa
         type            waveTransmissive;
-        // gamma from inlet_calculator.py
-        gamma           1.3;
+        // gamma from inlet_calculator.py (no burning)
+        gamma           $gamma;
         fieldInf		$Pref;
         // a measure of how far away the far-field condition should be
         // this corresponds to the downstream of the outlet

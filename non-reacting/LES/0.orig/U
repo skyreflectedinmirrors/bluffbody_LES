@@ -59,14 +59,14 @@ boundaryField
     }
     outlet
     {
-        type            advective;
-        gamma           1.3;
-        fieldInf        $Ubulk_field;
-        // a measure of how far away the far-field condition should be
-        // this corresponds to the downstream of the outlet
-        lInf            #calc "$L_TE_downstream * $convertToMeters";
-        value           $internalField;
-
+        // this outlet condition along with a wave transmitting pressure-outlet
+        // appears to correct the crazy-reflections we've been seeing
+        // essentially, it turns off inflow at the outlet
+        type            pressureDirectedInletOutletVelocity;
+        phi             phi;
+        rho             rho;
+        inletDirection  uniform (0 0 1);
+        value           uniform (0 0 0);
     }
 }
 

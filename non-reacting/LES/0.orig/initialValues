@@ -27,3 +27,5 @@ O2_init		0.23300750051310173;
 Tref        288;
 // inlet velocity
 Ubulk 		16.6;
+// specific heat ratio
+gamma		1.4;
