@@ -17,6 +17,8 @@ FoamFile
 
 // a collection of initial values, importable to other files
 
+#include "../system/meshDims"
+
 // operating pressure, 1 bar
 Pref  		100000;
 // mass fraction of N2 of air, for non-reacting
@@ -29,3 +31,9 @@ Tref        288;
 Ubulk 		16.6;
 // specific heat ratio
 gamma		1.4;
+// mass flow rate (kg/s)
+mdot 		0.2079;
+// inlet density (kg/m3)
+rho_inlet 	1.2031632129581173;
+// residence time, in seconds
+t_res		#calc "$(L_total * $convertToMeters) / $Ubulk"
