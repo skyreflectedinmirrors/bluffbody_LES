@@ -13,23 +13,29 @@ parser.add_argument('-n', '--non_reacting',
                     dest='reacting',
                     action='store_false',
                     required=False)
+parser.add_argument('-g', '--gas',
+                    default='ucsd.cti',
+                    type=str)
+parser.add_argument('-p', '--phase',
+                    default='',
+                    type=str)
 parser.set_defaults(reacting=True)
-reacting = parser.parse_args().reacting
+args = parser.parse_args()
+reacting = args.reacting
 
 # calculate inlet conditions for b.c.'s'
-gas = ct.Solution('chemkin/ucsd.cti')
+gas = ct.Solution(args.gas, args.phase)
+gas.transport_model = 'Multi'
 
 
 # from MVP recommendations
 # T0 = 288 k
 # P0 = 100 kPa
-# mdot = 0.2079 kg/s
 T0 = 288  # K
 P0 = 1e5  # kpa
-# from the experimental data _this_ appears to be fixed, rather than the mass flow rate
-U_bulk = 16.6 if not reacting else 17.2
+mdot = 0.2079  # kg / s
 
-# mass_flow_rate = 0.2079  # kg/s
+# U_bulk = 16.6 if not reacting else 17.2
 
 # dimensions
 D = 40 / 1000  # mm
@@ -44,41 +50,42 @@ phi = 0.62 if reacting else 0
 print('Non-reacting' if not reacting else 'Reacting')
 
 
-def static_deviation(xs):
+def T_static(U_bulk):
+    return T0 - U_bulk**2 / (2. * gas.cp)
+
+
+def gamma():
+    return gas.cp / gas.cv
+
+
+def P_static(Ts):
+    return P0 / ((T0 / Ts) ** (gamma() / (gamma() - 1)))
+
+
+def mdot_deviation(U_bulk):
     """
-    Takes a test static temperature / pressure & computes the deviation
-    w.r.t. the specified stagnation conditions
+    Takes a test velocity, and from it computes the static pressure, temperature
+    and mass flow rate.
+
+    Returns the deviation in mass flow rate from the specified temperature
     """
 
-    # extract
-    Ts, Ps = xs
+    Ts = T_static(U_bulk)
+    Ps = P_static(Ts)
+
     # set gas state
     gas.TP = Ts, Ps
     gas.set_equivalence_ratio(phi, 'C3H8', 'O2:1.0, N2:3.76')
 
-    # now we have the density
-    U_test = U_bulk
-
-    # specific heat ratio
-    gamma = gas.cp / gas.cv
-
-    # calculate speed of sound & mach #
-    a = np.sqrt(gamma * Ps / gas.density)
-    M = U_test / a
-
-    # https://www.grc.nasa.gov/www/k-12/airplane/isentrop.html
-
-    # now we can convert from T -> T0
-    T0_test = Ts * (1 + ((gamma - 1) / 2.) * M * M)
-
-    # use isentropic relation to get P0
-    P0_test = Ps * (1 + ((gamma - 1) / 2.) * M * M) ** (gamma / (gamma - 1))
-
-    # and return difference
-    return np.array([T0 - T0_test, P0 - P0_test])
+    # now we have the density, return the calculate mass flow rate
+    return gas.density * U_bulk * area - mdot
 
 
-Ts, Ps = fsolve(static_deviation, np.array([0.95 * T0, 0.95 * P0]))
+U_bulk = fsolve(mdot_deviation, 16.6 if not reacting else 17.2)
+print('U_bulk: {} m/s'.format(U_bulk))
+
+Ts = T_static(U_bulk)
+Ps = P_static(Ts)
 
 print('Static temperature: {} K'.format(Ts))
 print('Static pressure: {} kPa'.format(Ps))
@@ -91,15 +98,16 @@ gas.set_equivalence_ratio(phi, 'C3H8', 'O2:1.0, N2:3.76')
 print('Inlet mass fractions:')
 print(gas[['C3H8', 'O2', 'N2']].mass_fraction_dict())
 
-print('Inlet gamma: {}'.format(gas.cp / gas.cv))
+print('Inlet density: {} (kg/m^3)'.format(gas.density))
+
 # get velocity
+print('Inlet gamma: {}'.format(gamma()))
 
-# mass flow rate from MVP2
-mass_flow_rate = (gas.density * area) * U_bulk
-print('Inlet mass flow rate: {} kg/s'.format(mass_flow_rate))
-
-a = np.sqrt((gas.cp / gas.cv) * ct.gas_constant * gas.T)
+a = np.sqrt(gamma() * ct.gas_constant * gas.T / gas.mean_molecular_weight)
+print('Speed of sound: {} m/s'.format(a))
 print('Inlet mach: ', U_bulk / a)
 
 # Reynolds #
 print('Re: {}'.format((gas.density * U_bulk * D) / gas.viscosity))
+
+print(gas())
