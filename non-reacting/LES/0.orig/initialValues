@@ -36,4 +36,4 @@ mdot 		0.2079;
 // inlet density (kg/m3)
 rho_inlet 	1.2031632129581173;
 // residence time, in seconds
-t_res		#calc "$(L_total * $convertToMeters) / $Ubulk"
+t_res		#calc "($L_total * $convertToMeters) / $Ubulk"
