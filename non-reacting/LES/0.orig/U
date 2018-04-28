@@ -53,10 +53,8 @@ boundaryField
     }
     inlet
     {
-        type            flowRateInletVelocity;
-        massFlowRate    $mdot;
-        rho             rho;
-        rhoInlet        $rho_inlet;
+        type            fixedValue;
+        value           $internalField;
     }
     outlet
     {
