@@ -11,7 +11,7 @@ graph_name = 'meanAxialVelocity'
 
 def plot(case, reacting, t_start=0, t_end=-1):
     make_dir(case)
-    expdata = read_experimental_data(graph_name, args.reacting)
+    expdata = read_experimental_data(graph_name, reacting)
     simdata = read_simulation_data(case, graph_name, reacting, t_start, t_end)
     # normalize / convert simulation data
     simdata.normalize(reacting)

@@ -18,7 +18,7 @@ def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both'):
     for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
         for vc in velocity_component:
             name = graph_name.format(point=point)
-            expdata = read_experimental_data(name, args.reacting,
+            expdata = read_experimental_data(name, reacting,
                                              velocity_component=vc, point=point)
             simdata = read_simulation_data(case, name, reacting, t_start,
                                            t_end, velocity_component=vc)
