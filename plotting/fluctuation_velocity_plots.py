@@ -20,7 +20,7 @@ def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both'):
         for vc in velocity_component:
             name = sim_name.format(point=point)
             # first read experimental data
-            expdata = read_experimental_data(exp_name, args.reacting,
+            expdata = read_experimental_data(exp_name, reacting,
                                              velocity_component=vc, point=point)
             # read baseline averaged data
             baseline = read_simulation_data(case, name, reacting, t_start,
