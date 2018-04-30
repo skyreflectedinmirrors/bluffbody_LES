@@ -22,6 +22,7 @@ def plot(case, reacting, t_start=0, t_end=-1):
     plt.ylabel(expdata.columns[1])
     plt.legend(loc=0)
     plt.savefig(pjoin(case, 'mean_axial_velocity.pdf'))
+    plt.close()
 
 
 if __name__ == '__main__':
