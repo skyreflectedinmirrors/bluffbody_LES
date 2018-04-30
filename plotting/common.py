@@ -90,10 +90,6 @@ class dataset(object):
                     flip = getattr(dims, '{}_flip'.format(axis), 1)
                     self.data[:, i] *= flip
                 Ubulk = dims.Ubulk
-                if 'fluct' in self.name:
-                    # we've taken the sqrt, hence we should be normalizing by the
-                    # sqrt of Ubulk
-                    Ubulk = np.sqrt(Ubulk)
                 # and normalize
                 self.data[:, i] /= Ubulk
 

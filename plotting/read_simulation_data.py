@@ -75,14 +75,12 @@ class RMS(object):
 
         assert axis == 0
 
-        # number of time-samples
-        num_samples = data.shape[0]
         # fluctuation across space
         fluct = data - self.baseline[:, 1]
         # square all samples
         fluct = fluct * fluct
-        # mean across time
-        fluct = np.mean(fluct / num_samples, axis=0)
+        # average over time
+        fluct = integration_averager()(fluct, time)
         # root
         return np.sqrt(fluct)
 
