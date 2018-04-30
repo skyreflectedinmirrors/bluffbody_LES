@@ -8,7 +8,7 @@ plotters = [fplot, mplot, aplot]
 
 if __name__ == '__main__':
     parser = get_default_parsing_args(
-            'plot_att.py',
+            'plot_all.py',
             'Generates all plots for the given case.')
 
     args = parser.parse_args()
