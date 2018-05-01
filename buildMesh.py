@@ -25,17 +25,14 @@ import itertools as it
 
 import numpy as np
 
-
 # problem dimensions
 D = 40  # mm
 height = 3 * D  # mm
 width = 2 * D  # mm
-# total channel length
-length = 782.0  # mm
 # up/down-stream of bluff-body (from trailing edge)
-L_TE_upstream = 100.0  # mm
+L_TE_upstream = 200.0  # mm
 L_TE_downstream = 682.0  # mm
-L_total = 782.0  # mm
+L_total = 882.0  # mm
 BB_height = D * np.sqrt(3.) / 2.  # mm
 L_LE_upstream = L_TE_upstream - BB_height  # mm
 

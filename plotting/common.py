@@ -24,7 +24,7 @@ class dimensions(object):
         self.height = 3 * self.D
         self.width = 2 * self.D
         self.Ubulk = 16.6 if not reacting else 17.6  # m/s
-        self.trailing_edge = -100 / 1000  # mm
+        self.trailing_edge = -200 / 1000  # mm
         self.z_offset = self.trailing_edge  # mm
         self.y_offset = self.height / 2  # mm
         self.z_flip = -1

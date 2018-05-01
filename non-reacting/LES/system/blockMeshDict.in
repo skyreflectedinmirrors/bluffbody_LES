@@ -60,7 +60,7 @@ Channel dimensions:
 1--------------------------------------13                 /
                                                         (x)
 <------->|<---------------------------->
-  0.1m   ^           0.682 m
+  0.2m   ^           0.682 m
          |
  bluff-body trailing edge
 <------L_total------------------------->
@@ -80,7 +80,7 @@ Upstream of Bluff Body (y-z planar slice at x=0)
                        |    |
 <---L_LE_upstream ---->|    |
                             |
-<-----------0.1m----------->|
+<-----------0.2m----------->|
       L_TE_upstream
 
 

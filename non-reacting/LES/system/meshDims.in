@@ -41,8 +41,8 @@ height         $three_D;
 
 // total channel length
 // up/down-stream of bluff-body (from trailing edge)
-L_TE_upstream       100.0; // mm
+L_TE_upstream       200.0; // mm
 L_TE_downstream     682.0; // mm
-L_total             782.0; // mm
+L_total             882.0; // mm
 BB_height           #calc "$D * sqrt(3.0) / 2.0"; // mm
 L_LE_upstream       #calc "$L_TE_upstream - $BB_height"; //mm
