@@ -30,9 +30,9 @@ boundaryField
     inlet
     {
         type            totalPressure;
-        p0		$internalField;
-	value		$internalField;
-        gamma		$gamma;
+        p0              $internalField;
+        value           $internalField;
+        gamma           $gamma;
     };
     top_wall
     {
@@ -56,11 +56,11 @@ boundaryField
     }
     outlet
     {
-    	// MVP2 recommends transmissive BC w/ target P = 100kPa
+        // MVP2 recommends transmissive BC w/ target P = 100kPa
         type            waveTransmissive;
         // gamma from inlet_calculator.py (no burning)
         gamma           $gamma;
-        fieldInf		$Pref;
+        fieldInf        $Pref;
         // a measure of how far away the far-field condition should be
         // this corresponds to the downstream of the outlet
         lInf            #calc "$L_TE_downstream * $convertToMeters";
