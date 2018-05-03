@@ -182,7 +182,7 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
         timelist.append(time)
 
     # sanity check -- ensure all data is same shape
-    assert np.all(x.shape == datalist[0].shape for x in datalist)
+    assert np.all([x.shape == datalist[0].shape for x in datalist])
 
     # check time is ordered
     assert np.all([timelist[i + 1] > timelist[i] for i in range(len(timelist) - 1)])
