@@ -84,7 +84,7 @@ N2
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1000;
         highCpCoeffs    ( 2.92664 0.0014879768 -5.68476e-07 1.0097038e-10 -6.753351e-15 -922.7977 5.980528 );
@@ -109,7 +109,7 @@ HOCN
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1368;
         highCpCoeffs    ( 5.89784885 0.00316789393 -1.11801064e-06 1.77243144e-10 -1.04339177e-14 -3706.53331 -6.18167825 );
@@ -320,7 +320,7 @@ C3H8
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1000;
         highCpCoeffs    ( 7.5341368 0.018872239 -6.2718491e-06 9.1475649e-10 -4.7838069e-14 -16467.516 -17.892349 );
@@ -531,7 +531,7 @@ HCCOH
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1000;
         highCpCoeffs    ( 5.9238291 0.00679236 -2.5658564e-06 4.4987841e-10 -2.9940101e-14 7264.626 -7.6017742 );
@@ -688,7 +688,7 @@ CH2CHO
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1000;
         highCpCoeffs    ( 5.97567 0.008130591 -2.743624e-06 4.070304e-10 -2.176017e-14 490.3218 -5.045251 );
@@ -715,7 +715,7 @@ HNCO
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1478;
         highCpCoeffs    ( 6.22395134 0.00317864004 -1.09378755e-06 1.70735163e-10 -9.95021955e-15 -16659.9344 -8.38224741 );
@@ -925,7 +925,7 @@ C3H7
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1000;
         highCpCoeffs    ( 7.7026987 0.016044203 -5.283322e-06 7.629859e-10 -3.9392284e-14 8298.4336 -15.48018 );
@@ -1109,7 +1109,7 @@ HCNN
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1000;
         highCpCoeffs    ( 5.8946362 0.0039895959 -1.598238e-06 2.9249395e-10 -2.0094686e-14 53452.941 -5.1030502 );
@@ -1189,7 +1189,7 @@ HCNO
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1382;
         highCpCoeffs    ( 6.59860456 0.00302778626 -1.07704346e-06 1.71666528e-10 -1.01439391e-14 17966.1339 -10.3306599 );
@@ -1320,7 +1320,7 @@ AR
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1000;
         highCpCoeffs    ( 2.5 0 0 0 0 -745.375 4.366 );
