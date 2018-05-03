@@ -504,7 +504,7 @@ H2CN
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           4000;
         Tcommon         1000;
         highCpCoeffs    ( 5.209703 0.0029692911 -2.8555891e-07 -1.63555e-10 3.0432589e-14 27677.109 -4.444478 );
@@ -743,7 +743,7 @@ HCCO
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           4000;
         Tcommon         1000;
         highCpCoeffs    ( 5.6282058 0.0040853401 -1.5934547e-06 2.8626052e-10 -1.9407832e-14 19327.215 -3.9302595 );
@@ -1057,7 +1057,7 @@ CH3O
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           3000;
         Tcommon         1000;
         highCpCoeffs    ( 3.770799 0.007871497 -2.656384e-06 3.944431e-10 -2.112616e-14 127.83252 2.929575 );
