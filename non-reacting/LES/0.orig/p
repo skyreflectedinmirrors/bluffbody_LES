@@ -30,7 +30,7 @@ boundaryField
     inlet
     {
         type            zeroGradient;
-    };
+    }
     top_wall
     {
         type            zeroGradient;
