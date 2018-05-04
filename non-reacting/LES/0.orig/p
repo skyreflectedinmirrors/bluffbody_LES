@@ -29,10 +29,7 @@ boundaryField
 {
     inlet
     {
-        type            totalPressure;
-        p0              $internalField;
-        value           $internalField;
-        gamma           $gamma;
+        type            zeroGradient;
     };
     top_wall
     {
