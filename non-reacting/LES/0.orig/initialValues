@@ -20,20 +20,22 @@ FoamFile
 #include "../system/meshDims"
 
 // operating pressure, 1 bar
-Pref  		100000;
+Pref  		1e5;
+Ps 			99834.09523427696;
 // mass fraction of N2 of air, for non-reacting
 N2_init		0.7669924994868982;
 // mass fraction of O2 of air, for non-reacting
 O2_init		0.23300750051310173;
 // inlet temperature
 Tref        288;
+Ts 			287.8634248147636;
 // inlet velocity
 Ubulk 		16.6;
 // specific heat ratio
-gamma		1.4;
+gamma		1.3999110177501861;
 // mass flow rate (kg/s)
-mdot 		0.2079;
+mdot 		0.2015948087465419;
 // inlet density (kg/m3)
-rho_inlet 	1.2031632129581173;
+rho_inlet 	1.2047427868522074;
 // residence time, in seconds
 t_res		#calc "($L_total * $convertToMeters) / $Ubulk";
