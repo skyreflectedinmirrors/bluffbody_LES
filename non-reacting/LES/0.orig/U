@@ -54,7 +54,7 @@ boundaryField
     inlet
     {
         type            fixedValue;
-        value           $internalField;
+        value           uniform $Ubulk_field;
     }
     outlet
     {
