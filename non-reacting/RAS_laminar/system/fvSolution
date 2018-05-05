@@ -1,0 +1,109 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+
+/*
+
+Setup for simulation of Volvo flygmotor AB non-reacting flow LES
+
+Nicholas Curtis - 04/10/2018
+
+Based on:
+
+Cocks et al: https://arc.aiaa.org/doi/abs/10.2514/6.2013-170
+Wolf: http://www.wolfdynamics.com/wiki/OFtipsandtricks.pdf
+Manual: https://cfd.direct/openfoam/user-guide/fvSolution/
+PRM: https://github.com/ParticulateFlow/OSCCAR-doc/blob/master/openFoamUserManual_PFM.pdf
+
+*/
+
+solvers
+{
+	"rho.*"
+    {
+        solver          diagonal;
+    }
+
+	// solver based on Sandia Flame-D example
+    p
+	{
+		solver PCG;
+		preconditioner    DIC;
+        tolerance         1e-06;
+        relTol            0.01;
+	}
+	pFinal
+	{
+        $p
+		relTol            0;
+	}
+
+    "(U|h|k|epsilon)"
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+		tolerance       1e-6;
+        relTol          0.1;
+    };
+    "(U|h|k|epsilon)Final"
+    {
+        $U;
+    };
+
+    Yi
+    {
+        $U
+        tolerance       1e-8;
+    };
+
+    YiFinal
+    {
+        $Yi
+        relTol          0;
+    };
+}
+
+PIMPLE
+{
+	// manual - PISO, SIMPLE and PIMPLE algorithms
+	// neither low RE nor multi-phase
+    momentumPredictor yes;
+    nOuterCorrectors  1;
+    nCorrectors       2;
+    // wolf p.g., 43
+	nNonOrthogonalCorrectors 1;
+
+	// RANS specific
+	maxDeltaT           1e-4;
+    maxCo               0.25;
+    // from SANDIA Flame-D
+    alphaTemp           0.05;
+    alphaY              0.05;
+    Yref
+    {
+        O2                  0.1;
+        CH4                 0.1;
+    }
+    rDeltaTSmoothingCoeff   0.025;
+    rDeltaTDampingCoeff     1;
+}
+
+relaxationFactors
+{
+    equations
+    {
+        ".*"            1;
+    }
+}

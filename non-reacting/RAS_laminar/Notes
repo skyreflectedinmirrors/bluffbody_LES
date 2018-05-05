@@ -1,0 +1,47 @@
+Notes
+-----
+
+- http://www.pointwise.com/yplus/, the expected y+ is ~0.017 mm, hence we need a wall treatment
+- Mesh is different from LES case, place first cell at 1mm,  -> ~58 * y+
+- this will require interpolation via mapFields for the LES initialization case
+
+Mesh Creation
+-------------
+
+For both RANS & Potential, the mesh is created with:
+
+>python buildMesh.py -c non-reacting/CASE/ -m 4 -w 1 -g 1.25 -l 1.05
+
+Which corresponds to a 4mm mesh, w/ wall spacing of 0.85mm.
+The geometric expansion ratio in the y-direction is 1.2, while in the z-direction (downstream of the BB)
+it is 1.1
+
+This yields a mesh of 225720 cells, which is nice and cheap for simulation
+
+Initial Conditions
+------------------
+
+First, start with potential flow solution (mapFields from decompose)
+Next, 
+
+Boundary Outlet Conditions
+--------------------------
+
+Since I'm seeing reflections from the boundary (that grow out of control for LES), we will play with outlet-BC's in RANS
+
+Possible conditions:
+
+outlet:
+	-U:
+		fluxCorrectedVelocity
+			- mix of zeroGradient & flux corrected (takes into account fixed pressure boundary condition)
+		inletOutlet w/ inlet set to zero?
+			- zero gradient for outflow, zero inflow
+		pressureDirectedInletOutletVelocity
+			- velocity B.C. for patches where pressure is specified
+			- zero gradient for out flow (defined by flux)
+			- inflow direction specified, velocity determined from flux in this direction
+		pressureInletOutletVelocity
+			- velocity B.C. for patches where pressure is specified
+			- zero gradient for outflow
+			- inflow obtained from patch-face normal
