@@ -1,1 +1,1 @@
-potentialFoam -writePhi
+potentialFoam -writep -writePhi -noFunctionObjects
