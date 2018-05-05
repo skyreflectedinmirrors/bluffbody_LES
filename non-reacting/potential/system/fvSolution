@@ -40,7 +40,7 @@ solvers
     };
     PhiFinal
     {
-        $phi;
+        $Phi;
     };
 }
 
