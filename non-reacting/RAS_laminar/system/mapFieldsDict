@@ -17,7 +17,11 @@ FoamFile
 // List of pairs of target/source patches for mapping
 patchMap
 (
-    top_wall left_wall right_wall bottom_wall bluff_body
+    top_wall top_wall
+    left_wall left_wall
+    right_wall right_wall
+    bottom_wall bottom_wall
+    bluff_body bluff_body
 );
 
 // List of target patches cutting the source domain (these need to be
@@ -25,5 +29,6 @@ patchMap
 // outlet & inlet have different boundary conditions from potentialFoam
 cuttingPatches
 (
-    outlet inlet
+    outlet outlet
+    inlet inlet
 );
