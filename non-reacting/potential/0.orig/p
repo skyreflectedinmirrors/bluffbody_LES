@@ -23,14 +23,14 @@ dimensions              [0 2 -2 0 0 0 0];
 #include                "../system/meshDims";
 
 // from MVP2
-internalField           uniform $Ps;
+internalField           uniform 0;
 
 boundaryField
 {
     inlet
     {
         type            fixedValue;
-        value           uniform $Pref;
+        value           uniform 0;
     }
     top_wall
     {
