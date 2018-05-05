@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      k;
+}
+
+// Initializer for TKE for RANS
+dimensions      [0 2 -2 0 0 0 0];
+
+//obtain Ubulk
+#include                "ransInitialValues";
+internalField           uniform $kguess;
+
+boundaryField
+{
+    // the maximum wall normal distance is < 0.3mm, and from
+    // http://www.pointwise.com/yplus/, the expected y+ is ~0.0166 mm, hence we need
+    // a wall treatment
+    top_wall
+    {
+        type            kqRWallFunction;
+        value           $internalField;
+    }
+    bottom_wall
+    {
+        type            kqRWallFunction;
+        value           $internalField;
+    }
+    bluff_body
+    {
+        type            kqRWallFunction;
+        value           $internalField;
+    }
+    left_wall
+    {
+        type            symmetryPlane;
+    }
+    right_wall
+    {
+        type            symmetryPlane;
+    }
+    inlet
+    {
+        // no turbulence at inlet
+        type            fixedValue;
+        value           uniform 0;
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+}
