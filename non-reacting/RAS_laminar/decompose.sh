@@ -1,1 +1,1 @@
-cp -r 0.orig 0 && mapFields ../potential -consistent && decomposePar && renumberMesh -latestTime -overwrite
+blockMesh && cp -r 0.orig 0 && mapFields ../potential && renumberMesh -latestTime -overwrite && decomposePar
