@@ -59,4 +59,5 @@ functions
 	#includeFunc    axialDeficitPlot_1p53
 	#includeFunc    axialDeficitPlot_3p75
 	#includeFunc    axialDeficitPlot_9p4
+	#includeFunc    InletSampling
 }

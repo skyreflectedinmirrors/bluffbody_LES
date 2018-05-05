@@ -18,6 +18,13 @@ it is 1.1
 
 This yields a mesh of 225720 cells, which is nice and cheap for simulation
 
+Initial Conditions
+------------------
+
+First, start with potential flow solution (mapFields from decompose)
+Next, run in Laminar mode to get an initial solution
+Finally run w/ RAS
+
 Boundary Outlet Conditions
 --------------------------
 

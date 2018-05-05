@@ -23,13 +23,18 @@ dimensions              [1 -1 -2 0 0 0 0];
 #include                "../system/meshDims";
 
 // from MVP2
-internalField           uniform $Pref;
+internalField           uniform #calc "0.95 * $Ps";
 
 boundaryField
 {
     inlet
     {
-        type            zeroGradient;
+        type            totalPressure;
+        p0              uniform $Pref;
+        value           $internalField;
+        // important to not specify gamma / psi,
+        // in order to indicated this is compressible subsonic flow
+        psi             none;
     }
     top_wall
     {
@@ -55,13 +60,13 @@ boundaryField
     {
         // MVP2 recommends transmissive BC w/ target P = 100kPa
         type            waveTransmissive;
+        field           p;
         // gamma from inlet_calculator.py (no burning)
         gamma           $gamma;
-        fieldInf        $Pref;
-        // a measure of how far away the far-field condition should be
-        // this corresponds to the downstream of the outlet
-        lInf            #calc "$L_TE_downstream * $convertToMeters";
+        fieldInf        $Pref
         value           $internalField;
+        // a measure of how far away the far-field condition should be
+        lInf            3;
     }
 }
 

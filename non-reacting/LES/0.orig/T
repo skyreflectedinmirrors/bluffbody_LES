@@ -21,7 +21,7 @@ dimensions      [0 0 0 1 0 0 0];
 
 // from MVP2
 #include                "initialValues";
-internalField           uniform $Tref;
+internalField           uniform $Ts;
 
 boundaryField
 {
@@ -30,10 +30,8 @@ boundaryField
         // MVP2
         type            totalTemperature;
         T0              $internalField;
+        value           $internalField;
         gamma           $gamma;
-        U               U;
-        phi             phi;
-        psi             thermo:psi;
     }
     outlet
     {
