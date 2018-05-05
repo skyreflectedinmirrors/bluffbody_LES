@@ -23,14 +23,14 @@ dimensions              [1 -1 -2 0 0 0 0];
 #include                "../system/meshDims";
 
 // from MVP2
-internalField           uniform #calc "0.95 * $Ps";
+internalField           uniform #calc "$Ps";
 
 boundaryField
 {
     inlet
     {
         type            fixedValue;
-        value           $Pref;
+        value           uniform $Pref;
     }
     top_wall
     {
@@ -54,15 +54,8 @@ boundaryField
     }
     outlet
     {
-        // MVP2 recommends transmissive BC w/ target P = 100kPa
-        type            waveTransmissive;
-        field           p;
-        // gamma from inlet_calculator.py (no burning)
-        gamma           $gamma;
-        fieldInf        $Pref
+        type            fixedValue;
         value           $internalField;
-        // a measure of how far away the far-field condition should be
-        lInf            3;
     }
 }
 

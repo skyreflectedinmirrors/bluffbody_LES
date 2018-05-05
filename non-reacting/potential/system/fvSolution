@@ -38,10 +38,10 @@ solvers
 		tolerance       1e-8;
         relTol          1e-4;
     };
-    PhiFinal
+    p
     {
         $Phi;
-    };
+    }
 }
 
 potentialFlow
