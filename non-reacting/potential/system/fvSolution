@@ -48,11 +48,3 @@ potentialFlow
 {
 	nNonOrthogonalCorrectors 3;
 }
-
-relaxationFactors
-{
-    equations
-    {
-        ".*"            1;
-    }
-}
