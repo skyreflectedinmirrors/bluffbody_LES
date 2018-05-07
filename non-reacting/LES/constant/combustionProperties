@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-//combustionModel  EDC<psiChemistryCombustion>;
+//combustionModel  EDC<psiThermoCombustion>;
 combustionModel noCombustion<psiChemistryCombustion>;
 
 active  false;
