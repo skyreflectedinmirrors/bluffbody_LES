@@ -23,7 +23,7 @@ dimensions              [0 2 -2 0 0 0 0];
 #include                "../system/meshDims";
 
 // from MVP2
-internalField           uniform 0;
+internalField           uniform $Pref;
 
 boundaryField
 {
@@ -54,7 +54,7 @@ boundaryField
     outlet
     {
         type            fixedValue;
-        value           uniform 0;
+        value           uniform $Pref;
     }
 }
 
