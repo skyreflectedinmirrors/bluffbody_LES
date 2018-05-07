@@ -61,7 +61,7 @@ boundaryField
         fieldInf        $Pref
         value           $internalField;
         // a measure of how far away the far-field condition should be
-        lInf            $L_total;
+        lInf            #calc "$L_total * $convertToMeters";
     }
 }
 
