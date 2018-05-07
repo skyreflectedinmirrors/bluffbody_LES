@@ -23,18 +23,13 @@ dimensions              [1 -1 -2 0 0 0 0];
 #include                "../system/meshDims";
 
 // from MVP2
-internalField           uniform #calc "0.95 * $Ps";
+internalField           uniform #calc "$Ps";
 
 boundaryField
 {
     inlet
     {
-        type            totalPressure;
-        p0              uniform $Pref;
-        value           $internalField;
-        // important to not specify gamma / psi,
-        // in order to indicated this is compressible subsonic flow
-        psi             none;
+        type            zeroGradient;
     }
     top_wall
     {
@@ -66,7 +61,7 @@ boundaryField
         fieldInf        $Pref
         value           $internalField;
         // a measure of how far away the far-field condition should be
-        lInf            3;
+        lInf            $L_total;
     }
 }
 
