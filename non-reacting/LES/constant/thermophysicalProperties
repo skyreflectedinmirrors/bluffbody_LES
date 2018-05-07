@@ -38,6 +38,6 @@ fuel        CH4;
 
 chemistryReader foamChemistryReader;
 foamChemistryThermoFile "$FOAM_CASE/chemkin/thermo30_foam.dat";
-foamChemistryFile "$FOAM_CASE/chemkin/grimech30_foam.dat";
+foamChemistryFile "$FOAM_CASE/chemkin/grimech30_nonreacting_foam.dat";
 
 // ************************************************************************* //
