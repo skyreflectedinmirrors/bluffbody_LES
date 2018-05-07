@@ -36,13 +36,12 @@ stopAt          endTime;
 endTime         0.5;
 
 // larger time step
-adjustTimeStep  yes;
-deltaT			1e-2;
-maxCo			0.5;
+adjustTimeStep  no;
+deltaT			1e-6;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
-writeControl    adjustableRunTime;
-writeInterval   1e-2;
+writeControl    runTime;
+writeInterval   1e-4;
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;
