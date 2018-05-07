@@ -29,8 +29,8 @@ boundaryField
     {
         // MVP2
         type            totalTemperature;
-        T0              $internalField;
-        value           $internalField;
+        T0              uniform $Tref;
+        value           uniform $Tref;
         gamma           $gamma;
     }
     outlet
