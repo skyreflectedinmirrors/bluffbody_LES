@@ -60,7 +60,8 @@ boundaryField
     {
         // from wolf, Do not force the flow at the outflow, use a zero normal gradient for all flow variables
         // except pressure. The solver extrapolates the required information from the interior
-        type            zeroGradient;
+        type            pressureInletOutletVelocity;
+        value           uniform (0 0 0);
     }
 }
 
