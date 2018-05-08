@@ -60,7 +60,7 @@ boundaryField
         fieldInf        $Pref
         value           uniform $Pref;
         // a measure of how far away the far-field condition should be
-        lInf            5;
+        lInf            50;
     }
 }
 
