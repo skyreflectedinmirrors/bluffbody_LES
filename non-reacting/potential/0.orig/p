@@ -27,34 +27,34 @@ internalField           uniform $Pref;
 
 boundaryField
 {
-    inlet
-    {
-        type            zeroGradient;
-    }
-    top_wall
-    {
-        type            zeroGradient;
-    }
-    bottom_wall
-    {
-        type            zeroGradient;
-    }
-    bluff_body
-    {
-        type            zeroGradient;
-    }
-    left_wall
-    {
-        type            symmetryPlane;
-    }
-    right_wall
-    {
-        type            symmetryPlane;
-    }
-    outlet
+    OUTLET
     {
         type            fixedValue;
         value           uniform $Pref;
+    }
+    INLET
+    {
+        type            zeroGradient;
+    }
+    WALL_V
+    {
+        type            zeroGradient;
+    }
+    WALL_TOP
+    {
+        type            zeroGradient;
+    }
+    WALL_BOT
+    {
+        type            zeroGradient;
+    }
+    PERIODIC
+    {
+        type            symmetryPlane;
+    }
+    periodic_sh
+    {
+        type            symmetryPlane;
     }
 }
 

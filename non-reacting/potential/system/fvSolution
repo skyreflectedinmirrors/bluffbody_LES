@@ -31,16 +31,27 @@ PRM: https://github.com/ParticulateFlow/OSCCAR-doc/blob/master/openFoamUserManua
 
 solvers
 {
-    Phi
-    {
-        solver          PBiCGStab;
-        preconditioner  DIC;
-		tolerance       1e-8;
-        relTol          1e-4;
-    };
     p
     {
-        $Phi;
+        solver PCG;
+        preconditioner    DIC;
+        tolerance         1e-05;
+        relTol            0.01;
+        minIter           3;
+    }
+    pFinal
+    {
+        $p
+        tolerance         1e-6;
+        relTol            0.001;
+    }
+    Phi
+    {
+        $p
+    }
+    PhiFinal
+    {
+        $pFinal;
     }
 }
 
