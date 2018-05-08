@@ -41,7 +41,7 @@ adjustTimeStep  yes;
 deltaT			1e-6;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
-writeControl    runTime;
+writeControl    adjustableRunTime;
 writeInterval   1e-4;
 purgeWrite      0;
 writeFormat     binary;
