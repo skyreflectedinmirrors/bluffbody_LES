@@ -37,7 +37,7 @@ endTime         0.5;
 
 // larger time step
 maxCo 			0.5;
-adjustTimeStep  yes;
+adjustTimeStep  no;
 deltaT			1e-6;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial

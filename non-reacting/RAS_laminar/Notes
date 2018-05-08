@@ -21,27 +21,37 @@ This yields a mesh of 225720 cells, which is nice and cheap for simulation
 Initial Conditions
 ------------------
 
-First, start with potential flow solution (mapFields from decompose)
-Next, 
+Start with potential flow solution (mapFields from decompose)
 
-Boundary Outlet Conditions
---------------------------
+Scheme
+------
 
-Since I'm seeing reflections from the boundary (that grow out of control for LES), we will play with outlet-BC's in RANS
+The fvSchemes used here are designed to be very diffusive to get rid of the large
+ugly pressure waves (and instability caused therein), specifically to be used as an
+input to the regular RANS simulation
 
-Possible conditions:
+You will want to start with a fixed timestep of 1e-06s, and gradually increase it as the simulation goes on.
+Once the initial transients (and pressure wave) have dissappated, you may map this onto the regular RANS case.
 
-outlet:
-	-U:
-		fluxCorrectedVelocity
-			- mix of zeroGradient & flux corrected (takes into account fixed pressure boundary condition)
-		inletOutlet w/ inlet set to zero?
-			- zero gradient for outflow, zero inflow
-		pressureDirectedInletOutletVelocity
-			- velocity B.C. for patches where pressure is specified
-			- zero gradient for out flow (defined by flux)
-			- inflow direction specified, velocity determined from flux in this direction
-		pressureInletOutletVelocity
-			- velocity B.C. for patches where pressure is specified
-			- zero gradient for outflow
-			- inflow obtained from patch-face normal
+Time:
+
+0s
+--
+	-fixed time-step of 1e-6s
+
+~1e-4s
+------
+	- increase time-step to 2e-6s
+
+~1e-3s
+------
+	- increase time-step to 3e-6s
+
+~1e-2s
+------
+	- switch to adjustable mode (maxCo ~ 0.5)
+	- you may also wish to increase the write interval here (~5e-3s)
+
+~2e-2s
+------
+	- Flow is nicely developed, and may be switched to RANS input

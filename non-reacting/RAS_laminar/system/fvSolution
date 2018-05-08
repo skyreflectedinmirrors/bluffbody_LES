@@ -43,7 +43,7 @@ solvers
         preconditioner      DIC;
         tolerance           1e-05;
         relTol              0.05;
-        minIter             3;
+        minIter             5;
     }
     pFinal
     {
@@ -58,7 +58,7 @@ solvers
         preconditioner      DILU;
         tolerance           1e-08;
         relTol              0;
-        minIter             3;
+        minIter             5;
     }
     UFinal
     {
@@ -71,7 +71,7 @@ solvers
         preconditioner      DILU;
         tolerance           1e-8;
         relTol              0.1;
-        minIter             3;
+        minIter             5;
     };
 
     "(O2|N2|h|k|epsilon)Final"
@@ -96,9 +96,9 @@ PIMPLE
     // neither low RE nor multi-phase
     momentumPredictor yes;
     nOuterCorrectors  1;
-    nCorrectors       2;
+    nCorrectors       3;
     // wolf p.g., 43
-    nNonOrthogonalCorrectors 1;
+    nNonOrthogonalCorrectors 2;
 }
 
 relaxationFactors
