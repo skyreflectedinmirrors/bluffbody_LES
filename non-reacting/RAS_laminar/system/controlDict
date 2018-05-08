@@ -36,7 +36,7 @@ stopAt          endTime;
 endTime         0.5;
 
 // larger time step
-adjustTimeStep  no;
+adjustTimeStep  yes;
 deltaT			1e-6;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
