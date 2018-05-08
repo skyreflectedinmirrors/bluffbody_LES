@@ -31,7 +31,6 @@ Manual: https://cfd.direct/openfoam/user-guide/fvSchemes/
 */
 
 // from pitz-daily potential flow case
-
 ddtSchemes
 {
     default         steadyState;
@@ -39,19 +38,44 @@ ddtSchemes
 
 gradSchemes
 {
-    default         Gauss linear;
+    // Cocks et al. used a green-gauss node-based method, which doesn't appear
+    // to be present by default in OpenFOAM.
+    // The closest method is "Gauss linear" - which is a cell-based version of
+    // the Green-gauss node-based method
+    //
+    // Chalmers states that Gauss gradient is accurate on hex-meshes
+    //
+    // Limit suggestion comes from Wolf
+    default         cellMDLimited Gauss linear 0.5;
+    grad(U)         cellMDLimited Gauss linear 0.5;
 }
 
 divSchemes
 {
     default         none;
-    div(phi,U)      bounded Gauss linear;
+    // Cocks et al. used a 2nd order *bounded* central scheme for inviscid terms
+    //      bounded by "Sweby limiter"
+    // Wolf: accurate & stable numerical scheme -- 2nd order accurate
+    div(phi,U)      Gauss linearUpwind grad(U);
     div(div(phi,U)) Gauss linear;
 }
 
 laplacianSchemes
 {
-    default         Gauss linear corrected;
+    // Cocks et al. used a "2nd-order accurate central scheme for discretization of"
+    //                     "the Laplacian terms"
+    //
+    // From the manual (https://cfd.direct/openfoam/user-guide/fvSchemes/#x19-1410004.4):
+    // "to maintain *second-order accuracy*, an explicit non-orthogonal correction "
+    // "can be added to the orthogonal component, known as the corrected scheme"
+    //
+    // Further, maximum orthogonality from checkMesh of the blockMesh output is:
+    //      Mesh non-orthogonality Max: 29.37587877 average: 2.520147965
+    // hence we don't need the "limited" approach
+    //
+    // from Chalmers, may want a cell/face-limited form for bounded variables (
+    // e.g., mass fractions) -- but no need for limited as max non-orthgonality < 70
+    default         Gauss linear limited 1.0;
 }
 
 interpolationSchemes
@@ -61,5 +85,5 @@ interpolationSchemes
 
 snGradSchemes
 {
-    default         corrected;
+    default         limited 1.0;
 }
