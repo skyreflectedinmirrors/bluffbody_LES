@@ -39,39 +39,54 @@ solvers
 	// solver based on Sandia Flame-D example
     p
 	{
-		solver PCG;
+		solver            PCG;
 		preconditioner    DIC;
-        tolerance         1e-06;
-        relTol            0.01;
+        tolerance         1e-05;
+        relTol            0.05;
+        minIter           3;
 	}
 	pFinal
 	{
         $p
+        tolerance         1e-06;
 		relTol            0;
 	}
 
-    "(U|h|k|epsilon)"
+    U
     {
-        solver          PBiCGStab;
-        preconditioner  DILU;
-		tolerance       1e-6;
-        relTol          0.1;
-    };
-    "(U|h|k|epsilon)Final"
-    {
-        $U;
-    };
-
-    Yi
+        solver              PBiCGStab;
+        preconditioner      DILU;
+        tolerance           1e-08;
+        relTol              0;
+        minIter             3;
+    }
+    UFinal
     {
         $U
-        tolerance       1e-8;
+    }
+
+    "(O2|N2|h|k|epsilon)"
+    {
+        solver              PBiCGStab;
+        preconditioner      DILU;
+        tolerance           1e-8;
+        relTol              0.1;
+        minIter             3;
     };
 
-    YiFinal
+    "(O2|N2|h|k|epsilon)Final"
     {
-        $Yi
-        relTol          0;
+        $O2
+        relTol              0;
+    };
+
+    // for non-reacting, other mass fractions are zero
+    Yi
+    {
+        solver              PBiCGStab;
+        preconditioner      DILU;
+        tolerance           1e-1;
+        relTol              0;
     };
 }
 
@@ -84,20 +99,6 @@ PIMPLE
     nCorrectors       2;
     // wolf p.g., 43
 	nNonOrthogonalCorrectors 1;
-
-	// RANS specific
-	maxDeltaT           1e-4;
-    maxCo               0.25;
-    // from SANDIA Flame-D
-    alphaTemp           0.05;
-    alphaY              0.05;
-    Yref
-    {
-        O2                  0.1;
-        CH4                 0.1;
-    }
-    rDeltaTSmoothingCoeff   0.025;
-    rDeltaTDampingCoeff     1;
 }
 
 relaxationFactors

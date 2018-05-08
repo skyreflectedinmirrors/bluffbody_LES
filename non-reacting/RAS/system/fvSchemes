@@ -48,7 +48,7 @@ gradSchemes
 	// Chalmers states that Gauss gradient is accurate on hex-meshes
 	//
 	// Limit suggestion comes from Wolf
-	default 		cellMDLimited Gauss linear 0.5;
+	default 		cellLimited Gauss linear 1;
 };
 
 // diffusion
@@ -67,7 +67,7 @@ laplacianSchemes
 	//
  	// from Chalmers, may want a cell/face-limited form for bounded variables (
  	// e.g., mass fractions) -- but no need for limited as max non-orthgonality < 70
-    default			Gauss linear corrected;
+    default			Gauss linear limited 1;
 };
 
 snGradSchemes
@@ -75,7 +75,7 @@ snGradSchemes
 	// not mentioned in Cocks et al.
 	// use a corrected scheme by default, since that was what was used for the
 	// laplacian
-	default			corrected;
+	default			limited 1;
 }
 
 interpolationSchemes
@@ -152,8 +152,8 @@ divSchemes
 		N2              limitedLinear01 1;
         h               limitedLinear 1;
     };
-    // from SANDIA combustion tutorial for K-epsilon
-    div(phi,K)          Gauss limitedLinear 1;
-    div(phi,k)          Gauss limitedLinear 1;
-    div(phi,epsilon)    Gauss limitedLinear 1;
+    // from wolf
+    div(phi,K)          Gauss linearUpwind default;
+    div(phi,k)          Gauss linearUpwind default;
+    div(phi,epsilon)    Gauss linearUpwind default;
 }
