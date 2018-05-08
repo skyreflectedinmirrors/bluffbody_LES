@@ -36,6 +36,7 @@ stopAt          endTime;
 endTime         0.5;
 
 // larger time step
+maxCo 			0.5;
 adjustTimeStep  yes;
 deltaT			1e-6;
 
