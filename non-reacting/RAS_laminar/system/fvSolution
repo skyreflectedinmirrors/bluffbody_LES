@@ -55,7 +55,7 @@ solvers
     U
     {
         type                coupled;
-        solver              PBiCCCG;
+        solver              PBiCGStab;
         preconditioner      DILU;
         tolerance           (1e-08 1e-08 1e-08);
         relTol              (0 0 0);
