@@ -34,7 +34,7 @@ Ubulk 		16.6;
 // specific heat ratio
 gamma		1.3999110177501861;
 // mass flow rate (kg/s)
-mdot 		0.2015948087465419;
+mdot 		0.19198781051276775;
 // inlet density (kg/m3)
 rho_inlet 	1.2047427868522074;
 // residence time, in seconds

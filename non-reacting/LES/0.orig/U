@@ -26,7 +26,7 @@ dimensions      [0 1 -1 0 0 0 0];
 #include                "initialValues";
 #include                "../system/meshDims";
 
-Ubulk_field             (0 0 #calc "-1 * $Ubulk");
+Ubulk_field             (0 0 0);
 internalField           uniform $Ubulk_field;
 
 boundaryField
@@ -53,8 +53,11 @@ boundaryField
     }
     inlet
     {
-        type            fixedValue;
-        value           uniform $Ubulk_field;
+        type            flowRateInletVelocity;
+        // mark as mass flowrate
+        massFlowRate    constant $mdot;
+        rho             rho;
+        rhoInlet        $rho_inlet;
     }
     outlet
     {

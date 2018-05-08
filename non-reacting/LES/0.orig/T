@@ -28,10 +28,8 @@ boundaryField
     inlet
     {
         // MVP2
-        type            totalTemperature;
-        T0              uniform $Tref;
-        value           uniform $Tref;
-        gamma           $gamma;
+        type            fixedValue;
+        value           uniform $Ts;
     }
     outlet
     {
