@@ -23,7 +23,7 @@ dimensions              [0 -2 -2 0 0 0 0];
 #include                "../system/meshDims";
 
 // from MVP2
-internalField           uniform "#calc $Ps / $rho_inlet";
+internalField           uniform #calc "$Ps / $rho_inlet";
 
 boundaryField
 {
@@ -56,7 +56,7 @@ boundaryField
         // MVP2 recommends transmissive BC w/ target P = 100kPa
         type            fixedValue;
         // gamma from inlet_calculator.py (no burning)
-        value 			uniform "#calc $Pref / $rho_inlet";
+        value 			uniform #calc "$Pref / $rho_inlet";
     }
 }
 
