@@ -29,12 +29,12 @@ boundaryField
     top_wall
     {
         type            calculated;
-        value           $internalField
+        value           $internalField;
     }
     bottom_wall
     {
         type            calculated;
-        value           $internalField
+        value           $internalField;
     }
     bluff_body
     {
