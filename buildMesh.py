@@ -337,13 +337,13 @@ def main(case, mesh_size, wall_normal, geometric_ratio, long_geometric_ratio):
                               geometric_ratio)
         graders.append(block0y)
         graders.append(blockGrader(0, 'z', L_LE_upstream, wall_normal, mesh_size,
-                                   geometric_ratio, grade_end=False))
+                                   long_geometric_ratio, grade_end=False))
         # block 1
         block1y = blockGrader(1, 'y', height / 2., wall_normal, mesh_size,
                               geometric_ratio)
         graders.append(block1y)
         graders.append(blockGrader(1, 'z', L_LE_upstream, wall_normal, mesh_size,
-                                   geometric_ratio, grade_end=False))
+                                   long_geometric_ratio, grade_end=False))
         # block 2
         block2y_short = blockGrader(2, 'y_short', D, wall_normal, mesh_size,
                                     geometric_ratio)
