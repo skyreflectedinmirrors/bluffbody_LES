@@ -19,21 +19,24 @@ dimensions      [1 -1 -1 0 0 0 0];
 
 // again from Sandia Flame-D case, set walls to alphatWallFunction w/ default prandtl # of 0.85
 
-internalField           uniform 1e-12;
+internalField           uniform 1e-6;
 
 boundaryField
 {
     top_wall
     {
-        type            zeroGradient;
+        type            calculated;
+        value           $internalField;
     }
     bottom_wall
     {
-        type            zeroGradient;
+        type            calculated;
+        value           $internalField;
     }
     bluff_body
     {
-        type            zeroGradient;
+        type            calculated;
+        value           $internalField;
     }
     left_wall
     {

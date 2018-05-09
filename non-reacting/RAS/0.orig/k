@@ -30,19 +30,19 @@ boundaryField
     {
         // use small k value at resolved wall
         type            fixedValue;
-        value           1e-12;
+        value           uniform 1e-12;
     }
     bottom_wall
     {
         // use small k value at resolved wall
         type            fixedValue;
-        value           1e-12;
+        value           uniform 1e-12;
     }
     bluff_body
     {
         // use small k value at resolved wall
         type            fixedValue;
-        value           1e-12;
+        value           uniform 1e-12;
     }
     left_wall
     {
@@ -56,7 +56,7 @@ boundaryField
     {
         // no turbulence at inlet
         type            fixedValue;
-        value           uniform 1e-12;
+        value           uniform 0;
     }
     outlet
     {

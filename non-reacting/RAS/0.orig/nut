@@ -19,7 +19,7 @@ FoamFile
 // and inlets / outlets as calculated
 
 dimensions              [0 2 -1 0 0 0 0];
-internalField           uniform 1e-6;
+internalField           uniform 0.1;
 
 boundaryField
 {
@@ -28,25 +28,27 @@ boundaryField
     // a wall treatment
     top_wall
     {
-        type            zeroGradient;
+        type            calculated;
+        value           $internalField
     }
     bottom_wall
     {
-        type            zeroGradient;
+        type            calculated;
+        value           $internalField
     }
     bluff_body
     {
-        type            zeroGradient;
+        type            calculated;
+        value           $internalField
     }
     inlet
     {
         type            fixedValue;
-        value           $internalField;
+        value           uniform 0;
     }
     outlet
     {
-        type            calculated;
-        value           $internalField;
+        type            zeroGradient;
     }
     left_wall
     {
