@@ -157,3 +157,10 @@ divSchemes
     div(phi,K)          Gauss limitedLinear 1;
     div(phi,k)          Gauss limitedLinear 1;
     div(phi,epsilon)    Gauss limitedLinear 1;
+    div(phi,omega)      Gauss limitedLinear 1;
+}
+
+wallDist
+{
+    method meshWave;
+}
