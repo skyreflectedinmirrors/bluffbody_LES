@@ -72,6 +72,11 @@ solvers
         tolerance           1e-8;
         minIter             5;
     };
+
+    "(Yi|h|k|epsilon)Final"
+    {
+        $Yi
+    };
 }
 
 PIMPLE
