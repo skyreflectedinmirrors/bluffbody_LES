@@ -24,10 +24,8 @@ class dimensions(object):
         self.height = 3 * self.D
         self.width = 2 * self.D
         self.Ubulk = 16.6 if not reacting else 17.6  # m/s
-        self.trailing_edge = -200 / 1000  # mm
-        self.z_offset = self.trailing_edge  # mm
-        self.y_offset = self.height / 2  # mm
-        self.z_flip = -1
+        self.z_offset = 0  # mm
+        self.y_offset = 0  # mm
 
 
 class dataset(object):
@@ -74,21 +72,13 @@ class dataset(object):
 
         dims = dimensions(reacting)
         for i, col in enumerate(self.columns):
-            if col in ['y', 'z']:
+            if col in ['x', 'y']:
                 # correct dimensions
                 offset = getattr(dims, '{}_offset'.format(col), 0)
                 self.data[:, i] -= offset
-                # flip axes?
-                flip = getattr(dims, '{}_flip'.format(col), 1)
-                self.data[:, i] *= flip
                 # normalize
                 self.data[:, i] /= dims.D
             elif col in ['Ux', 'Uy', 'Uz']:
-                axis = col[-1]
-                if 'fluct' not in self.name:
-                    # flip axes?
-                    flip = getattr(dims, '{}_flip'.format(axis), 1)
-                    self.data[:, i] *= flip
                 Ubulk = dims.Ubulk
                 # and normalize
                 self.data[:, i] /= Ubulk

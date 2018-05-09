@@ -29,14 +29,19 @@ def get_graph_columns(graph_name, **kwargs):
     Returns the expected filename, and column names for a given graph
     """
 
+    def get_index(vc):
+        return ['axis', 'Ux', 'Uy', 'Uz'].index(vc)
+
     if graph_name == 'meanAxialVelocity':
-        return 'line_U.xy', ('z', 'Uz'), (0, 3)
+        vc = 'Ux'
+        axis = 'x'
     elif 'axialDeficitPlot' in graph_name:
         # translate experimental component
         vc = kwargs.pop('velocity_component')
         vc = 'U{}'.format(vc)
-        index = ['axis', 'Ux', 'Uy', 'Uz'].index(vc)
-        return 'line_U.xy', ('y', vc), (0, index)
+        axis = 'y'
+
+    return 'line_U.xy', (axis, vc), (0, get_index(vc))
 
 
 class integration_averager(object):

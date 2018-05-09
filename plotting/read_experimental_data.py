@@ -74,7 +74,7 @@ def read_experimental_data(graph_name, reacting=False, **kwargs):
     # translate our coordinate system into experimental
     point = kwargs.pop('point', '')
     vc = kwargs.pop('velocity_component', '')
-    vc = 'U' if vc == 'z' else 'V'
+    vc = 'U' if vc == 'x' else 'V'
     file = file.format(vc, point)
 
     return read_file(file, reacting)

@@ -10,7 +10,7 @@ graph_name = 'axialDeficitPlot_{point}'
 
 def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both'):
     if velocity_component == 'both':
-        velocity_component = ['z', 'y']
+        velocity_component = ['x', 'y']
     else:
         velocity_component = [velocity_component]
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         'along the centerline of the Volvo bluff-body experiment, as compared '
         'to experimental data')
     parser.add_argument('-v', '--velocity_component',
-                        choices=['z', 'y', 'both'],
+                        choices=['x', 'y', 'both'],
                         help='The velocity component to plot',
                         default='both',
                         required=False)
