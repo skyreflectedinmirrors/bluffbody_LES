@@ -12,3 +12,6 @@ input to the regular RANS simulation
 
 You will want to run at a fairly large time-step (1e-5s) for a long while to get
 rid of the transients
+
+After ~ 0.01s the flow will change into nicely developed laminar case, and
+we may proceed to the RAS case
