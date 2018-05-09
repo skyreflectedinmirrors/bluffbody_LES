@@ -14,8 +14,8 @@ Description
 #include   "meshDims"
 
 // axial velocity varying along y-directio
-start   ($calc "0.375 * $D"      0          0);
-end     ($calc "0.375 * $D"      $height    0);
+start   (#calc "0.375 * $D"      0          0);
+end     (#calc "0.375 * $D"      $height    0);
 fields  (U);
 
 // Sampling and I/O settings
