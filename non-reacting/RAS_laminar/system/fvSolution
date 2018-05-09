@@ -65,28 +65,12 @@ solvers
         $U
     }
 
-    "(O2|N2|h|k|epsilon)"
+    "(Yi|h|k|epsilon)"
     {
         solver              PBiCGStab;
         preconditioner      DILU;
         tolerance           1e-8;
-        relTol              0.1;
         minIter             5;
-    };
-
-    "(O2|N2|h|k|epsilon)Final"
-    {
-        $O2
-        relTol              0;
-    };
-
-    // for non-reacting, other mass fractions are zero
-    Yi
-    {
-        solver              PBiCGStab;
-        preconditioner      DILU;
-        tolerance           1e-1;
-        relTol              0;
     };
 }
 
