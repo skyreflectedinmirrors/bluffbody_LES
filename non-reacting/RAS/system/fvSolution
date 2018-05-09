@@ -65,18 +65,19 @@ solvers
         $U
     }
 
-    "(O2|N2|h|k|epsilon)"
+    "(h|k|epsilon)"
     {
         solver              PBiCGStab;
         preconditioner      DILU;
-        tolerance           1e-8;
+        tolerance           1e-6;
         relTol              0.1;
         minIter             3;
     };
 
-    "(O2|N2|h|k|epsilon)Final"
+    "(h|k|epsilon)Final"
     {
         $O2
+        tolerance           1e-8;
         relTol              0;
     };
 
@@ -85,8 +86,9 @@ solvers
     {
         solver              PBiCGStab;
         preconditioner      DILU;
-        tolerance           1e-1;
+        tolerance           1e-8;
         relTol              0;
+        minIter             3;
     };
 }
 
