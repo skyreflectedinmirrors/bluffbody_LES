@@ -29,20 +29,21 @@ convertToMeters 0.001;
 mesh_size      ${mesh_size}; //mm
 
 // define bluff body dimension
-D              40.0; // mm
-half_D         #calc "$D / 2.0";   //mm
-two_D          #calc "2.0 * $D";   //mm
-three_D        #calc "3.0 * $D";   //mm
-three_halves_D #calc "1.5 * $D"; //mm
+D              0.04; // m
+half_D         #calc "$D / 2.0";   //m
+two_D          #calc "2.0 * $D";   //m
+three_D        #calc "3.0 * $D";   //m
+three_halves_D #calc "1.5 * $D";   //m
 
 // and channel dimensions
 width          $two_D;
 height         $three_D;
 
 // total channel length
-// up/down-stream of bluff-body (from trailing edge)
-L_TE_upstream       200.0; // mm
-L_TE_downstream     682.0; // mm
-L_total             882.0; // mm
+// up-stream of bluff-body (from trailing edge)
+L_TE_upstream       #calc "-1 * 0.2"; // mm
+// down-stream of bluff-body (from trailing edge)
+L_TE_downstream     0.682; // mm
+L_total             0.882; // mm
 BB_height           #calc "$D * sqrt(3.0) / 2.0"; // mm
-L_LE_upstream       #calc "$L_TE_upstream - $BB_height"; //mm
+L_LE_upstream       #calc "-1 * $BB_height"; //mm

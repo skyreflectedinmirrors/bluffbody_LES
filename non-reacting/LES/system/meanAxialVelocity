@@ -14,8 +14,8 @@ Description
 #include   "meshDims"
 
 // mean axial velocity along midline
-start   (#calc "0.5 * $width * $convertToMeters"	#calc "0.5 * $height * $convertToMeters"	#calc "-1 * $L_TE_upstream * $convertToMeters");
-end     (#calc "0.5 * $width * $convertToMeters"	#calc "0.5 * $height * $convertToMeters"	#calc "-1 * $L_total * $convertToMeters");
+start   (0                     0          0);
+end     ($L_TE_downstream      0          0);
 fields  (U);
 
 // Sampling and I/O settings
