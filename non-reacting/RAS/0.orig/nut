@@ -39,7 +39,7 @@ boundaryField
     bluff_body
     {
         type            calculated;
-        value           $internalField
+        value           $internalField;
     }
     inlet
     {
