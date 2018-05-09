@@ -56,7 +56,7 @@ boundaryField
     {
         // no turbulence at inlet
         type            fixedValue;
-        value           uniform 0;
+        value           uniform 1e-6;
     }
     outlet
     {

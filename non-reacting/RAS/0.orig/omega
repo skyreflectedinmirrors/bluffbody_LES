@@ -15,7 +15,7 @@ FoamFile
 }
 
 #include                "ransInitialValues";
-internalField           uniform 0;
+internalField           uniform 1e-6;
 dimensions              [0 0 -1 0 0 0 0];
 
 boundaryField
@@ -23,17 +23,17 @@ boundaryField
     top_wall
     {
         type            omegaWallFunction;
-        value           uniform 1e-12;
+        value           uniform 1e-6;
     }
     bottom_wall
     {
         type            omegaWallFunction;
-        value           uniform 1e-12;
+        value           uniform 1e-6;
     }
     bluff_body
     {
         type            omegaWallFunction;
-        value           uniform 1e-12;
+        value           uniform 1e-6;
     }
     inlet
     {
