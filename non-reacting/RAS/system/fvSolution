@@ -65,7 +65,7 @@ solvers
         $U
     }
 
-    "(h|k|epsilon)"
+    "(h|k|epsilon|omega)"
     {
         solver              PBiCGStab;
         preconditioner      DILU;
@@ -74,7 +74,7 @@ solvers
         minIter             3;
     };
 
-    "(h|k|epsilon)Final"
+    "(h|k|epsilon|omega)Final"
     {
         $h
         tolerance           1e-8;
