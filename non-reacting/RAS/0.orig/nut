@@ -28,22 +28,19 @@ boundaryField
     // a wall treatment
     top_wall
     {
-        type            calculated;
-        value           $internalField;
+        type            zeroGradient;
     }
     bottom_wall
     {
-        type            calculated;
-        value           $internalField;
+        type            zeroGradient;
     }
     bluff_body
     {
-        type            calculated;
-        value           $internalField;
+        type            zeroGradient;
     }
     inlet
     {
-        type            calculated;
+        type            fixedValue;
         value           $internalField;
     }
     outlet
