@@ -26,7 +26,7 @@ Nick Curtis - 04/10/2018
 convertToMeters 0.001;
 
 // mesh size
-mesh_size      ${mesh_size}; //mm
+mesh_size      4; //mm
 
 // define bluff body dimension
 D              0.04; // m
