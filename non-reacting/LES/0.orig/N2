@@ -46,11 +46,11 @@ boundaryField
     }
     left_wall
     {
-        type            symmetryPlane;
+        type            symmetry;
     }
     right_wall
     {
-        type            symmetryPlane;
+        type            symmetry;
     }
 }
 
