@@ -28,18 +28,21 @@ boundaryField
     // a wall treatment
     top_wall
     {
-        type            kqRWallFunction;
-        value           $internalField;
+        // use small k value at resolved wall
+        type            fixedValue;
+        value           1e-12;
     }
     bottom_wall
     {
-        type            kqRWallFunction;
-        value           $internalField;
+        // use small k value at resolved wall
+        type            fixedValue;
+        value           1e-12;
     }
     bluff_body
     {
-        type            kqRWallFunction;
-        value           $internalField;
+        // use small k value at resolved wall
+        type            fixedValue;
+        value           1e-12;
     }
     left_wall
     {

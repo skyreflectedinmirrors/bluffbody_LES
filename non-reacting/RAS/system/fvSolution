@@ -76,7 +76,7 @@ solvers
 
     "(h|k|epsilon)Final"
     {
-        $O2
+        $h
         tolerance           1e-8;
         relTol              0;
     };

@@ -28,18 +28,15 @@ boundaryField
     // a wall treatment
     top_wall
     {
-        type            nutkWallFunction;
-        value           $internalField;
+        type            zeroGradient;
     }
     bottom_wall
     {
-        type            nutkWallFunction;
-        value           $internalField;
+        type            zeroGradient
     }
     bluff_body
     {
-        type            nutkWallFunction;
-        value           $internalField;
+        type            zeroGradient
     }
     inlet
     {

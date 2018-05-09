@@ -25,21 +25,15 @@ boundaryField
 {
     top_wall
     {
-        type            compressible::alphatWallFunction;
-        Prt             0.85;
-        value           $internalField;
+        type            zeroGradient;
     }
     bottom_wall
     {
-        type            compressible::alphatWallFunction;
-        Prt             0.85;
-        value           $internalField;
+        type            zeroGradient;
     }
     bluff_body
     {
-        type            compressible::alphatWallFunction;
-        Prt             0.85;
-        value           $internalField;
+        type            zeroGradient;
     }
     left_wall
     {
