@@ -23,7 +23,7 @@ dimensions              [1 -1 -2 0 0 0 0];
 #include                "../system/meshDims";
 
 // from MVP2
-internalField           uniform $Pref;
+internalField           uniform #calc "1.05 * $Pref";
 
 boundaryField
 {
