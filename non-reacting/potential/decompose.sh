@@ -1,1 +1,1 @@
-cp -r 0.orig 0
+cp -rv 0.orig/* 0
