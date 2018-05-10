@@ -1,1 +1,1 @@
-potentialFoam -writePhi
+potentialFoam -writePhi -writep
