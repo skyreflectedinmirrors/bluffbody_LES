@@ -62,26 +62,8 @@ def P_static(Ts):
     return P0 / ((T0 / Ts) ** (gamma() / (gamma() - 1)))
 
 
-def mdot_deviation(U_bulk):
-    """
-    Takes a test velocity, and from it computes the static pressure, temperature
-    and mass flow rate.
+U_bulk = 16.6 if not reacting else 17.2
 
-    Returns the deviation in mass flow rate from the specified temperature
-    """
-
-    Ts = T_static(U_bulk)
-    Ps = P_static(Ts)
-
-    # set gas state
-    gas.TP = Ts, Ps
-    gas.set_equivalence_ratio(phi, 'C3H8', 'O2:1.0, N2:3.76')
-
-    # now we have the density, return the calculate mass flow rate
-    return gas.density * U_bulk * area - mdot
-
-
-U_bulk = fsolve(mdot_deviation, 16.6 if not reacting else 17.2)
 print('U_bulk: {} m/s'.format(U_bulk))
 
 Ts = T_static(U_bulk)
@@ -98,7 +80,7 @@ gas.set_equivalence_ratio(phi, 'C3H8', 'O2:1.0, N2:3.76')
 print('Inlet mass fractions:')
 print(gas[['C3H8', 'O2', 'N2']].mass_fraction_dict())
 
-print('Inlet density: {} (kg/m^3)'.format(gas.density))
+print('Inlet density: {} (kg/m^3)'.format(gas.density_mass))
 
 # get velocity
 print('Inlet gamma: {}'.format(gamma()))
@@ -108,6 +90,8 @@ print('Speed of sound: {} m/s'.format(a))
 print('Inlet mach: ', U_bulk / a)
 
 # Reynolds #
-print('Re: {}'.format((gas.density * U_bulk * D) / gas.viscosity))
+print('Re: {}'.format((gas.density_mass * U_bulk * D) / gas.viscosity))
+print('mdot: {} (kg/s)'.format(gas.density_mass * U_bulk * area))
+
 
 print(gas())

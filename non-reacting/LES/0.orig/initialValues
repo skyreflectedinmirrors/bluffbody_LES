@@ -30,10 +30,10 @@ Tref        288;
 // inlet velocity
 Ubulk 		16.6;
 // specific heat ratio
-gamma		1.4;
+gamma		1.3999110177501861;
 // mass flow rate (kg/s)
-mdot 		0.2079;
+mdot 		0.19198781051276775;
 // inlet density (kg/m3)
-rho_inlet 	1.2031632129581173;
+rho_inlet 	1.2047427868522074;
 // residence time, in seconds
 t_res		#calc "($L_total * $convertToMeters) / $Ubulk";
