@@ -60,7 +60,7 @@ boundaryField
         fieldInf        $Pref;
         // a measure of how far away the far-field condition should be
         // this corresponds to the downstream of the outlet
-        lInf            50;
+        lInf            1;
         value           $internalField;
     }
 }
