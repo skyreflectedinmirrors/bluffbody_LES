@@ -23,7 +23,7 @@ dimensions              [1 -1 -2 0 0 0 0];
 #include                "../system/meshDims";
 
 // from MVP2
-internalField           uniform #calc "1.05 * $Pref";
+internalField           uniform #calc "1.005 * $Pref";
 
 boundaryField
 {
@@ -58,9 +58,10 @@ boundaryField
         // gamma from inlet_calculator.py (no burning)
         gamma           $gamma;
         fieldInf        $Pref;
+        rho             rho;
         // a measure of how far away the far-field condition should be
         // this corresponds to the downstream of the outlet
-        lInf            1;
+        lInf            #calc "$L_TE_downstream * convertToMeters;
         value           $internalField;
     }
 }
