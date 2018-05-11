@@ -36,9 +36,9 @@ stopAt          endTime;
 endTime         0.5;
 
 // larger time step
-adjustTimeStep  yes;
-deltaT			1e-6;
-maxCo			0.5;
+adjustTimeStep  no;
+deltaT          1e-6;
+maxCo           0.5;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
 writeControl    adjustableRunTime;
@@ -53,10 +53,10 @@ runTimeModifiable true;
 
 functions
 {
-	#includeFunc 	meanAxialVelocity
-	#includeFunc    axialDeficitPlot_0p375
-	#includeFunc    axialDeficitPlot_0p95
-	#includeFunc    axialDeficitPlot_1p53
-	#includeFunc    axialDeficitPlot_3p75
-	#includeFunc    axialDeficitPlot_9p4
+    #includeFunc    meanAxialVelocity
+    #includeFunc    axialDeficitPlot_0p375
+    #includeFunc    axialDeficitPlot_0p95
+    #includeFunc    axialDeficitPlot_1p53
+    #includeFunc    axialDeficitPlot_3p75
+    #includeFunc    axialDeficitPlot_9p4
 }
