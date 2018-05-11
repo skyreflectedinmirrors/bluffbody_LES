@@ -51,8 +51,9 @@ class grading(object):
 
     def __repr__(self):
         """ Returns the subgrading string """
-        return '({})'.format(' '.join(str(x) for x in (
-            self.distance, self.n_cells, self.ratio)))
+        return dedent("""distance: {}
+        n_cells: {}
+        ratio: {:.5f}""").format(self.distance, self.n_cells, self.ratio)
 
     def copy(self):
         return self.copy_with()
@@ -65,7 +66,7 @@ class grading(object):
 
 class blockGrader(object):
     def __init__(self, number, axis, dim, start_size, mesh_size, geometric_ratio,
-                 grade_start=True, grade_end=True):
+                 grade_start=True, grade_end=True, requires_interior=True):
         """
         Parameters
         ----------
@@ -86,15 +87,15 @@ class blockGrader(object):
             If true, grade at the start of this axis
         grade_end: bool [True]
             If true, grade at the end of this axis
+        requires_interior: bool [True]
+            if True, there must be at least one cell between gradings of the
+            desired mesh size
         """
         self.num = number
         self.axis = axis
         self.dim = dim
         self.start_size = start_size
         self.mesh_size = mesh_size
-        # OpenFOAM treats the expansion ratio as the ratio of the largest cell /
-        # to smallest cell,
-        self.expansion_ratio = self.mesh_size / self.start_size
 
         # the geometric ratio is the cell-growth between any two neighbors
         self.geometric_ratio = geometric_ratio
@@ -104,6 +105,14 @@ class blockGrader(object):
         self.grade_end = grade_end
         self.children = []
         self.owner = None
+        self.requires_interior = requires_interior
+        self._backup = vars(self).copy()
+
+    @property
+    def expansion_ratio(self):
+        # OpenFOAM treats the expansion ratio as the ratio of the largest cell /
+        # to smallest cell,
+        return self.mesh_size / self.start_size
 
     def add_child(self, other):
         assert other.owner is None
@@ -148,7 +157,15 @@ class blockGrader(object):
 
         if not len(self.gradings):
             self.__call__()
-        return '\n'.join(str(grad) for grad in self.gradings)
+        return dedent("""
+        block: {}
+            axis: {}
+            graders:
+        {}
+        """).format(
+            self.num,
+            self.axis,
+            '\n'.join([' ' * 8 + str(grad) for grad in self.gradings]))
 
     def get_subst_dict(self):
         """
@@ -159,11 +176,17 @@ class blockGrader(object):
         if self.owner:
             n_cells = self.owner.n_cells
 
-        return {self.name: self,
+        gradings = '\n'.join(
+            '({})'.format(' '.join(str(x) for x in (
+                grad.distance, grad.n_cells, grad.ratio)))
+            for grad in self.gradings)
+
+        return {self.name: gradings,
                 self.cell_name: n_cells}
 
     def __check_interior(self, interior):
-        if interior < self.mesh_size:
+        if (self.requires_interior and interior < self.mesh_size) or \
+                interior < 0:
             raise Exception(
                 'blockGrading {} along axis {} '
                 'with dimension ({}mm) cannot be implemented -- grading '
@@ -173,49 +196,96 @@ class blockGrader(object):
                 ''.format(self.num, self.axis, self.dim, self.start_size,
                           self.geometric_ratio, interior, self.mesh_size))
 
-    def __call__(self, repopulate=False):
+    def __call__(self, repopulate=False, use_interior=True):
         if len(self.gradings) and not repopulate:
             # already populated
             return
         elif repopulate:
             self.gradings = []
+            for var, val in self._backup.items():
+                setattr(self, var, val)
 
-        # figure out how many cells are required for this progression
-        n_steps = self.solve_geo_progression()
-        # and the distance taken
-        geo_dist = self.solve_geo_series(n_steps)
+        if use_interior:
 
-        expansion = grading(geo_dist, n_steps, self.expansion_ratio)
+            # figure out how many cells are required for this progression
+            n_steps = self.solve_geo_progression()
+            # and the distance taken
+            geo_dist = self.solve_geo_series(n_steps)
 
-        # count gradings
-        num_gradings = 0
-        if self.grade_start:
-            num_gradings += 1
-        if self.grade_end:
-            num_gradings += 1
+            expansion = grading(geo_dist, n_steps, self.expansion_ratio)
 
-        # create dummy interior grading
-        interior = self.dim - num_gradings * geo_dist
-        self.__check_interior(interior)
-        interior_n_cells = int(np.ceil(interior / self.last_geo_size(n_steps)))
-        interior = grading(interior, interior_n_cells, 1.0)
+            # count gradings
+            num_gradings = 0
+            if self.grade_start:
+                num_gradings += 1
+            if self.grade_end:
+                num_gradings += 1
+            assert num_gradings
 
-        # now add gradings
+            # create dummy interior grading
+            interior = self.dim - num_gradings * geo_dist
+            self.__check_interior(interior)
+            if interior < self.mesh_size:
+                return self(repopulate=True, use_interior=False)
+            else:
+                interior_n_cells = int(np.ceil(interior / self.last_geo_size(
+                    n_steps)))
+            interior = grading(interior, interior_n_cells, 1.0)
 
-        # start
-        if self.grade_start:
-            self.gradings.append(expansion.copy())
-        # interior #1
-        self.gradings.append(interior.copy())
-        # and final contraction
-        if self.grade_end:
-            self.gradings.append(expansion.copy_with(contraction=True))
+            # now add gradings
+
+            # start
+            if self.grade_start:
+                self.gradings.append(expansion.copy())
+            # interior #1
+            if interior_n_cells > 0:
+                self.gradings.append(interior.copy())
+            # and final contraction
+            if self.grade_end:
+                self.gradings.append(expansion.copy_with(contraction=True))
+
+        else:
+            # distance is simply half / the whole distance
+            num_gradings = 0
+            if self.grade_start:
+                num_gradings += 1
+            if self.grade_end:
+                num_gradings += 1
+            assert num_gradings
+            geo_dist = self.dim / num_gradings
+
+            # here we want to keep the geometric ratio ~ constant, hence
+            # grab the number of steps
+            n_steps = self.solve_geo_progression(allow_adjust=False) - 1
+            # then the last cell size
+            last_cell = self.last_geo_size(n_steps, allow_deviation=True)
+            # from the last cell size, get the actual geometric ratio
+            ratio = self.get_geometric_ratio(n_steps, mesh_size=last_cell)
+            # and finally calculate the actual number of steps
+            n_steps = int(self.num_expansion_steps(geometric_ratio=ratio,
+                                                   mesh_size=last_cell))
+            print('Adjusting interior mesh size of block {} in axis {} to {} (mm)'
+                  .format(self.num, self.axis, last_cell))
+
+            # get expansion ratio
+            self.mesh_size = last_cell
+            self.geometric_ratio = ratio
+            expansion = grading(geo_dist, n_steps, self.expansion_ratio)
+
+            # now add gradings
+
+            # start
+            if self.grade_start:
+                self.gradings.append(expansion.copy())
+            # and final contraction
+            if self.grade_end:
+                self.gradings.append(expansion.copy_with(contraction=True))
 
         # consistency check
         assert np.isclose(np.sum(grad.distance for grad in self.gradings),
                           self.dim)
 
-    def solve_geo_progression(self):
+    def solve_geo_progression(self, allow_adjust=True):
         """
         Returns the number of cells required to get from a starting mesh size of
         :param:`start_size` to the final size of :param:`mesh_size:`, using the given
@@ -235,6 +305,8 @@ class blockGrader(object):
             # but this isn't exact, so we adjust the expansion ratio such that
             # we keep ~ the same # of steps
             n_steps = int(np.ceil(n_steps))
+            if not allow_adjust:
+                return int(n_steps)
             # get new ratio
             geometric_ratio = self.get_geometric_ratio(n_steps)
             # sanity check
@@ -262,32 +334,36 @@ class blockGrader(object):
         return self.start_size * (1. - np.power(self.geometric_ratio, n_steps)) / (
             1. - self.geometric_ratio)
 
-    def last_geo_size(self, n_steps):
+    def last_geo_size(self, n_steps, allow_deviation=False):
         """
         Returns the size of the last cell at the end of the geometric progression
         """
 
-        assert np.isclose(self.start_size * np.power(self.geometric_ratio, n_steps),
-                          self.mesh_size)
+        val = self.start_size * np.power(self.geometric_ratio, n_steps)
+        if allow_deviation:
+            return val
+        assert np.isclose(val, self.mesh_size)
         return self.mesh_size
 
-    def num_expansion_steps(self, geometric_ratio=None):
+    def num_expansion_steps(self, geometric_ratio=None, mesh_size=None):
         """
         Returns the number of steps required for a given geometric ratio to reach
         the mesh size from the start_size
         """
 
-        if geometric_ratio is None:
-            geometric_ratio = self.geometric_ratio
-        return np.log(self.mesh_size / self.start_size) / np.log(geometric_ratio)
+        mesh_size = self.mesh_size if mesh_size is None else mesh_size
+        geometric_ratio = self.geometric_ratio if geometric_ratio is None else \
+            geometric_ratio
+        return np.log(mesh_size / self.start_size) / np.log(geometric_ratio)
 
-    def get_geometric_ratio(self, n_steps):
+    def get_geometric_ratio(self, n_steps, mesh_size=None):
         """
         Returns the geometric ratio required to reach the mesh size from the start
         size for the given number of steps
         """
 
-        return np.power((self.mesh_size / self.start_size), 1. / (n_steps))
+        mesh_size = self.mesh_size if mesh_size is None else mesh_size
+        return np.power((mesh_size / self.start_size), 1. / (n_steps))
 
 
 def get_src(case, filename):
@@ -319,7 +395,8 @@ def subs_at_indent(template_str, **kwargs):
             for key, value in kwargs.items()})
 
 
-def main(case, mesh_size, wall_normal, geometric_ratio, long_geometric_ratio):
+def main(case, mesh_size, wall_normal, geometric_ratio, long_geometric_ratio,
+         upstream_y_expansion_ratio, upstream_z_expansion_ratio):
     # populate mesh dims
     with open(join(case, 'system', 'meshDims'), 'w') as file:
         file.write(get_template(case, 'meshDims').safe_substitute(
@@ -334,35 +411,35 @@ def main(case, mesh_size, wall_normal, geometric_ratio, long_geometric_ratio):
         graders = []
         # block 0
         block0y = blockGrader(0, 'y', height / 2., wall_normal, mesh_size,
-                              geometric_ratio)
+                              upstream_y_expansion_ratio)
         graders.append(block0y)
         graders.append(blockGrader(0, 'z', L_LE_upstream, wall_normal, mesh_size,
-                                   long_geometric_ratio, grade_end=False))
+                                   upstream_z_expansion_ratio, grade_end=False))
         # block 1
         block1y = blockGrader(1, 'y', height / 2., wall_normal, mesh_size,
-                              geometric_ratio)
+                              upstream_y_expansion_ratio)
         graders.append(block1y)
         graders.append(blockGrader(1, 'z', L_LE_upstream, wall_normal, mesh_size,
-                                   long_geometric_ratio, grade_end=False))
+                                   upstream_z_expansion_ratio, grade_end=False))
         # block 2
         block2y_short = blockGrader(2, 'y_short', D, wall_normal, mesh_size,
                                     geometric_ratio)
         block2y_long = blockGrader(2, 'y_long', D * 1.5, wall_normal, mesh_size,
-                                   geometric_ratio)
+                                   upstream_y_expansion_ratio)
         graders.append(block2y_short)
         graders.append(block2y_long)
         graders.append(blockGrader(2, 'z', BB_height, wall_normal, mesh_size,
-                                   geometric_ratio))
+                                   geometric_ratio, requires_interior=False))
 
         # block 3
         block3y_short = blockGrader(3, 'y_short', D, wall_normal, mesh_size,
                                     geometric_ratio)
         block3y_long = blockGrader(3, 'y_long', D * 1.5, wall_normal, mesh_size,
-                                   geometric_ratio)
+                                   upstream_y_expansion_ratio)
         graders.append(block3y_short)
         graders.append(block3y_long)
         graders.append(blockGrader(3, 'z', BB_height, wall_normal, mesh_size,
-                                   geometric_ratio))
+                                   geometric_ratio, requires_interior=False))
 
         # block 4
         block4y = blockGrader(4, 'y', D, wall_normal, mesh_size,
@@ -389,6 +466,7 @@ def main(case, mesh_size, wall_normal, geometric_ratio, long_geometric_ratio):
         block3y_short.add_children([block3y_long, block1y, block6y])
 
         for grader in graders:
+            print(grader)
             mydict.update(grader.get_subst_dict())
         file.write(subs_at_indent(src, **mydict))
 
@@ -414,13 +492,22 @@ if __name__ == '__main__':
     parser.add_argument('-g', '--geometric_ratio',
                         type=float,
                         default=1.15,
-                        help='The geometric-ratio of cells size increases.'
-                             'Incompatible with expansion_distance option.')
+                        help='The geometric-ratio of cells size increases.')
+    parser.add_argument('-uy', '--upstream_y_expansion_ratio',
+                        type=float,
+                        default=1.15,
+                        help='The geometric-ratio of cells size increases in the '
+                             'y-direction in the inlet.')
+    parser.add_argument('-uz', '--upstream_z_expansion_ratio',
+                        type=float,
+                        default=1.15,
+                        help='The geometric-ratio of cells size increases in the '
+                             'z-direction in the inlet.')
     parser.add_argument('-l', '--long_geometric_ratio',
                         type=float,
                         default=1.05,
-                        help='The geometric-ratio of (slow) cell size increases.'
-                             'Incompatible with expansion_distance option.')
+                        help='The geometric-ratio of (slow) cell size increases.')
     args = parser.parse_args()
     main(args.case, args.mesh_size, args.wall_normal, args.geometric_ratio,
-         args.long_geometric_ratio)
+         args.long_geometric_ratio, args.upstream_y_expansion_ratio,
+         args.upstream_z_expansion_ratio)
