@@ -61,11 +61,7 @@ boundaryField
         // this outlet condition along with a wave transmitting pressure-outlet
         // appears to correct the crazy-reflections we've been seeing
         // essentially, it turns off inflow at the outlet
-        type            pressureDirectedInletOutletVelocity;
-        phi             phi;
-        rho             rho;
-        inletDirection  uniform (0 0 1);
-        value           uniform (0 0 0);
+        type            zeroGradient;
     }
 }
 
