@@ -10,7 +10,7 @@ Mesh Creation
 
 For both RANS & Potential, the mesh is created with:
 
->python buildMesh.py -c non-reacting/potential/ -m 4 -w 0.85 -g 1.2 -l 1.1 -uy 1.15 -uz 1.2
+>python buildMesh.py -c non-reacting/CASE/ -m 4 -w 0.85 -g 1.2 -l 1.1 -uy 1.15 -uz 1.2
 
 Which corresponds to:
 -a 4mm mesh
