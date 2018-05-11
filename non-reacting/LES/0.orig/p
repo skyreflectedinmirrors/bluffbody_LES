@@ -61,7 +61,7 @@ boundaryField
         rho             rho;
         // a measure of how far away the far-field condition should be
         // this corresponds to the downstream of the outlet
-        lInf            #calc "$L_TE_downstream * convertToMeters"
+        lInf            #calc "$L_TE_downstream * $convertToMeters";
         value           $internalField;
     }
 }
