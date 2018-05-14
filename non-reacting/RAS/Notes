@@ -78,15 +78,40 @@ Most diffusive / stable:
         - laplacian scheme -> "Gauss linear limited 0.5;"
         - snGradSchems -> "limited 0.5;"
     - this will be run in the RAS folder using a fixed time-step until 0.1s
+    Result:
+        - nice smooth U, T & p fields, no breakup
+        - shedding begins ~0.025s
 
 Less diffusive / stable, but more accurate:
         - gradscheme -> "cellLimited Gauss linear 0.5;"
         - laplacian scheme -> "Gauss linear corrected;"
         - snGradSchems -> "corrected;"
     - this will be run in RAS2 using a fixed time-step until 0.1s
+    Result:
+        - broken up pressure / temperature field, affects upstream velocity
+        - striations beging and intensify right around breakup
 
 Most accurate:
         - gradscheme -> "cellLimited Gauss linear 1.0;"
         - laplacian scheme -> "Gauss linear corrected;"
         - snGradSchems -> "corrected;"
     - this will be run in RAS3 using a fixed time-step until 0.1s
+    Result:
+        - good pressure / temperature field
+        - some minor striations upstream of BB, but don't seem to be affecting U-solution
+          or being unstable
+
+Conclusion, round 1:
+    - We should run RAS3 and RAS until 0.5s
+    - if RAS3 is stable for the whole time, we might use it
+    - Compare the velocity results obtained by both solutions to Experimental and decide from there.
+
+Conclusion, round 2:
+    - Both RAS & RAS3 run until ~0.35s
+    - both have good looking temperature / pressure fields
+    - still some upstream striations in RAS3 in p / T, particularly in high aspect ratio cells in the inlet to the BB channel
+    - RAS3 does a bit better on mean plots (axial / velocity deficits), and has similar fluctuations to
+
+Results
+-------
+    - Use RAS3 scheme as initial mapping for LES
