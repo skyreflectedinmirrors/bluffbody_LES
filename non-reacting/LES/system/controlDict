@@ -34,18 +34,13 @@ stopAt          endTime;
 
 // ~ equivalent to 10 residence times
 endTime         0.5;
-
-// ~ equivalent to 10 residence times
-// larger time step
-adjustTimeStep  yes;
-maxCo			0.5;
 // non-reacting time-step from Cocks et al.
 deltaT          1e-6;
 
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
 writeControl    adjustableRunTime;
-writeInterval   5e-4;
+writeInterval   5e-3;
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;
@@ -56,10 +51,10 @@ runTimeModifiable true;
 
 functions
 {
-	#includeFunc 	meanAxialVelocity
-	#includeFunc    axialDeficitPlot_0p375
-	#includeFunc    axialDeficitPlot_0p95
-	#includeFunc    axialDeficitPlot_1p53
-	#includeFunc    axialDeficitPlot_3p75
-	#includeFunc    axialDeficitPlot_9p4
+    #includeFunc    meanAxialVelocity
+    #includeFunc    axialDeficitPlot_0p375
+    #includeFunc    axialDeficitPlot_0p95
+    #includeFunc    axialDeficitPlot_1p53
+    #includeFunc    axialDeficitPlot_3p75
+    #includeFunc    axialDeficitPlot_9p4
 }
