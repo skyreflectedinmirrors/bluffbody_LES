@@ -9,17 +9,31 @@ from common import get_default_parsing_args, make_dir
 graph_name = 'meanAxialVelocity'
 
 
-def plot(case, reacting, t_start=0, t_end=-1):
+def process(caseno, case, reacting, t_start=0, t_end=-1, multiple_cases=False):
     make_dir(case)
-    expdata = read_experimental_data(graph_name, reacting)
+    if not caseno:
+        expdata = read_experimental_data(graph_name, reacting)
     simdata = read_simulation_data(case, graph_name, reacting, t_start, t_end)
     # normalize / convert simulation data
     simdata.normalize(reacting)
 
-    plt.scatter(expdata[:, 0], expdata[:, 1], label=expdata.name, color='r')
+    if not caseno:
+        plt.scatter(expdata[:, 0], expdata[:, 1], label=expdata.name, color='r')
+
+    label = simdata.name
+    if multiple_cases:
+        label += ' ({})'.format(case)
+
     plt.plot(simdata[:, 0], simdata[:, 1], label=simdata.name)
-    plt.xlabel(expdata.columns[0])
-    plt.ylabel(expdata.columns[1])
+    if not caseno:
+        plt.xlabel(expdata.columns[0])
+        plt.ylabel(expdata.columns[1])
+
+
+def plot(case, reacting, t_start=0, t_end=-1):
+    for caseno, casename in enumerate(case):
+        process(caseno, casename, reacting, t_start, t_end, len(case) > 1)
+
     plt.legend(loc=0)
     plt.savefig(pjoin(case, 'mean_axial_velocity.pdf'))
     plt.close()

@@ -9,49 +9,64 @@ sim_name = 'axialDeficitPlot_{point}'
 exp_name = 'fluctuationVelocity'
 
 
+def process(caseno, case, reacting, point, t_start=0, t_end=-1,
+            velocity_component=None, multiple_cases=False):
+    name = sim_name.format(point=point)
+    # first read experimental data
+    if not caseno:
+        expdata = read_experimental_data(exp_name, reacting,
+                                         velocity_component=velocity_component,
+                                         point=point)
+    # read baseline averaged data
+    baseline = read_simulation_data(case, name, reacting, t_start,
+                                    t_end, velocity_component=velocity_component)
+    # read fluctuation data
+    fluct = read_simulation_data(case, name, reacting, t_start,
+                                 t_end, velocity_component=velocity_component,
+                                 collection_type='fluct',
+                                 collection_method='rms',
+                                 baseline=baseline)
+    # normalize / convert simulation data
+    fluct.normalize(reacting)
+
+    if not caseno:
+        plt.scatter(expdata[:, 1], expdata[:, 0], label=expdata.name,
+                    color='r')
+    label = fluct.name
+    if multiple_cases:
+        label += ' ({})'.format(case)
+    plt.plot(fluct[:, 1], fluct[:, 0], label=label)
+    if not caseno:
+        plt.xlabel(expdata.columns[1])
+        plt.ylabel(expdata.columns[0])
+
+
 def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both'):
     if velocity_component == 'both':
         velocity_component = ['z', 'y']
     else:
         velocity_component = [velocity_component]
 
-    make_dir(case)
-    for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
-        for vc in velocity_component:
-            name = sim_name.format(point=point)
-            # first read experimental data
-            expdata = read_experimental_data(exp_name, reacting,
-                                             velocity_component=vc, point=point)
-            # read baseline averaged data
-            baseline = read_simulation_data(case, name, reacting, t_start,
-                                            t_end, velocity_component=vc)
-            # read fluctuation data
-            fluct = read_simulation_data(case, name, reacting, t_start,
-                                         t_end, velocity_component=vc,
-                                         collection_type='fluct',
-                                         collection_method='rms',
-                                         baseline=baseline)
-            # normalize / convert simulation data
-            fluct.normalize(reacting)
+    for caseno, casename in enumerate(case):
+        make_dir(casename)
+        for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
+            for vc in velocity_component:
+                process(caseno, casename, reacting, point, t_start, t_end,
+                        vc, len(case) > 1)
 
-            plt.scatter(expdata[:, 1], expdata[:, 0], label=expdata.name,
-                        color='r')
-            plt.plot(fluct[:, 1], fluct[:, 0], label=fluct.name)
-            plt.xlabel(expdata.columns[1])
-            plt.ylabel(expdata.columns[0])
-            plt.gca().set_xlim([-1, 1] if velocity_component == 'y' else
-                               [-1, 2])
-            plt.legend(loc=0)
-            plt.savefig(pjoin(case,
-                        '{vc}_prime_rms_{point}.pdf'.format(
-                            vc=vc, point=point)))
-            plt.close()
+                plt.gca().set_xlim([-1, 1] if vc == 'y' else
+                                   [-1, 2])
+                plt.legend(loc=0)
+                plt.savefig(pjoin(case,
+                            '{vc}_prime_rms_{point}.pdf'.format(
+                                vc=vc, point=point)))
+                plt.close()
 
 
 if __name__ == '__main__':
     parser = get_default_parsing_args(
-        'mean_axial_velocity.py',
-        'plots the time-averaged, normalized axial velocity '
+        'fluctuation_velocity_plots.py',
+        'plots the RMS fluctuation velocity at different axial slices '
         'along the centerline of the Volvo bluff-body experiment, as compared '
         'to experimental data')
     parser.add_argument('-v', '--velocity_component',

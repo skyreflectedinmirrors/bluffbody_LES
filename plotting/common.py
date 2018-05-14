@@ -130,9 +130,12 @@ def get_default_parsing_args(name, description):
                         action='store_false',
                         dest='reacting',
                         required=False)
-    parser.add_argument('-c', '--case',
-                        help='The simulation to plot',
-                        choices=['LES', 'RAS'],
+    parser.add_argument('-c', '--case-list',
+                        type=str,
+                        help='The simulation(s) to plot. If more than one simulation'
+                             ' is supplied, they will be plotted on the same figure'
+                             " in the first supplied case's directory.",
+                        nargs='+',
                         required=True)
     parser.add_argument('-t_start', '--start_time',
                         help='The start time for simulation averaging in seconds.',
