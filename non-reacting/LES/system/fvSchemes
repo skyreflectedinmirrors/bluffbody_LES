@@ -48,7 +48,7 @@ gradSchemes
 	// Chalmers states that Gauss gradient is accurate on hex-meshes
 	//
 	// Limit suggestion comes from Wolf
-	default 		cellMDLimited Gauss linear 0.5;
+	default 		cellLimited Gauss linear 1.0;
 };
 
 // diffusion
@@ -96,7 +96,7 @@ divSchemes
 	div(phi,U) 		bounded Gauss linearUpwind grad(U);
 	div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 	// use same as U, as inviscid term
-	div(phi,K)      bounded Gauss linearUpwind grad(U);
+	div(phi,K)      limitedLinear 1;
 	div(phi,Yi_h)   Gauss multivariateSelection
     {
     	H2              limitedLinear01 1;
