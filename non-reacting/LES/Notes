@@ -6,10 +6,11 @@ Mesh Creation
 
 For both LES
 
->python buildMesh.py -c non-reacting/LES/ -m 2 -w 0.3 -g 1.15 -l 1.05
+>python buildMesh.py -c non-reacting/LES/ -m 2 -w 0.3 -g 1.1 -uy 1.1 -l 1.05 -uz 1.05
 
 Which corresponds to a 2mm mesh, w/ wall spacing of 0.3mm.
 The geometric expansion ratio in the y-direction is 1.15, while in the z-direction (downstream of the BB)
 it is 1.05
 
-This yields a mesh of 1833720 cells, which is similar to Cocks et al.
+This yields a mesh of 2365000 cells, which is slightly more than Cocks et al., but they
+also did not include the full inlet

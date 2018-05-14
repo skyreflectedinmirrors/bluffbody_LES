@@ -500,7 +500,7 @@ if __name__ == '__main__':
                              'y-direction in the inlet.')
     parser.add_argument('-uz', '--upstream_z_expansion_ratio',
                         type=float,
-                        default=1.15,
+                        default=1.05,
                         help='The geometric-ratio of cells size increases in the '
                              'z-direction in the inlet.')
     parser.add_argument('-l', '--long_geometric_ratio',
