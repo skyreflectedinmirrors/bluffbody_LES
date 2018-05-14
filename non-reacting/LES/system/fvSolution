@@ -31,31 +31,32 @@ PRM: https://github.com/ParticulateFlow/OSCCAR-doc/blob/master/openFoamUserManua
 
 solvers
 {
-	// rho / pressure solver from fireFoam / xiFoam LES examples
-	"(p|rho)"
+    "rho.*"
+    {
+        solver          diagonal;
+    }
+
+	// from RAS solver
+	p
     {
         solver              PCG;
-        preconditioner      FDIC;
+        preconditioner      DIC;
         tolerance           1e-6;
         relTol              0.01;
     };
-
-    "(p|rho)Final"
+    pFinal
     {
-    	$p
-    	relTol				0;
+        $p
+        relTol            0;
     }
 
     "(U|h)"
     {
         solver          PBiCGStab;
         preconditioner  DILU;
-        // from fireFoam LES example -- relTol bumped down to 0.05 from 0.01
 		tolerance       1e-6;
         relTol          0.1;
-        nSweeps         1;
     };
-
     "(U|h)Final"
     {
         $U;
