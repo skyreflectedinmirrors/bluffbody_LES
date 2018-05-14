@@ -130,7 +130,7 @@ def get_default_parsing_args(name, description):
                         action='store_false',
                         dest='reacting',
                         required=False)
-    parser.add_argument('-c', '--case-list',
+    parser.add_argument('-c', '--caselist',
                         type=str,
                         help='The simulation(s) to plot. If more than one simulation'
                              ' is supplied, they will be plotted on the same figure'

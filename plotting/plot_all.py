@@ -13,4 +13,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     for plot in plotters:
-        plot(args.case, args.reacting)
+        plot(args.caselist, args.reacting, args.start_time, args.end_time)

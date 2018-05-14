@@ -24,7 +24,7 @@ def process(caseno, case, reacting, t_start=0, t_end=-1, multiple_cases=False):
     if multiple_cases:
         label += ' ({})'.format(case)
 
-    plt.plot(simdata[:, 0], simdata[:, 1], label=simdata.name)
+    plt.plot(simdata[:, 0], simdata[:, 1], label=label)
     if not caseno:
         plt.xlabel(expdata.columns[0])
         plt.ylabel(expdata.columns[1])
@@ -35,7 +35,7 @@ def plot(case, reacting, t_start=0, t_end=-1):
         process(caseno, casename, reacting, t_start, t_end, len(case) > 1)
 
     plt.legend(loc=0)
-    plt.savefig(pjoin(case, 'mean_axial_velocity.pdf'))
+    plt.savefig(pjoin(case[0], 'mean_axial_velocity.pdf'))
     plt.close()
 
 
@@ -47,4 +47,4 @@ if __name__ == '__main__':
         'to experimental data')
     args = parser.parse_args()
 
-    plot(args.case, args.reacting, args.start_time, args.end_time)
+    plot(args.caselist, args.reacting, args.start_time, args.end_time)
