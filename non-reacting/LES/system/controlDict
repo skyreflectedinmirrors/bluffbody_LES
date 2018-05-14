@@ -39,14 +39,15 @@ deltaT          1e-6;
 
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
-writeControl    adjustableRunTime;
-writeInterval   5e-3;
+writeControl    clockTime;
+// 5 hours and 45 minutes (15 minutes shorter than parallel reservation)
+writeInterval   19620; // s
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;
 writeCompression no;
 timeFormat      general;
-timePrecision   6;
+timePrecision   16;
 runTimeModifiable true;
 
 functions
