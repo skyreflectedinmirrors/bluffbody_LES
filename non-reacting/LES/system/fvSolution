@@ -36,8 +36,8 @@ solvers
         solver          diagonal;
     }
 
-	// from RAS solver
-	p
+    // from RAS solver
+    p
     {
         solver              PCG;
         preconditioner      DIC;
@@ -54,7 +54,7 @@ solvers
     {
         solver          PBiCGStab;
         preconditioner  DILU;
-		tolerance       1e-6;
+        tolerance       1e-6;
         relTol          0.1;
     };
     "(U|h)Final"
@@ -65,27 +65,31 @@ solvers
 
     Yi
     {
-    	$U
-    	tolerance		1e-8;
+        $U
+        tolerance       1e-8;
     };
 
     YiFinal
     {
-    	$Yi
-    	relTol          0;
+        $Yi
+        relTol          0;
     };
 }
 
 PIMPLE
 {
-	// manual - PISO, SIMPLE and PIMPLE algorithms
-	// neither low RE nor multi-phase -> use momentum corrector
+    // manual - PISO, SIMPLE and PIMPLE algorithms
+    // neither low RE nor multi-phase -> use momentum corrector
     momentumPredictor yes;
     nOuterCorrectors  1;
-    nCorrectors       2;
+    nCorrectors       3;
     // wolf p.g., 43
-	nNonOrthogonalCorrectors 1;
-	maxDeltaT		  1e-6;
+    nNonOrthogonalCorrectors 1;
+    maxDeltaT           1e-6;
+    // from SANDIA Flame-D
+    alphaTemp           0.05;
+    rDeltaTSmoothingCoeff   0.025;
+    rDeltaTDampingCoeff     1;
 }
 
 relaxationFactors
