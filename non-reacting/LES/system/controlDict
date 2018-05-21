@@ -42,7 +42,7 @@ deltaT          1e-6;
 writeControl    adjustableRunTime;
 // Write three times over 5 hours and 45 minutes (15 minutes shorter than parallel reservation)
 // this should work out to roughly simulation intervals of ~9.5 * 10^-3s
-writeInterval   0.005; // s
+writeInterval   0.001; // s
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;
