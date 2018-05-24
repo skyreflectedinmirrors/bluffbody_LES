@@ -16,6 +16,10 @@ parser.add_argument('-n', '--non_reacting',
 parser.add_argument('-g', '--gas',
                     default='ucsd.cti',
                     type=str)
+parser.add_argument('-f', '--fuel',
+                    default='C3H8',
+                    type=str,
+                    help='The name of the fuel molecule to use in the mechanism.')
 parser.add_argument('-p', '--phase',
                     default='',
                     type=str)
@@ -75,10 +79,10 @@ print('Static pressure: {} kPa'.format(Ps))
 # set state
 gas.TP = Ts, Ps
 # and equivalence ratio
-gas.set_equivalence_ratio(phi, 'C3H8', 'O2:1.0, N2:3.76')
+gas.set_equivalence_ratio(phi, args.fuel, 'O2:1.0, N2:3.76')
 
 print('Inlet mass fractions:')
-print(gas[['C3H8', 'O2', 'N2']].mass_fraction_dict())
+print(gas[[args.fuel, 'O2', 'N2']].mass_fraction_dict())
 
 print('Inlet density: {} (kg/m^3)'.format(gas.density_mass))
 
