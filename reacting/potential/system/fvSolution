@@ -1,0 +1,58 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+
+/*
+
+Setup for simulation of Volvo flygmotor AB non-reacting flow LES
+
+Nicholas Curtis - 04/10/2018
+
+Based on:
+
+Cocks et al: https://arc.aiaa.org/doi/abs/10.2514/6.2013-170
+Wolf: http://www.wolfdynamics.com/wiki/OFtipsandtricks.pdf
+Manual: https://cfd.direct/openfoam/user-guide/fvSolution/
+PRM: https://github.com/ParticulateFlow/OSCCAR-doc/blob/master/openFoamUserManual_PFM.pdf
+
+*/
+
+solvers
+{
+    "(p|Phi)"
+    {
+        solver          PBiCGStab;
+        preconditioner  DIC;
+        tolerance       1e-8;
+        relTol          1e-4;
+    };
+    "(p|Phi)Final"
+    {
+        $Phi;
+    };
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 3;
+}
+
+relaxationFactors
+{
+    equations
+    {
+        ".*"            1;
+    }
+}

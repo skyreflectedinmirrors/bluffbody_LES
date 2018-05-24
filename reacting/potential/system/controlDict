@@ -1,0 +1,44 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          controlDict;
+}
+
+/*
+
+Setup for simulation of Volvo flygmotor AB non-reacting flow LES
+
+Nicholas Curtis - 04/05/2018
+
+*/
+
+
+// use same settings for both non-reacting & reacting simulations per Cocks et al.
+application     potentialFoam;
+startFrom       startTime;
+startTime       0;
+
+// potential foam -> steady state
+stopAt          endTime;
+endTime         1;
+deltaT          1;
+writeInterval   1;
+
+writeControl    timeStep;
+purgeWrite      0;
+writeFormat     binary;
+writePrecision  10;
+writeCompression no;
+timeFormat      general;
+timePrecision   6;
+runTimeModifiable true;

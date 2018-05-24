@@ -1,0 +1,117 @@
+Notes
+-----
+
+- http://www.pointwise.com/yplus/, the expected y+ is ~0.017 mm, hence we need a wall treatment
+- Mesh is different from LES case, place first cell at 1mm,  -> ~58 * y+
+- this will require interpolation via mapFields for the LES initialization case
+
+Mesh Creation
+-------------
+
+For both RANS & Potential, the mesh is created with:
+
+>python buildMesh.py -c non-reacting/CASE/ -m 4 -w 0.85 -g 1.2 -l 1.1 -uy 1.15 -uz 1.2
+
+Which corresponds to:
+-a 4mm mesh
+-wall spacing of 0.85mm ~ 40 * y+ (http://www.pointwise.com/yplus/)
+-geometric expansion ratio (GER) in the y-axis downstream of BB = 1.2
+-GER=1.15 in the y-axis upstream of BB
+-GER=1.2 in z-direction upstream of the BB
+-GER=1.1 in z-direction downstream of the BB
+
+
+This yields a mesh of 266400 cells, which is nice and cheap for simulation
+Additionally:
+	Max aspect ratio = 7.28170268 OK.
+	Mesh non-orthogonality Max: 29.83519797 average: 3.318041845
+	Max skewness = 0.5347861081 OK.
+
+Diffusivity Experiments
+-----------------------
+
+So our current default scheme (which was changed in cf0878c228f) is not diffusive enough.
+Over time, the pressure & temperature fields start to become striated and wrinkled (looking a bit
+like reflecting mach shocks).
+
+The point of these experiments are to run short RANS cases of a few different levels of numerical
+diffusion such that we can select the most accurate scheme that is also stable.
+
+Gradient limiters
+-----------------
+sources: http://www.wolfdynamics.com/wiki/OFtipsandtricks.pdf
+         https://www.slideshare.net/fumiyanozaki96/limited-gradient-schemes-in-openfoam
+         https://cfd.direct/openfoam/user-guide/fvschemes/
+
+
+                       coeff
+        0<----------------------------->1
+    accurate                         stable
+    limiter off                      limiter on
+
+    cellMDLimited   ^ less diffusive
+    cellLimited     |
+    faceMDLimited   |
+    faceLimited     V more diffusive
+
+Laplacian schemes
+-----------------
+sources: http://www.wolfdynamics.com/wiki/OFtipsandtricks.pdf
+
+Coefficient controls orthogonality correction, Wolf recommends limited 1 or corrected
+for orthogonality < 40
+
+
+snGradSchemes
+-------------
+sources: https://cfd.direct/openfoam/user-guide/fvschemes/
+
+Coefficient controls the extent of the non-orthogonal corrections
+Again lower coeffiecient -> more stable, while higher coefficient is more accurate
+
+
+Schemes
+-------
+
+Most diffusive / stable:
+        - gradscheme -> "faceLimited Gauss linear 0.5;"
+        - laplacian scheme -> "Gauss linear limited 0.5;"
+        - snGradSchems -> "limited 0.5;"
+    - this will be run in the RAS folder using a fixed time-step until 0.1s
+    Result:
+        - nice smooth U, T & p fields, no breakup
+        - shedding begins ~0.025s
+
+Less diffusive / stable, but more accurate:
+        - gradscheme -> "cellLimited Gauss linear 0.5;"
+        - laplacian scheme -> "Gauss linear corrected;"
+        - snGradSchems -> "corrected;"
+    - this will be run in RAS2 using a fixed time-step until 0.1s
+    Result:
+        - broken up pressure / temperature field, affects upstream velocity
+        - striations beging and intensify right around breakup
+
+Most accurate:
+        - gradscheme -> "cellLimited Gauss linear 1.0;"
+        - laplacian scheme -> "Gauss linear corrected;"
+        - snGradSchems -> "corrected;"
+    - this will be run in RAS3 using a fixed time-step until 0.1s
+    Result:
+        - good pressure / temperature field
+        - some minor striations upstream of BB, but don't seem to be affecting U-solution
+          or being unstable
+
+Conclusion, round 1:
+    - We should run RAS3 and RAS until 0.5s
+    - if RAS3 is stable for the whole time, we might use it
+    - Compare the velocity results obtained by both solutions to Experimental and decide from there.
+
+Conclusion, round 2:
+    - Both RAS & RAS3 run until ~0.35s
+    - both have good looking temperature / pressure fields
+    - still some upstream striations in RAS3 in p / T, particularly in high aspect ratio cells in the inlet to the BB channel
+    - RAS3 does a bit better on mean plots (axial / velocity deficits), and has similar fluctuations to
+
+Results
+-------
+    - Use RAS3 scheme as initial mapping for LES

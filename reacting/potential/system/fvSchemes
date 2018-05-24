@@ -1,0 +1,65 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+
+
+/*
+
+Setup for simulation of Volvo flygmotor AB non-reacting flow LES
+
+Nicholas Curtis - 04/10/2018
+
+Based on:
+
+Chalmers: http://www.tfd.chalmers.se/~hani/kurser/OS_CFD_2015/HrvojeJasak/DiscretisationBestPractice.pdf
+Cocks et al: https://arc.aiaa.org/doi/abs/10.2514/6.2013-170
+Wolf: http://www.wolfdynamics.com/wiki/OFtipsandtricks.pdf
+Manual: https://cfd.direct/openfoam/user-guide/fvSchemes/
+
+*/
+
+// from pitz-daily potential flow case
+
+ddtSchemes
+{
+    default         steadyState;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+}
+
+divSchemes
+{
+    default         none;
+    div(phi,U)      bounded Gauss linear;
+    div(div(phi,U)) Gauss linear;
+}
+
+laplacianSchemes
+{
+    default         Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
