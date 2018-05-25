@@ -48,7 +48,7 @@ gradSchemes
 	// Chalmers states that Gauss gradient is accurate on hex-meshes
 	//
 	// Limit suggestion comes from Wolf
-	default 		faceLimited Gauss linear 0.5;
+	default 		cellLimited Gauss linear 0.33;
 };
 
 // diffusion
