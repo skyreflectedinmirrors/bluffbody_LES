@@ -35,8 +35,8 @@ stopAt          endTime;
 // ~ equivalent to 10 residence times
 endTime         0.5;
 
-// larger time step
-deltaT          1e-6;
+// reacting-time step from Cocks et al
+deltaT          3e-7;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
 writeControl    adjustableRunTime;
