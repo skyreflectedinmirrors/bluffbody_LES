@@ -1,0 +1,41 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "0";
+    object      initialValues;
+}
+
+
+// a collection of initial values, importable to other files
+
+#include "../system/meshDims"
+
+// operating pressure, 1 bar
+Pref  		100000;
+// mass fraction of CH4, for an equivalence ratio of 0.62
+CH4_init    0.03494841762021331;
+// mass fraction of N2 of air, for non-reacting
+N2_init		0.7401873253032588;
+// mass fraction of O2 of air, for non-reacting
+O2_init		0.2248642570765278;
+// inlet temperature
+Tref        288;
+// inlet velocity
+Ubulk 		17.2;
+// specific heat ratio
+gamma		1.392728371588844;
+// mass flow rate (kg/s)
+mdot 		0.19352623244824685;
+// inlet density (kg/m3)
+rho_inlet 	1.1720338689937433;
+// residence time, in seconds
+t_res		#calc "($L_total * $convertToMeters) / $Ubulk";
