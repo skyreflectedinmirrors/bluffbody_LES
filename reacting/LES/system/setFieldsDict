@@ -28,8 +28,8 @@ regions
     boxToCell
     {
         // set box of really high temperature to ignite the gas behind the bluff-body
-        box (#calc "-$half_D * $convertToMeters" $D     #calc "-$L_TE_upstream * $convertToMeters")
-            (calc "$half_D * $convertToMeters"   $two_D #calc "-($L_TE_upstream + 0.375 * $D) * $convertToMeters");
+        box (#calc "-$half_D * $convertToMeters"  $D     #calc "-$L_TE_upstream * $convertToMeters")
+            (#calc "$half_D * $convertToMeters"   $two_D #calc "-($L_TE_upstream + 0.375 * $D) * $convertToMeters");
         fieldValues
         (
             volScalarFieldValue T 2000
