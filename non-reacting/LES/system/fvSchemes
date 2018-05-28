@@ -40,118 +40,119 @@ ddtSchemes
 // gradients
 gradSchemes
 {
-	// Cocks et al. used a green-gauss node-based method, which doesn't appear
-	// to be present by default in OpenFOAM.
-	// The closest method is "Gauss linear" - which is a cell-based version of
-	// the Green-gauss node-based method
-	//
-	// Chalmers states that Gauss gradient is accurate on hex-meshes
-	//
-	// Limit suggestion comes from Wolf
-	default 		cellLimited Gauss linear 0.33;
+    // Cocks et al. used a green-gauss node-based method, which doesn't appear
+    // to be present by default in OpenFOAM.
+    // The closest method is "Gauss linear" - which is a cell-based version of
+    // the Green-gauss node-based method
+    //
+    // Chalmers states that Gauss gradient is accurate on hex-meshes
+    //
+    // Limit suggestion comes from Wolf
+    default         faceLimited Gauss linear 1;
+    grad(U)         cellMDLimited Gauss linear 0.1;
 };
 
 // diffusion
 laplacianSchemes
 {
     // Cocks et al. used a "2nd-order accurate central scheme for discretization of"
-    //					   "the Laplacian terms"
+    //                     "the Laplacian terms"
     //
     // From the manual (https://cfd.direct/openfoam/user-guide/fvSchemes/#x19-1410004.4):
     // "to maintain *second-order accuracy*, an explicit non-orthogonal correction "
     // "can be added to the orthogonal component, known as the corrected scheme"
-	//
+    //
     // Further, maximum orthogonality from checkMesh of the blockMesh output is:
-    //		Mesh non-orthogonality Max: 29.37587877 average: 2.520147965
+    //      Mesh non-orthogonality Max: 29.37587877 average: 2.520147965
     // hence we don't need the "limited" approach
-	//
- 	// from Chalmers, may want a cell/face-limited form for bounded variables (
- 	// e.g., mass fractions) -- but no need for limited as max non-orthgonality < 70
-    default			Gauss linear corrected;
+    //
+    // from Chalmers, may want a cell/face-limited form for bounded variables (
+    // e.g., mass fractions) -- but no need for limited as max non-orthgonality < 70
+    default         Gauss linear corrected;
 };
 
 snGradSchemes
 {
-	// not mentioned in Cocks et al.
-	// use a corrected scheme by default, since that was what was used for the
-	// laplacian
-	default			corrected;
+    // not mentioned in Cocks et al.
+    // use a corrected scheme by default, since that was what was used for the
+    // laplacian
+    default         corrected;
 }
 
 interpolationSchemes
 {
-	// not mentioned in Cocks et al.
-	// use a linear scheme as recommended by the manual
-	// https://cfd.direct/openfoam/user-guide/fvSchemes/#x19-1410004.4
-	default 		linear;
+    // not mentioned in Cocks et al.
+    // use a linear scheme as recommended by the manual
+    // https://cfd.direct/openfoam/user-guide/fvSchemes/#x19-1410004.4
+    default         linear;
 };
 
 divSchemes
 {
 
-	default			none;
-	// Cocks et al. used a 2nd order *bounded* central scheme for inviscid terms
-	// 		bounded by "Sweby limiter"
-	// Wolf: accurate & stable numerical scheme -- 2nd order accurate
-	div(phi,U) 		bounded Gauss linearUpwind grad(U);
-	div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
-	// use same as U, as inviscid term
-	div(phi,K)      Gauss limitedLinear 1;
-	div(phi,Yi_h)   Gauss multivariateSelection
+    default         none;
+    // Cocks et al. used a 2nd order *bounded* central scheme for inviscid terms
+    //      bounded by "Sweby limiter"
+    // Wolf: accurate & stable numerical scheme -- 2nd order accurate
+    div(phi,U)      bounded Gauss linearUpwind grad(U);
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
+    // use same as U, as inviscid term
+    div(phi,K)      Gauss limitedLinear 1;
+    div(phi,Yi_h)   Gauss multivariateSelection
     {
-    	H2              limitedLinear01 1;
-		H               limitedLinear01 1;
-		O               limitedLinear01 1;
-		O2              limitedLinear01 1;
-		OH              limitedLinear01 1;
-		H2O             limitedLinear01 1;
-		HO2             limitedLinear01 1;
-		H2O2            limitedLinear01 1;
-		C               limitedLinear01 1;
-		CH              limitedLinear01 1;
-		CH2             limitedLinear01 1;
-		CH2S            limitedLinear01 1;
-		CH3             limitedLinear01 1;
-		CH4             limitedLinear01 1;
-		CO              limitedLinear01 1;
-		CO2             limitedLinear01 1;
-		HCO             limitedLinear01 1;
-		CH2O            limitedLinear01 1;
-		CH2OH           limitedLinear01 1;
-		CH3O            limitedLinear01 1;
-		CH3OH           limitedLinear01 1;
-		C2H             limitedLinear01 1;
-		C2H2            limitedLinear01 1;
-		C2H3            limitedLinear01 1;
-		C2H4            limitedLinear01 1;
-		C2H5            limitedLinear01 1;
-		C2H6            limitedLinear01 1;
-		HCCO            limitedLinear01 1;
-		CH2CO           limitedLinear01 1;
-		HCCOH           limitedLinear01 1;
-		N               limitedLinear01 1;
-		NH              limitedLinear01 1;
-		NH2             limitedLinear01 1;
-		NH3             limitedLinear01 1;
-		NNH             limitedLinear01 1;
-		NO              limitedLinear01 1;
-		NO2             limitedLinear01 1;
-		N2O             limitedLinear01 1;
-		HNO             limitedLinear01 1;
-		CN              limitedLinear01 1;
-		HCN             limitedLinear01 1;
-		H2CN            limitedLinear01 1;
-		HCNN            limitedLinear01 1;
-		HCNO            limitedLinear01 1;
-		HOCN            limitedLinear01 1;
-		HNCO            limitedLinear01 1;
-		NCO             limitedLinear01 1;
-		AR              limitedLinear01 1;
-		C3H7            limitedLinear01 1;
-		C3H8            limitedLinear01 1;
-		CH2CHO          limitedLinear01 1;
-		CH3CHO          limitedLinear01 1;
-		N2              limitedLinear01 1;
+        H2              limitedLinear01 1;
+        H               limitedLinear01 1;
+        O               limitedLinear01 1;
+        O2              limitedLinear01 1;
+        OH              limitedLinear01 1;
+        H2O             limitedLinear01 1;
+        HO2             limitedLinear01 1;
+        H2O2            limitedLinear01 1;
+        C               limitedLinear01 1;
+        CH              limitedLinear01 1;
+        CH2             limitedLinear01 1;
+        CH2S            limitedLinear01 1;
+        CH3             limitedLinear01 1;
+        CH4             limitedLinear01 1;
+        CO              limitedLinear01 1;
+        CO2             limitedLinear01 1;
+        HCO             limitedLinear01 1;
+        CH2O            limitedLinear01 1;
+        CH2OH           limitedLinear01 1;
+        CH3O            limitedLinear01 1;
+        CH3OH           limitedLinear01 1;
+        C2H             limitedLinear01 1;
+        C2H2            limitedLinear01 1;
+        C2H3            limitedLinear01 1;
+        C2H4            limitedLinear01 1;
+        C2H5            limitedLinear01 1;
+        C2H6            limitedLinear01 1;
+        HCCO            limitedLinear01 1;
+        CH2CO           limitedLinear01 1;
+        HCCOH           limitedLinear01 1;
+        N               limitedLinear01 1;
+        NH              limitedLinear01 1;
+        NH2             limitedLinear01 1;
+        NH3             limitedLinear01 1;
+        NNH             limitedLinear01 1;
+        NO              limitedLinear01 1;
+        NO2             limitedLinear01 1;
+        N2O             limitedLinear01 1;
+        HNO             limitedLinear01 1;
+        CN              limitedLinear01 1;
+        HCN             limitedLinear01 1;
+        H2CN            limitedLinear01 1;
+        HCNN            limitedLinear01 1;
+        HCNO            limitedLinear01 1;
+        HOCN            limitedLinear01 1;
+        HNCO            limitedLinear01 1;
+        NCO             limitedLinear01 1;
+        AR              limitedLinear01 1;
+        C3H7            limitedLinear01 1;
+        C3H8            limitedLinear01 1;
+        CH2CHO          limitedLinear01 1;
+        CH3CHO          limitedLinear01 1;
+        N2              limitedLinear01 1;
         h               limitedLinear 1;
     };
 }
