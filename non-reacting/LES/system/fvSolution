@@ -42,7 +42,7 @@ solvers
         solver              PCG;
         preconditioner      DIC;
         tolerance           1e-6;
-        relTol              0.01;
+        relTol              0;
     };
     pFinal
     {
@@ -54,13 +54,13 @@ solvers
     {
         solver          PBiCGStab;
         preconditioner  DILU;
-        tolerance       1e-6;
-        relTol          0.1;
+        tolerance       1e-8;
+        relTol          0;
     };
     "(U|h)Final"
     {
         $U;
-        relTol          0.0;
+        relTol          0;
     };
 
     Yi
