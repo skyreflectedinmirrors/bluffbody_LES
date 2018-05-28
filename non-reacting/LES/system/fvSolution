@@ -41,12 +41,14 @@ solvers
     {
         solver              PCG;
         preconditioner      DIC;
-        tolerance           1e-6;
-        relTol              0;
+        tolerance           1e-4;
+        relTol              0.05;
+        minIter             3;
     };
     pFinal
     {
         $p
+        tolerance         1e-6;
         relTol            0;
     }
 
