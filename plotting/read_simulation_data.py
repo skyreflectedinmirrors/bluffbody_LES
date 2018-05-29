@@ -128,7 +128,7 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
     """
 
     assert t_start >= 0, 'Start time < 0 not supported'
-    assert t_end < 0 or t_end > t_end, (
+    assert t_end < 0 or t_end > t_start, (
         'End time must be disabled or greater than start time')
 
     # collection type
