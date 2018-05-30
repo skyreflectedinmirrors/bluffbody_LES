@@ -49,7 +49,7 @@ gradSchemes
     //
     // Limit suggestion comes from Wolf
     default         Gauss linear corrected;
-    grad(P)         faceLimited Gauss leastSquares 1;
+    grad(p)         faceLimited leastSquares 0.5;
 };
 
 // diffusion
