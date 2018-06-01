@@ -29,8 +29,8 @@ chemistryType
 }
 
 chemistry       on;
-
 initialChemicalTimeStep 1e-07;
+Treact          550;
 
 odeCoeffs
 {
