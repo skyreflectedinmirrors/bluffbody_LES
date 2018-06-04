@@ -14,3 +14,10 @@ it is 1.05
 
 This yields a mesh of 2365000 cells, which is slightly more than Cocks et al., but they
 also did not include the full inlet
+
+Scheme Changes
+--------------
+
+faceMDLimited ~ 0.05s
+
+cellLimited ~ 0.142s
