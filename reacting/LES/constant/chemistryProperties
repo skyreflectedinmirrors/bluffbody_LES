@@ -34,7 +34,7 @@ Treact          550;
 
 odeCoeffs
 {
-    solver          rodas34;
+    solver          Rosenbrock34;
     absTol          1e-10;
     relTol          1e-06;
 }
