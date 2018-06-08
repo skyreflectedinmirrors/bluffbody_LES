@@ -40,9 +40,8 @@ deltaT          5e-7;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
 writeControl    adjustableRunTime;
-// Write three times over 5 hours and 45 minutes (15 minutes shorter than parallel reservation)
-// this should work out to roughly simulation intervals of ~9.5 * 10^-3s
-writeInterval   0.001; // s
+// use 0.5ms write interval
+writeInterval   5e-4; // s
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;
