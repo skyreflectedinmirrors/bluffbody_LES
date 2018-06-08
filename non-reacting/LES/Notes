@@ -14,3 +14,87 @@ it is 1.05
 
 This yields a mesh of 2365000 cells, which is slightly more than Cocks et al., but they
 also did not include the full inlet
+
+-Scheme Changes
+---------------
+faceMDLimited ~ 0.05s
+
+limitedLinear (non-V) ~ 0.142s
+
+
+Attempts to fix broadening of near field velocity
+-------------------------------------------------
+All starting at 0.142s
+
+LES/
+    - switch to limitedLinear (non-V) at 0.142s & drop write time to 5e-4s
+    - slightly better match of negative velocity peak
+    - axial velocity still is positive next to the back of the BB
+    - -ve velocity peak shifted downstream
+    - similar to limitedU but a bit smoother due to more runtime
+
+LES_limitedU
+    - switch grad(U) -> cellMDLimited leastSquares 0.5
+    - switch div(phi,U) -> Gauss linear;
+    - start to seem (limited) breakup, the near field axial velocity is still broadened
+    - the negative velocity peak is a much closer match however, although shifted a bit downstream
+    - after one Run switch grad(U) -> cellMDLimited leastSquares 0.5 -> grad(U) -> cellMDLimited leastSquares 0.75
+    - still (nearly) positive velocity right near the back of the BB
+    - BAD
+
+LES_rho_thermo
+    - switch to rhoReactingFoam
+    - -ve velocity peak downshifted (positive velocity near BB)
+    - doing that annoying thing where the temperature plummits
+    - BAD
+
+LES_limitedLinear2
+    - use limitedLinear 0.33 for U & K
+    - axial deficit peak shifted downstream (broadend in near field)
+    - a bit wonky y-velocities
+    - BAD
+
+LES_LUST
+    - use LUST for velocity like the fireFoam LES example
+    - switch gradSchemes to "default Gauss linear;" (i.e., drop "corrected" -- can't find a reference to it anywhere)
+    - recirculation zone bubble is still a bit downshifted and broadened near the BB
+    - y velocity profiles off
+    - better than the regular LES a bit
+
+LES_no_corrected
+    - switch gradSchemes to "default Gauss linear;" (i.e., drop "corrected" -- can't find a reference to it anywhere)
+    - no discernable effect
+    - broadend and mismatch
+
+LES_wolf
+    - leastSquares on all limits
+    - linear for all divschemes (except the Yi's / h)
+    - breakup *BAD*
+
+LES_wolf2
+    - dt -> CN 0.333
+    - cellMdLimited Gauss Linear 1.0 on all gradients
+    - *** THIS HAS THE BEST RESULTS OF ANY SCHEME SO FAR ***
+    - doesn't quite match -ve velocity peak, but all other profiles are fairly good matches
+    - a bit low axial velocity downstreal
+
+LES_wolf3
+    - dt -> CN 0.5
+    - faceMDLimited Gauss linear 0.5 on all gradients
+    - linear U divscheme
+    - a bit noisy still, but promising
+    - very good velocity peak match (but downshifted)
+    - y velocity deficits a bit wonky thus far
+    - z velocities still a bit broadend but decent
+
+LES_wolf4
+    - dt -> CN 0.5
+    - all else linear (except the Yi's / h)
+    - leastSquares gradients
+
+
+Results
+-------
+- Wolf 2 & 3 are promising at this point (best results so far)
+- LUST is OK, but not as good as wolf's
+- Still waiting on wolf 1 & 4
