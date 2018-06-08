@@ -190,3 +190,9 @@ Results
 -------
 Rosenbrock is the fastest, use for now -- re-run this test later when we get a more
 developed flow field
+
+
+Scheme Changes
+--------------
+
+0.0200197s - attempt using time-step of 1e-6s for reacting RAS
