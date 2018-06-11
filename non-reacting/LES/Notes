@@ -97,4 +97,25 @@ Results
 -------
 - Wolf 2 & 3 are promising at this point (best results so far)
 - LUST is OK, but not as good as wolf's
-- Still waiting on wolf 1 & 4
+- Still waiting on wolf 4
+
+Results round 2
+---------------
+
+Wolf2
+-----
+- good Vy agreement except at 1.53D
+- mean axial velocity matches cocks figure pretty well
+- VERY GOOD fluctuating velocity profiles
+
+Wolf3
+-----
+- Again, relatively poor Vy agreement at 1.53 D
+- Slightly better agreement w/ cocks over mean axial velocity (no bump near 2.5-5D)
+- seems to be more fine structures in the velocity, but possibly influenced by cell size
+
+Wolf4
+-----
+- About the same, maybe better downstream axial velocity matching (no bump), but doesn't get -ve velocity peak as well
+- overpredicts fluctuating velocity slightly
+- more fine structures again in velocity
