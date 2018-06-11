@@ -34,7 +34,7 @@ Manual: https://cfd.direct/openfoam/user-guide/fvSchemes/
 ddtSchemes
 {
     // 2nd ord implicit, backward diff -- from Cocks et al.
-    default         backward;
+    default         CrankNicolson 0.5;
 }
 
 // gradients
@@ -48,7 +48,7 @@ gradSchemes
 	// Chalmers states that Gauss gradient is accurate on hex-meshes
 	//
 	// Limit suggestion comes from Wolf
-	default 		cellLimited Gauss linear 1.0;
+	default 		faceMDLimited Gauss linear 0.5;
 };
 
 // diffusion
@@ -93,7 +93,7 @@ divSchemes
 	// Cocks et al. used a 2nd order *bounded* central scheme for inviscid terms
 	// 		bounded by "Sweby limiter"
 	// Wolf: accurate & stable numerical scheme -- 2nd order accurate
-	div(phi,U) 		bounded Gauss linearUpwind grad(U);
+	div(phi,U) 		Gauss linear;
 	div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 	div(phi,Yi_h)   Gauss multivariateSelection
     {
@@ -153,7 +153,6 @@ divSchemes
         h               limitedLinear 1;
     };
     // from SANDIA combustion tutorial for K-epsilon
-    div(phi,K)          Gauss limitedLinear 1;
-    div(phi,k)          Gauss limitedLinear 1;
-    div(phi,epsilon)    Gauss limitedLinear 1;
+    div(phi,k)          Gauss linear;
+    div(phi,epsilon)    Gauss linear;
 }
