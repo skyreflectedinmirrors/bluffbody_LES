@@ -52,14 +52,14 @@ solvers
         relTol            0;
     }
 
-    "(U|h)"
+    "(U|h|k|epsilon)"
     {
         solver          PBiCGStab;
         preconditioner  DILU;
         tolerance       1e-8;
         relTol          0;
     };
-    "(U|h)Final"
+    "(U|h|k|epsilon)Final"
     {
         $U;
         relTol          0;
