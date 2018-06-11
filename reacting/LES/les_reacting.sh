@@ -10,7 +10,7 @@
 #SBATCH --mail-type=END              # mail
 #SBATCH --mail-user=nicholas.curtis@uconn.edu
 #SBATCH --dependency=singleton
-#SBATCH --signal=SIGTERM 60
+#SBATCH --signal=SIGTERM@60
 
 
 mpirun reactingFoam -case . -parallel
