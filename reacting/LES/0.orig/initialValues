@@ -21,6 +21,8 @@ FoamFile
 
 // operating pressure, 1 bar
 Pref  		100000;
+// equivalence ratio
+phi         0.62;
 // mass fraction of CH4, for an equivalence ratio of 0.62
 CH4_init    0.03494841762021331;
 // mass fraction of N2 of air, for non-reacting
