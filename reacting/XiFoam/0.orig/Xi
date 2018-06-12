@@ -46,13 +46,11 @@ boundaryField
     }
     inlet
     {
-        type            calculated;
-        value           $internalField;
+        type            zeroGradient;
     }
     outlet
     {
-        type            calculated;
-        value           $internalField;
+        type            zeroGradient;
     }
 }
 
