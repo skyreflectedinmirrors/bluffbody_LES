@@ -1,0 +1,109 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermophysicalProperties;
+}
+
+/*
+
+ thermophysicalProperties for non-reacting volvo flygmotor AB
+
+ Nick Curtis -- 04/12/18
+
+*/
+
+thermoType
+{
+    type            heheuPsiThermo;
+    mixture         homogeneousMixture;
+    transport       const;
+    thermo          janaf;
+    energy          sensibleEnthalpy;
+    equationOfState perfectGas;
+    specie          specie;
+}
+
+// AFR of Methane is 17.18
+// https://www.brighthubengineering.com/machine-design/15235-the-stoichiometric-air-fuel-ratio/
+stoichiometricAirFuelMassRatio      stoichiometricAirFuelMassRatio [0 0 0 0 0 0 0]  17.19;
+
+// from cd $FOAM_UTILITIES/thermophysical/adiabaticFlameT
+// adiabaticFlameT controlDict for methane for phi = 0.62
+// phi = 0.62
+// ft = 0.0349359
+// Tad = 1707.6
+reactants specie
+{
+    molWeight       28.0675;
+    thermodynamics
+    {
+        Tlow            200;
+        Thigh           6000;
+        Tcommon         1000;
+        highCpCoeffs    ( 3.01283 0.00177833 -5.95937e-07 9.51475e-11 -5.59709e-15 -1536.85 5.63406 );
+        lowCpCoeffs     ( 3.67949 -0.00151762 4.57227e-06 -3.06227e-09 6.12909e-13 -1612.61 2.63867 );
+    }
+    // constant default transport coeffs
+    transport
+    {
+        mu              1e-5;
+        Pr              1;
+
+        As              1.67212e-06;
+        Ts              170.672;
+    }
+}
+
+burntProducts specie
+{
+    molWeight       27.6333;
+    thermodynamics
+    {
+        Tlow            200;
+        Thigh           6000;
+        Tcommon         1000;
+        highCpCoeffs    ( 3.06023 0.00182423 -5.93882e-07 8.93814e-11 -4.97599e-15 -10998.7 5.32214 );
+        lowCpCoeffs     ( 3.54631 0.000378278 2.02793e-07 9.31625e-10 -6.84026e-13 -11102.1 2.901 );
+    }
+    // constant default transport coeffs
+    transport
+    {
+        mu              1e-5;
+        Pr              1;
+
+        As              1.67212e-06;
+        Ts              170.672;
+    }
+}
+products specie
+{
+    molWeight       28.0675;
+    thermodynamics
+    {
+        Tlow            200;
+        Thigh           6000;
+        Tcommon         1000;
+        highCpCoeffs    ( 3.07489 0.00161629 -5.31425e-07 8.11881e-11 -4.59666e-15 -7426.18 5.33423 );
+        lowCpCoeffs     ( 3.55969 -1.60583e-05 7.26455e-07 5.60294e-10 -5.9403e-13 -7515.98 2.97643 );
+    }
+    // constant default transport coeffs
+    transport
+    {
+        mu              1e-5;
+        Pr              1;
+
+        As              1.67212e-06;
+        Ts              170.672;
+    }
+}
+// ************************************************************************* //

@@ -1,0 +1,85 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      combustionProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// based on http://www.tfd.chalmers.se/~hani/kurser/OS_CFD_2010/ehsanYasari/ehsanYasariReport.pdf
+// and moriyoshiHomogeneous tutorial
+
+// also includes meshdims
+#include "../0/initialValues"
+#include "../0/XiInitialConditions"
+
+
+laminarFlameSpeedCorrelation    Gulders;
+fuel                            Methane;
+// used for constant laminar flamespeed correction model
+// flamespeed calculated with flamespeed.py / cantera
+Su                              Su [ 0 1 -1 0 0 0 0 ] $Su;
+SuModel                         unstrained;
+equivalenceRatio                equivalenceRatio [ 0 0 0 0 0 0 0 ] $phi;
+sigmaExt                        sigmaExt [ 0 0 -1 0 0 0 0 ] 100000;
+XiModel                         transport;
+// used for algebraic ximodel
+//XiCoef                          XiCoef [ 0 0 0 0 0 0 0 ] 0.62;
+//XiShapeCoef                     XiShapeCoef [ 0 0 0 0 0 0 0 ] 1;
+uPrimeCoef                      uPrimeCoef [ 0 0 0 0 0 0 0 ] 1;
+GuldersCoeffs
+{
+    Methane
+    {
+        W 0.422;
+        eta 0.15;
+        xi 5.18;
+        alpha 2;
+        beta -0.5;
+        f 2.3;
+    }
+    Propane
+    {
+        W 0.446;
+        eta 0.12;
+        xi 4.95;
+        alpha 1.77;
+        beta -0.2;
+        f 2.3;
+    }
+    IsoOctane
+    {
+        W 0.4658;
+        eta -0.326;
+        xi 4.48;
+        alpha 1.56;
+        beta -0.22;
+        f 2.3;
+    }
+}
+
+ignite yes;
+ignitionSites (
+    {
+        // place ignition site behind bluff-body
+        location ( #calc "$D * $convertToMeters"
+                   $calc "1.5 * $D * $convertToMeters"
+                   #calc "-($L_TE_upstream + 0.125 * $D) * $convertToMeters");
+        diameter   #calc "0.25 * $D * $convertToMeters";
+        start 0;
+        duration 0.001;
+        strength 1 ;
+    } );
+ignitionSphereFraction          1;
+ignitionThickness               ignitionThickness [ 0 1 0 0 0 0 0 ] 0.001;
+ignitionCircleFraction          0.5;
+ignitionKernelArea              ignitionKernelArea [ 0 2 0 0 0 0 0 ] 0.001;
