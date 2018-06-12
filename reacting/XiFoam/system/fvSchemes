@@ -94,12 +94,13 @@ divSchemes
 	// 		bounded by "Sweby limiter"
 	// Wolf: accurate & stable numerical scheme -- 2nd order accurate
 	div(phi,U) 		Gauss linear;
-	div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
-    div(phi,K)      Gauss linear;
-    div(phi,R)      Gauss linear;
+    div(U)          Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
+    div(phi,K)      Gauss limitedLinear 1;
+    div(phi,R)      Gauss limitedLinear 1;
     div(R)          Gauss linear;
-	div(phiXi,Xi)   Gauss linear;
-    div(phiXi,Su)   Gauss linear;
+    div(phiXi,Xi)   Gauss limitedLinear 1;
+    div(phiXi,Su)   Gauss limitedLinear 1;
     div(phiSt,b)    Gauss limitedLinear01 1;
     div(phi,ft_b_ha_hau) Gauss multivariateSelection
     {
@@ -109,7 +110,6 @@ divSchemes
         ha  limitedLinear 1;
         hau limitedLinear 1;
     };
-    div(U)          Gauss linear;
     div((Su*n)) Gauss linear;
     div((U+((Su*Xi)*n))) Gauss linear;
     div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
