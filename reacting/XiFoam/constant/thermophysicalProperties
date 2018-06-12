@@ -42,9 +42,12 @@ stoichiometricAirFuelMassRatio      stoichiometricAirFuelMassRatio [0 0 0 0 0 0 
 // phi = 0.62
 // ft = 0.0349359
 // Tad = 1707.6
-reactants specie
+reactants
 {
-    molWeight       28.0675;
+    specie
+    {
+        molWeight       28.0675;
+    }
     thermodynamics
     {
         Tlow            200;
@@ -64,9 +67,12 @@ reactants specie
     }
 }
 
-burntProducts specie
+burntProducts
 {
-    molWeight       27.6333;
+    specie
+    {
+        molWeight       27.6333;
+    }
     thermodynamics
     {
         Tlow            200;
@@ -85,9 +91,12 @@ burntProducts specie
         Ts              170.672;
     }
 }
-products specie
+products
 {
-    molWeight       28.0675;
+    specie
+    {
+        molWeight       28.0675;
+    }
     thermodynamics
     {
         Tlow            200;

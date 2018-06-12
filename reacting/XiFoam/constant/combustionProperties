@@ -33,8 +33,8 @@ equivalenceRatio                equivalenceRatio [ 0 0 0 0 0 0 0 ] $phi;
 sigmaExt                        sigmaExt [ 0 0 -1 0 0 0 0 ] 100000;
 XiModel                         transport;
 // used for algebraic ximodel
-//XiCoef                          XiCoef [ 0 0 0 0 0 0 0 ] 0.62;
-//XiShapeCoef                     XiShapeCoef [ 0 0 0 0 0 0 0 ] 1;
+XiCoef                          XiCoef [ 0 0 0 0 0 0 0 ] 0.62;
+XiShapeCoef                     XiShapeCoef [ 0 0 0 0 0 0 0 ] 1;
 uPrimeCoef                      uPrimeCoef [ 0 0 0 0 0 0 0 ] 1;
 GuldersCoeffs
 {
@@ -72,7 +72,7 @@ ignitionSites (
     {
         // place ignition site behind bluff-body
         location ( #calc "$D * $convertToMeters"
-                   $calc "1.5 * $D * $convertToMeters"
+                   #calc "1.5 * $D * $convertToMeters"
                    #calc "-($L_TE_upstream + 0.125 * $D) * $convertToMeters");
         diameter   #calc "0.25 * $D * $convertToMeters";
         start 0;
