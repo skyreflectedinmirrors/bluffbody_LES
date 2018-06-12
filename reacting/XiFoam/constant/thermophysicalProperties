@@ -28,7 +28,7 @@ thermoType
     mixture         homogeneousMixture;
     transport       const;
     thermo          janaf;
-    energy          sensibleEnthalpy;
+    energy          absoluteEnthalpy;
     equationOfState perfectGas;
     specie          specie;
 }
