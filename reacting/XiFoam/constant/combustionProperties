@@ -73,11 +73,11 @@ ignitionSites (
         // place ignition site behind bluff-body
         location ( #calc "$D * $convertToMeters"
                    #calc "1.5 * $D * $convertToMeters"
-                   #calc "-($L_TE_upstream + 0.125 * $D) * $convertToMeters");
-        diameter   #calc "0.25 * $D * $convertToMeters";
-        start 0;
+                   #calc "-($L_TE_upstream + 0.25 * $D) * $convertToMeters");
+        diameter   #calc "0.5 * $D * $convertToMeters";
+        start 0.01;
         duration 0.001;
-        strength 1 ;
+        strength 200 ;
     } );
 ignitionSphereFraction          1;
 ignitionThickness               ignitionThickness [ 0 1 0 0 0 0 0 ] 0.001;
