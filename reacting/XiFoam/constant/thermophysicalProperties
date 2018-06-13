@@ -46,7 +46,6 @@ reactants
 {
     specie
     {
-        massFraction    1;
         molWeight       27.835;
     }
     thermodynamics
@@ -54,8 +53,9 @@ reactants
         Tlow            200;
         Thigh           6000;
         Tcommon         1000;
-        highCpCoeffs    ( 3.06023 0.00182423 -5.93882e-07 8.93814e-11 -4.97599e-15 -10998.7 5.32214 );
-        lowCpCoeffs     ( 3.54631 0.000378278 2.02793e-07 9.31625e-10 -6.84026e-13 -11102.1 2.901 );
+        highCpCoeffs    ( 2.98654 0.00193781 -6.48541e-07 1.03681e-10 -6.09734e-15 -1700.67 5.71664 );
+        lowCpCoeffs     ( 3.7079 -0.00175244 5.43411e-06 -3.93937e-09 9.23189e-13 -1779.55 2.49797 );
+
     }
     // constant default transport coeffs
     transport
@@ -81,6 +81,7 @@ burntProducts
         Tcommon         1000;
         highCpCoeffs    ( 3.06023 0.00182423 -5.93882e-07 8.93814e-11 -4.97599e-15 -10998.7 5.32214 );
         lowCpCoeffs     ( 3.54631 0.000378278 2.02793e-07 9.31625e-10 -6.84026e-13 -11102.1 2.901 );
+
     }
     // constant default transport coeffs
     transport
