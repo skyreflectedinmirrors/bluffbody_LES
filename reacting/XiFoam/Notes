@@ -201,3 +201,6 @@ Scheme Changes
 XiFoam Notes
 ------------
 - ft, fu not needed (homogeneous mixture https://www.cfd-online.com/Forums/openfoam-pre-processing/172095-ft-fu-xifoam-ehsan-yasari-tuto.html)
+- with phi = 0.62, we get repeated fast ignition / acceleration / blowout, rather
+  than a sustained flame
+        -> try with phi = 0.82

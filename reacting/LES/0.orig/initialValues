@@ -22,22 +22,22 @@ FoamFile
 // operating pressure, 1 bar
 Pref  		100000;
 // equivalence ratio
-phi         0.62;
-// mass fraction of CH4, for an equivalence ratio of 0.62
-CH4_init    0.03494841762021331;
-// mass fraction of N2 of air, for non-reacting
-N2_init		0.7401873253032588;
-// mass fraction of O2 of air, for non-reacting
-O2_init		0.2248642570765278;
+phi         0.82;
+// mass fraction of CH4, for an equivalence ratio of 0.82
+CH4_init    0.045706816557972915;
+// mass fraction of N2 of air, for reacting
+N2_init		0.7319357140115094;
+// mass fraction of O2 of air, for reacting
+O2_init		0.22235746943051762;
 // inlet temperature
 Tref        288;
 // inlet velocity
 Ubulk 		17.2;
 // specific heat ratio
-gamma		1.392728371588844;
+gamma		1.3906445526684523;
 // mass flow rate (kg/s)
-mdot 		0.19352623244824685;
+mdot 		0.1919225315929918;
 // inlet density (kg/m3)
-rho_inlet 	1.1720338689937433;
+rho_inlet 	1.1623215333877897;
 // residence time, in seconds
 t_res		#calc "($L_total * $convertToMeters) / $Ubulk";

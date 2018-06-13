@@ -18,5 +18,5 @@ FoamFile
 // a collection of initial values specifically for XiFoam
 #include        "initialValues";
 
-// laminar flamespeed from flamespeed.py for methane w/ phi = 0.62 [m/s]
-Su          0.133252;
+// laminar flamespeed from flamespeed.py for methane w/ phi = 0.82 [m/s]
+Su          0.291763;

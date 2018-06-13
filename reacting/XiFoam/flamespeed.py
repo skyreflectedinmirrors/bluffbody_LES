@@ -1,14 +1,15 @@
 from __future__ import print_function
 
-# based onhttps://www.cantera.org/docs/sphinx/html/cython/examples/onedim_flamespeed_sensitivity.html
-# and https://www.cantera.org/docs/sphinx/html/cython/examples/onedim_flame_fixed_T.html
+# based on:
+# https://www.cantera.org/docs/sphinx/html/cython/examples/onedim_flamespeed_sensitivity.html  # noqa
+# and https://www.cantera.org/docs/sphinx/html/cython/examples/onedim_flame_fixed_T.html    # noqa
 
 import cantera as ct
 
 # Simulation parameters
 p = ct.one_atm  # pressure [Pa]
 Tin = 300.0  # unburned gas temperature [K]
-phi = 0.62
+phi = 0.82
 reactants = 'CH4:0.45, O2:1.0, N2:3.76'
 
 width = 0.03  # m

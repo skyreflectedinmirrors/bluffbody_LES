@@ -37,24 +37,25 @@ thermoType
 // https://www.brighthubengineering.com/machine-design/15235-the-stoichiometric-air-fuel-ratio/
 stoichiometricAirFuelMassRatio      stoichiometricAirFuelMassRatio [0 0 0 0 0 0 0]  17.19;
 
-// from cd $FOAM_UTILITIES/thermophysical/adiabaticFlameT
+// cd $FOAM_UTILITIES/thermophysical/adiabaticFlameT
 // adiabaticFlameT controlDict for methane for phi = 0.62
-// phi = 0.62
-// ft = 0.0349359
-// Tad = 1707.6
+// phi = 0.82
+// ft = 0.0456906
+// Tad = 2049.17
 reactants
 {
     specie
     {
-        molWeight       28.0675;
+        massFraction    1;
+        molWeight       27.835;
     }
     thermodynamics
     {
         Tlow            200;
         Thigh           6000;
         Tcommon         1000;
-        highCpCoeffs    ( 3.01283 0.00177833 -5.95937e-07 9.51475e-11 -5.59709e-15 -1536.85 5.63406 );
-        lowCpCoeffs     ( 3.67949 -0.00151762 4.57227e-06 -3.06227e-09 6.12909e-13 -1612.61 2.63867 );
+        highCpCoeffs    ( 3.06023 0.00182423 -5.93882e-07 8.93814e-11 -4.97599e-15 -10998.7 5.32214 );
+        lowCpCoeffs     ( 3.54631 0.000378278 2.02793e-07 9.31625e-10 -6.84026e-13 -11102.1 2.901 );
     }
     // constant default transport coeffs
     transport
@@ -95,15 +96,15 @@ products
 {
     specie
     {
-        molWeight       28.0675;
+        molWeight       27.835;
     }
     thermodynamics
     {
         Tlow            200;
         Thigh           6000;
         Tcommon         1000;
-        highCpCoeffs    ( 3.07489 0.00161629 -5.31425e-07 8.11881e-11 -4.59666e-15 -7426.18 5.33423 );
-        lowCpCoeffs     ( 3.55969 -1.60583e-05 7.26455e-07 5.60294e-10 -5.9403e-13 -7515.98 2.97643 );
+        highCpCoeffs    ( 3.06704 0.00172763 -5.64869e-07 8.55754e-11 -4.79978e-15 -9339.18 5.32775 );
+        lowCpCoeffs     ( 3.55253 0.000195099 4.46047e-07 7.59132e-10 -6.42221e-13 -9436.27 2.93604 );
     }
     // constant default transport coeffs
     transport

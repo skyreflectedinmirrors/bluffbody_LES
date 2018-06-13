@@ -1,7 +1,6 @@
 from __future__ import division, print_function
 import argparse
 import cantera as ct
-from scipy.optimize import fsolve
 import numpy as np
 
 parser = argparse.ArgumentParser('inlet_calculator -- print properties at inlet!')
@@ -14,10 +13,10 @@ parser.add_argument('-n', '--non_reacting',
                     action='store_false',
                     required=False)
 parser.add_argument('-g', '--gas',
-                    default='ucsd.cti',
+                    default='gri30.cti',
                     type=str)
 parser.add_argument('-f', '--fuel',
-                    default='C3H8',
+                    default='CH4',
                     type=str,
                     help='The name of the fuel molecule to use in the mechanism.')
 parser.add_argument('-p', '--phase',
@@ -48,7 +47,9 @@ height = 3 * D
 area = width * height
 
 # equivalence ratio -- MVP2
-phi = 0.62 if reacting else 0
+# NOTE: 06/13 raised equivalence ratio to 0.82 to avoid repeated weak-flame /
+# strong-flame cycles
+phi = 0.82 if reacting else 0
 
 # iterate to find static conditions
 print('Non-reacting' if not reacting else 'Reacting')
