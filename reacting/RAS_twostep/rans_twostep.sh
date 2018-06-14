@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --partition=generat_requeue  # run on requeue partition
+#SBATCH --partition=general_requeue  # run on requeue partition
 #SBATCH --time=12:00:00              # Job should run for no more than 12 hours
 #SBATCH --nodes=1                    # one node
 #SBATCH --ntasks=24                  # 24 cores
