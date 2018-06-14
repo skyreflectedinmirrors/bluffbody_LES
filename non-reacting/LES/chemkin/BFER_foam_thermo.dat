@@ -6,7 +6,7 @@ N2
     }
     thermodynamics
     {
-        Tlow            300;
+        Tlow            275;
         Thigh           5000;
         Tcommon         1000;
         highCpCoeffs    ( 2.92664 0.0014879768 -5.68476e-07 1.0097038e-10 -6.753351e-15 -922.7977 5.980528 );
