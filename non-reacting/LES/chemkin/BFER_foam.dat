@@ -1,0 +1,41 @@
+elements
+4
+(
+O
+H
+C
+N
+)
+;
+
+species
+6
+(
+O2
+H2O
+CH4
+CO
+CO2
+N2
+)
+;
+
+reactions
+{
+    un-named-reaction-0
+    {
+        type            irreversibleArrheniusReaction;
+        reaction        "CH4 + 1.5O2 = CO + 2H2O";
+        A               54978.91668;
+        beta            0;
+        Ta              17863.28898;
+    }
+    un-named-reaction-1
+    {
+        type            reversibleArrheniusReaction;
+        reaction        "CO + 0.5O2 = CO2";
+        A               199999.9899;
+        beta            0.7;
+        Ta              6038.294866;
+    }
+}
