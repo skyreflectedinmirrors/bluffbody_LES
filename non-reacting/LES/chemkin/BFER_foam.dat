@@ -26,7 +26,7 @@ reactions
     {
         type            irreversibleArrheniusReaction;
         reaction        "CH4^0.5 + 1.5O2^0.65 = CO + 2H2O";
-        A               616873591.1;
+        A               1738585607;
         beta            0;
         Ta              17863.28898;
     }
@@ -34,7 +34,7 @@ reactions
     {
         type            reversibleArrheniusReaction;
         reaction        "CO + 0.5O2 = CO2";
-        A               199999.9899;
+        A               6324555.32;
         beta            0.7;
         Ta              6038.294866;
     }
