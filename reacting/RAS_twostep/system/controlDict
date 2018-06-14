@@ -41,7 +41,7 @@ deltaT          3e-7;
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
 writeControl    runTime;
 // should result in roughly 2 time-steps per run
-writeInterval   9e-7;
+writeInterval   1e-4;
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;
