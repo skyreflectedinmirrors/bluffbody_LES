@@ -28,8 +28,8 @@ regions
     sphereToCell
     {
         // set box of really high temperature to ignite the gas behind the bluff-body
-        center (#calc "$width * 0.5 * $convertToMeters" #calc "$height * 0.5 * $convertToMeters" #calc "-($L_TE_upstream + 0.25 * $D) * $convertToMeters");
-        diameter #calc "0.25 * $D * $convertToMeters";
+        centre (#calc "$width * 0.5 * $convertToMeters" #calc "$height * 0.5 * $convertToMeters" #calc "-($L_TE_upstream + 0.25 * $D) * $convertToMeters");
+        radius #calc "0.125 * $D * $convertToMeters";
         fieldValues
         (
             volScalarFieldValue T 2000
