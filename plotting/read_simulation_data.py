@@ -165,6 +165,9 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
                  if pisfile(pjoin(time_dir, x))]
         if len(files) > 1:
             raise NotImplementedError
+        elif not len(files):
+            raise Exception("Time directory {} has no post-procesing file".format(
+                time_dir))
         # open file
         file = files[0]
         base = pasename(file)
