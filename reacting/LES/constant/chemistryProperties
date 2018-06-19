@@ -22,10 +22,8 @@ Chemistry properties for reacting case
 
 chemistryType
 {
-    chemistrySolver ode;
-    chemistryThermo psi;
-    TDAC            off;
-    reduction       off;
+    solver ode;
+    method standard;
 }
 
 chemistry       on;
