@@ -13,6 +13,6 @@
 #SBATCH --signal=USR1@60
 
 export IPM_LOG='terse'
-export IPM_LOG='./log/'
+export IPM_LOG_DIR='./log/'
 export IPM_NESTED_REGIONS=1
 mpirun reactingFoamIPM -case . -parallel
