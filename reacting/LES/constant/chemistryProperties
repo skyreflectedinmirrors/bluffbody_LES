@@ -23,7 +23,7 @@ Chemistry properties for reacting case
 chemistryType
 {
     solver ode;
-    method standard;
+    method standardIPM;
 }
 
 chemistry       on;
