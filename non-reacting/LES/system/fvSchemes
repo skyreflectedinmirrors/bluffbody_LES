@@ -34,7 +34,7 @@ Manual: https://cfd.direct/openfoam/user-guide/fvSchemes/
 ddtSchemes
 {
     // 2nd ord implicit, backward diff -- from Cocks et al.
-    default         backward;
+    default         CrankNicolson 0.333;
 }
 
 // gradients
@@ -48,8 +48,7 @@ gradSchemes
     // Chalmers states that Gauss gradient is accurate on hex-meshes
     //
     // Limit suggestion comes from Wolf
-    default         Gauss linear corrected;
-    grad(p)         faceMDLimited leastSquares 0.5;
+    default        cellMdLimited Gauss Linear 1.0;
 };
 
 // diffusion
