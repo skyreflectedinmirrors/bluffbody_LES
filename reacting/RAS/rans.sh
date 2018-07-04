@@ -56,6 +56,12 @@ else
             fi
             echo "Time-step $i: ${time_at_steps[$i]}"
             time_per_step=$(c "${time_at_steps[$i]} - ${time_at_steps[$next_i]}")
+            if (( $(echo "$time_per_step < 0" | bc -l) ))
+            then
+                # the simulation restarted in this time step, hence the duration
+                # is simply the time value
+                time_per_step=${time_at_steps[$i]}
+            fi
             echo "Duration $i: ${time_per_step}"
             if (( $(echo "$time_per_step > $max_step" | bc -l) ))
             then
