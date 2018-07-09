@@ -22,7 +22,7 @@ fields  (U);
 #includeEtc "caseDicts/postProcessing/graphs/sampleDict.cfg"
 
 // Override settings here, e.g.
-// setConfig { type midPoint; }
+// setConfig { type lineCell; }
 
 // Must be last entry
 #includeEtc "caseDicts/postProcessing/graphs/graph.cfg"

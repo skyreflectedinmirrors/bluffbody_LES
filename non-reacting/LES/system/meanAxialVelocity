@@ -24,7 +24,7 @@ fields  (U);
 // Override settings here, e.g.
 setConfig
 {
-	type midPoint;
+	type lineCell;
 	axis z;
 }
 
