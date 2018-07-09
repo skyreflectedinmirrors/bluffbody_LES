@@ -18,6 +18,9 @@ minutes="0"
 seconds="0"
 # SIMILARLY WITH THE OUTPUT FILE
 output="rans_reacting.out"
+# Should be at least 2, such that if we get out of sleep at the beginning of a
+# timestep, we can safely take this time-step _and_ the next before ending.
+SAFTEY_FACTOR="3"
 
 # first, reset endtime
 bash -c "foamDictionary -entry \"stopAt\" -set \"endTime\" system/controlDict"
@@ -74,7 +77,7 @@ else
 fi
 
 # add safety factor
-time_per_step=$(c "$max_step * 1.5")
+time_per_step=$(c "$max_step * $SAFTEY_FACTOR")
 echo "After saftey factor: ${time_per_step}s."
 if (( $(echo "$time_per_step < 5" | bc -l) ))
 then
