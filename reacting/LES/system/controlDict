@@ -34,15 +34,15 @@ stopAt          endTime;
 
 // ~ equivalent to 10 residence times
 endTime         0.5;
-// non-reacting time-step from Cocks et al.
-deltaT          1e-6;
 
+// reacting time-step from Cocks et al.
+deltaT          3e-7;
 
 // output -- mostly pulled from combustion/reactingFoam/RAS/SandiaD_LTS tutorial
-writeControl    adjustableRunTime;
+writeControl    runTime;
 // Write three times over 5 hours and 45 minutes (15 minutes shorter than parallel reservation)
 // this should work out to roughly simulation intervals of ~9.5 * 10^-3s
-writeInterval   0.001; // s
+writeInterval   7e-6; // s
 purgeWrite      0;
 writeFormat     binary;
 writePrecision  10;
