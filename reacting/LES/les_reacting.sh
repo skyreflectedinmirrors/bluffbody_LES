@@ -91,12 +91,13 @@ echo "Sleeping for ${sleep_duration}s."
 if (( $(echo "$sleep_duration < 0" | bc -l) ))
 then
     echo "Reservation too short -- can't complete a timestep."
-    exit 1
+    # simply set to writeNow to start
+    bash -c "foamDictionary -entry \"stopAt\" -set \"writeNow\" system/controlDict" &
+else
+    # spawn a new bash process that will sleep until nearly the end of the reservation, and
+    # then change the stopAt entry to writeNow to allow IPM to exit gracefully
+    # and more importantly, write timing data
+    bash -c "sleep $sleep_duration; foamDictionary -entry \"stopAt\" -set \"writeNow\" system/controlDict" &
 fi
-
-# spawn a new bash process that will sleep until nearly the end of the reservation, and
-# then change the stopAt entry to writeNow to allow IPM to exit gracefully
-# and more importantly, write timing data
-bash -c "sleep $sleep_duration; foamDictionary -entry \"stopAt\" -set \"writeNow\" system/controlDict" &
 export IPM_NESTED_REGIONS=1
-mpirun reactingFoamIPM -parallel
+mpirun reactingFoamIPM -parallel -noFunctionObjects
