@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-combustionModel  edcIPM;
+combustionModel  pasrIPM;
 
 active  true;
 
@@ -23,5 +23,11 @@ EDCCoeffs
 {
     version v2005;
 }
+
+pasrIPMCoeffs
+{
+    Cmix                1.0;
+}
+
 
 // ************************************************************************* //
