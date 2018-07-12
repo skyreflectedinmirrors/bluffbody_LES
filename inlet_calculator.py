@@ -49,7 +49,7 @@ area = width * height
 # equivalence ratio -- MVP2
 # NOTE: 06/13 raised equivalence ratio to 0.82 to avoid repeated weak-flame /
 # strong-flame cycles
-phi = 0.82 if reacting else 0
+phi = 1.0 if reacting else 0
 
 # iterate to find static conditions
 print('Non-reacting' if not reacting else 'Reacting')
