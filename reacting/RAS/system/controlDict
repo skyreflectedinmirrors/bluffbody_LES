@@ -50,6 +50,7 @@ timeFormat      general;
 timePrecision   6;
 runTimeModifiable true;
 
+/*
 functions
 {
     #includeFunc    meanAxialVelocity
@@ -59,3 +60,4 @@ functions
     #includeFunc    axialDeficitPlot_3p75
     #includeFunc    axialDeficitPlot_9p4
 }
+*/
