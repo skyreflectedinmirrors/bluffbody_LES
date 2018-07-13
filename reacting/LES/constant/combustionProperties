@@ -24,10 +24,15 @@ EDCCoeffs
     version v2005;
 }
 
+// cmix from
+// http://www.tfd.chalmers.se/~hani/kurser/OS_CFD_2014/Lorenzo%20Bartolucci/Doc/LorenzoBartolucciTutorial.pdf
+// http://files.nequam.se/thesis.pdf
 pasrIPMCoeffs
 {
-    Cmix                1.0;
+    Cmix                0.1;
+    turbulentReaction   on;
 }
+
 
 
 // ************************************************************************* //
