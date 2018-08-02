@@ -21,12 +21,14 @@ seconds="0"
 output="les_reacting.out"
 # Should be at least 2, such that if we get out of sleep at the beginning of a
 # timestep, we can safely take this time-step _and_ the next before ending.
-SAFTEY_FACTOR="3"
+SAFTEY_FACTOR="2.2"
+# cutoff for "minimum" time-step duration, to avoid issues guessing duration
+minimum_timestep="1000" # s
 
 # first, reset endtime
 bash -c "foamDictionary -entry \"stopAt\" -set \"endTime\" system/controlDict"
 
-default="3000" # s
+default="15284.15" # s
 c () {
     local a
     (( $# > 0 )) && a="$@" || read -r -p "calc: " a
@@ -60,13 +62,13 @@ else
             fi
             echo "Time-step $i: ${time_at_steps[$i]}"
             time_per_step=$(c "${time_at_steps[$i]} - ${time_at_steps[$next_i]}")
-            if (( $(echo "$time_per_step < 0" | bc -l) ))
+            if (( $(echo "$time_per_step < 0" | bc -l) | $(echo "$time_per_step < ${minimum_timestep}" | bc -l) ))
             then
                 # the simulation restarted in this time step, hence the duration
                 # is simply the time value
                 time_per_step=${time_at_steps[$i]}
             fi
-            echo "Duration $i: ${time_per_step}"
+            echo "Duration $i: ${time_per_step} (${time_at_steps[$i]} - ${time_at_steps[$next_i]})"
             if (( $(echo "$time_per_step > $max_step" | bc -l) ))
             then
                 max_step=$time_per_step
