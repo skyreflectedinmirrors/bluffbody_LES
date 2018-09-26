@@ -23,12 +23,12 @@ FoamFile
 Pref  		100000;
 // equivalence ratio
 phi         1.0;
-// mass fraction of CH4, for an equivalence ratio of 0.82
-CH4_init    0.055186324560485174;
+// mass fraction of CH4, for an equivalence ratio of 1.0
+CH4_init    0.045706816557972915;
 // mass fraction of N2 of air, for reacting
-N2_init		0.7246650024747564;
+N2_init		0.7319357140115094;
 // mass fraction of O2 of air, for reacting
-O2_init		0.2201486729647583;
+O2_init		0.22235746943051762;
 // inlet temperature
 Tref        288;
 // inlet velocity
