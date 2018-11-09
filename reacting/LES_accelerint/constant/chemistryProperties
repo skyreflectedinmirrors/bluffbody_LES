@@ -1,0 +1,44 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    location        "constant";
+    object          chemistryProperties;
+}
+
+/*
+
+Chemistry properties for reacting case
+
+*/
+
+chemistryType
+{
+    solver batched;
+    method batchedIPM;
+}
+
+chemistry       on;
+initialChemicalTimeStep 1e-07;
+Treact          550;
+
+odeCoeffs
+{
+    solver          AccelerInt;
+    accSolver       ROS4;
+    platform        intel;
+    vectorSize      8;
+    absTol          1e-10;
+    relTol          1e-06;
+    maxSteps        1000000;
+}
+
+// ************************************************************************* //
