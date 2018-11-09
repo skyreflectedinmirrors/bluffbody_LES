@@ -28,11 +28,18 @@ regions
     sphereToCell
     {
         // set box of really high temperature to ignite the gas behind the bluff-body
-        centre (#calc "$width * 0.5 * $convertToMeters" #calc "$height * 0.5 * $convertToMeters" #calc "-($L_TE_upstream + 0.25 * $D) * $convertToMeters");
-        radius #calc "0.125 * $D * $convertToMeters";
+        centre (#calc "$width * 0.5 * $convertToMeters" #calc "$height * 0.5 * $convertToMeters" #calc "-($L_TE_upstream + $D) * $convertToMeters");
+        radius #calc "0.5 * $D * $convertToMeters";
         fieldValues
         (
-            volScalarFieldValue T 2000
+            // set to equilibrium to avoid FPE
+            volScalarFieldValue T   2043.42
+            volScalarFieldValue O2  0.0404805
+            volScalarFieldValue H2O 0.102653
+            volScalarFieldValue CO  0.000798569
+            volScalarFieldValue CO2 0.124132
+            volScalarFieldValue N2  0.731936
+            volScalarFieldValue CH4 4.12617e-21
         );
     }
 );

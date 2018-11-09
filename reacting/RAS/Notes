@@ -192,7 +192,11 @@ Rosenbrock is the fastest, use for now -- re-run this test later when we get a m
 developed flow field
 
 
-Scheme Changes
---------------
+Solver retest
+-------------
+On 48 cores, average step timings for the RANS solvers were:
 
-0.0200197s - attempt using time-step of 1e-6s for reacting RAS
+43.8856667 minutes for Seulex
+22.5848333 minutes for Rodas34
+12.7686667 minutes for Rosenbrock34
+    -> go to Rosenbrock34

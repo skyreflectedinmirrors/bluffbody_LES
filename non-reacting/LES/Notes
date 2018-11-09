@@ -119,3 +119,36 @@ Wolf4
 - About the same, maybe better downstream axial velocity matching (no bump), but doesn't get -ve velocity peak as well
 - overpredicts fluctuating velocity slightly
 - more fine structures again in velocity
+
+Final Results
+-------------
+- Axial Y plots:
+    - 0.375D -> wolf2
+    - 0.95D -> wolf3 (followed by wolf2)
+    - 1.53D -> none good
+    - 3.75D, 9.4D -> all equivalent
+- Axial Z plots:
+    - 0.375D -> wolf2
+    - 0.95D -> wolf2 (followed by wolf3)
+    - 1.53D -> wolf2 (followed by wolf3)
+    - 3.75D -> all similar (maybe wolf2?)
+    - 9.4D -> all similar
+- Mean axial
+    - wolf 3 (much better match of -ve velocity peak)
+    - all fairly close to Cocks paper
+- Y' RMS
+    - 0.375D -> wolf3 (followed by wolf2)
+    - 0.95D -> wolf2 (followed by wolf3)
+    - 1.53D -> wolf4 (followed by wolf2)
+    - 3.75D -> wolf2 (followed by wolf3)
+    - 9.4D -> wolf2
+- Z' RMS
+    - 0.375D -> wolf3 (followed by 2)
+    - 0.95D -> wolf2, maybe? all pretty much equivalent
+    - 1.53D -> wolf2 (followed by 3)
+    - 3.75D -> wolf2
+    - 9.4D -> equivalent
+
+FINAL:
+    - wolf2 = 10 lead, 4 2nd
+    - wolf3 = 3 lead, 4 2nd

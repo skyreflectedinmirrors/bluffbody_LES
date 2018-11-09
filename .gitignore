@@ -35,8 +35,8 @@
 processor*/
 *0/
 *0.*/
-dynamicCode/
-*/system/blockMeshDict
-*/system/meshDims
-*/constant/polyMesh
-*/constant/cellToRegion
+*/*/dynamicCode/
+*/*/system/blockMeshDict
+*/*/system/meshDims
+*/*/constant/polyMesh
+*/*/constant/cellToRegion

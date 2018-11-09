@@ -10,7 +10,9 @@
 #SBATCH --mail-type=END              # mail
 #SBATCH --mail-user=nicholas.curtis@uconn.edu
 #SBATCH --dependency=singleton
-#SBATCH --signal=SIGTERM@60
+#SBATCH --signal=USR1@60
 
-
-mpirun reactingFoam -case . -parallel
+export IPM_LOG='terse'
+export IPM_LOG_DIR='./log/'
+export IPM_NESTED_REGIONS=1
+mpirun reactingFoamIPM -case . -parallel

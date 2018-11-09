@@ -22,10 +22,8 @@ Chemistry properties for reacting case
 
 chemistryType
 {
-    chemistrySolver ode;
-    chemistryThermo psi;
-    TDAC            off;
-    reduction       off;
+    solver ode;
+    method standardIPM;
 }
 
 chemistry       on;
@@ -37,6 +35,7 @@ odeCoeffs
     solver          Rosenbrock34;
     absTol          1e-10;
     relTol          1e-06;
+    maxSteps        1000000;
 }
 
 // ************************************************************************* //
