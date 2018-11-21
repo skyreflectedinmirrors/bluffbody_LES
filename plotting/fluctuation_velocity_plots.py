@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from read_simulation_data import read_simulation_data
 from read_experimental_data import read_experimental_data
-from common import get_default_parsing_args, make_dir
+from common import get_default_parsing_args, make_dir, get_cases
 from os.path import join as pjoin
 
 sim_name = 'axialDeficitPlot_{point}'
@@ -41,7 +41,8 @@ def process(caseno, case, reacting, point, t_start=0, t_end=-1,
         plt.ylabel(expdata.columns[0])
 
 
-def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both'):
+def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both',
+         out_path=None):
     if velocity_component == 'both':
         velocity_component = ['z', 'y']
     else:
@@ -57,7 +58,9 @@ def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both'):
             plt.gca().set_xlim([-1, 1] if vc == 'y' else
                                [-1, 2])
             plt.legend(loc=0)
-            plt.savefig(pjoin(case[0],
+            if out_path is None:
+                out_path = case[0]
+            plt.savefig(pjoin(out_path,
                         '{vc}_prime_rms_{point}.pdf'.format(
                             vc=vc, point=point)))
             plt.close()
@@ -76,5 +79,7 @@ if __name__ == '__main__':
                         required=False)
     args = parser.parse_args()
 
-    plot(args.caselist, args.reacting, args.start_time, args.end_time,
-         args.velocity_component)
+    plot(get_cases(args.caselist, args.reacting, args.base_path),
+         args.reacting, args.start_time,
+         args.end_time, args.velocity_component,
+         out_path=args.out_path)

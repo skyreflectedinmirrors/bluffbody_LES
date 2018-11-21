@@ -116,6 +116,16 @@ def make_dir(case):
         os.makedirs(pjoin(script_dir, case))
 
 
+def get_cases(cases, reacting=False, base_path=None):
+    if base_path:
+        base_path = os.path.abspath(base_path)
+        if reacting:
+            base_path = os.path.join(base_path, 'reacting')
+        else:
+            base_path = os.path.join(base_path, 'non-reacting')
+        return [os.path.join(base_path, case) for case in cases]
+
+
 def get_default_parsing_args(name, description):
     parser = ArgumentParser('{name}: {description}'.format(
         name=name, description=description))
@@ -147,4 +157,14 @@ def get_default_parsing_args(name, description):
                         required=False,
                         type=float,
                         default=-1)
+    parser.add_argument('-p', '--base_path',
+                        default=None,
+                        type=str,
+                        help='The base path to the top-level folder that contains '
+                             'the non-reacting and reacting cases.')
+    parser.add_argument('-o', '--out_path',
+                        required=False,
+                        default=None,
+                        help='The path to place the generated plots in. '
+                             'If not supplied, stores in the case-directory')
     return parser

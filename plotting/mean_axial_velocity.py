@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from read_simulation_data import read_simulation_data
 from read_experimental_data import read_experimental_data
-from common import get_default_parsing_args, make_dir
+from common import get_default_parsing_args, make_dir, get_cases
 
 graph_name = 'meanAxialVelocity'
 
@@ -30,12 +30,15 @@ def process(caseno, case, reacting, t_start=0, t_end=-1, multiple_cases=False):
         plt.ylabel(expdata.columns[1])
 
 
-def plot(case, reacting, t_start=0, t_end=-1):
+def plot(case, reacting, t_start=0, t_end=-1, out_path=None):
     for caseno, casename in enumerate(case):
         process(caseno, casename, reacting, t_start, t_end, len(case) > 1)
 
+    if out_path is None:
+        out_path = case[0]
+
     plt.legend(loc=0)
-    plt.savefig(pjoin(case[0], 'mean_axial_velocity.pdf'))
+    plt.savefig(pjoin(out_path, 'mean_axial_velocity.pdf'))
     plt.close()
 
 
@@ -47,4 +50,6 @@ if __name__ == '__main__':
         'to experimental data')
     args = parser.parse_args()
 
-    plot(args.caselist, args.reacting, args.start_time, args.end_time)
+    plot(get_cases(args.caselist, args.reacting, args.base_path),
+         args.reacting, args.start_time,
+         args.end_time, out_path=args.out_path)
