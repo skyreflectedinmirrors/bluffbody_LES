@@ -14,6 +14,7 @@ from os.path import join as pjoin
 from os.path import pardir as ppardir
 from os.path import isdir as pisdir
 import numpy as np
+import matplotlib.pyplot as plt
 
 script_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -94,36 +95,80 @@ class dataset(object):
                 self.data[:, i] /= Ubulk
 
 
-def get_simulation_path(case, graph_name, reacting=False):
+class PlotStyles(object):
+    def __init__(self, cases, grey=False):
+        self.num_colors = len(cases) + 1  # for experimental data
+        self.grey = grey
+
+    @property
+    def color_map(self):
+        cmap = 'Greys' if self.grey else 'inferno'
+        return plt.get_cmap(cmap, self.num_colors + 1)
+
+
+class UserOptions(object):
     """
-    Return the path to a simulation graph directory
+    A simple class that holds the various user-specified options
     """
-    # get path
-    react_str = 'reacting' if reacting else 'non-reacting'
-    path = pjoin(script_dir, ppardir, react_str, case, 'postProcessing', graph_name)
-    path = os.path.abspath(path)
 
-    if not pisdir(path):
-        raise Exception('Graph {} for case {} {} not found, {} is not a valid '
-                        'directory'.format(graph_name, react_str, case, path))
-
-    return path
-
-
-def make_dir(case):
-    import os
-    if not os.path.exists(pjoin(script_dir, case)):
-        os.makedirs(pjoin(script_dir, case))
-
-
-def get_cases(cases, reacting=False, base_path=None):
-    if base_path:
-        base_path = os.path.abspath(base_path)
-        if reacting:
-            base_path = os.path.join(base_path, 'reacting')
+    def __init__(self, cases, reacting, t_start=0, t_end=-1,
+                 base_path=None, out_path=None, velocity_component='both'):
+        self.cases = cases
+        self.reacting = reacting
+        self.t_start = t_start
+        self.t_end = t_end
+        self.base_path = base_path
+        self.out_path = out_path
+        self.velocity_component = velocity_component
+        if self.velocity_component == 'both':
+            self.velocity_component = ['z', 'y']
         else:
-            base_path = os.path.join(base_path, 'non-reacting')
-        return [os.path.join(base_path, case) for case in cases]
+            self.velocity_component = [self.velocity_component]
+        # fix case paths
+        self.cases = self.get_cases()
+        if self.out_path is None:
+            self.out_path = script_dir
+
+        # plot styles
+        self.style = PlotStyles(self.cases)
+
+    @property
+    def ncases(self):
+        return len(self.cases)
+
+    def get_simulation_path(self, case, graph_name):
+        """
+        Return the path to a simulation graph directory
+        """
+        path = pjoin(self.base_path, case, 'postProcessing', graph_name)
+        path = os.path.abspath(path)
+
+        if not pisdir(path):
+            raise Exception('Graph {} for case {} {} not found, {} is not a valid '
+                            'directory'.format(
+                                graph_name,
+                                'reacting' if self.reacting else 'non-reacting',
+                                case, path))
+
+        return path
+
+    def make_dir(self, case):
+        import os
+        if not os.path.exists(pjoin(self.out_path, case)):
+            os.makedirs(pjoin(self.out_path, case))
+
+    def get_cases(self):
+        # get path
+        if self.base_path:
+            self.base_path = os.path.abspath(self.base_path)
+        else:
+            self.base_path = os.path.abspath(pjoin(script_dir, ppardir))
+        react_str = 'reacting' if self.reacting else 'non-reacting'
+        self.base_path = pjoin(self.base_path, react_str)
+        return [pjoin(self.base_path, case) for case in self.cases]
+
+    def color(self, caseno, exp=False):
+        return self.style.color_map(caseno + 1 if not exp else 0)
 
 
 def get_default_parsing_args(name, description):

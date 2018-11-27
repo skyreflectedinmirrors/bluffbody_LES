@@ -2,65 +2,55 @@ import matplotlib.pyplot as plt
 
 from read_simulation_data import read_simulation_data
 from read_experimental_data import read_experimental_data
-from common import get_default_parsing_args, make_dir, get_cases
+from common import get_default_parsing_args, UserOptions
 from os.path import join as pjoin
 
 sim_name = 'axialDeficitPlot_{point}'
 exp_name = 'fluctuationVelocity'
 
 
-def process(caseno, case, reacting, point, t_start=0, t_end=-1,
-            velocity_component=None, multiple_cases=False):
+def process(caseno, case, point, velocity_component, opts):
     name = sim_name.format(point=point)
     # first read experimental data
     if not caseno:
-        expdata = read_experimental_data(exp_name, reacting,
+        expdata = read_experimental_data(exp_name, opts.reacting,
                                          velocity_component=velocity_component,
                                          point=point)
     # read baseline averaged data
-    baseline = read_simulation_data(case, name, reacting, t_start,
-                                    t_end, velocity_component=velocity_component)
+    baseline = read_simulation_data(case, name, opts,
+                                    velocity_component=velocity_component)
     # read fluctuation data
-    fluct = read_simulation_data(case, name, reacting, t_start,
-                                 t_end, velocity_component=velocity_component,
+    fluct = read_simulation_data(case, name, opts,
+                                 velocity_component=velocity_component,
                                  collection_type='fluct',
                                  collection_method='rms',
                                  baseline=baseline)
     # normalize / convert simulation data
-    fluct.normalize(reacting)
+    fluct.normalize(opts.reacting)
 
     if not caseno:
         plt.scatter(expdata[:, 1], expdata[:, 0], label=expdata.name,
-                    color='r')
+                    color=opts.color(caseno, exp=True))
     label = fluct.name
-    if multiple_cases:
+    if opts.ncases > 1:
         label += ' ({})'.format(case)
-    plt.plot(fluct[:, 1], fluct[:, 0], label=label)
+    plt.plot(fluct[:, 1], fluct[:, 0], label=label, color=opts.color(caseno))
     if not caseno:
         plt.xlabel(expdata.columns[1])
         plt.ylabel(expdata.columns[0])
 
 
-def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both',
-         out_path=None):
-    if velocity_component == 'both':
-        velocity_component = ['z', 'y']
-    else:
-        velocity_component = [velocity_component]
-
+def plot(opts):
     for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
-        for vc in velocity_component:
-            for caseno, casename in enumerate(case):
-                make_dir(casename)
-                process(caseno, casename, reacting, point, t_start, t_end,
-                        vc, len(case) > 1)
+        for vc in opts.velocity_component:
+            for caseno, casename in enumerate(opts.cases):
+                opts.make_dir(casename)
+                process(caseno, casename, point, vc, opts)
 
             plt.gca().set_xlim([-1, 1] if vc == 'y' else
                                [-1, 2])
             plt.legend(loc=0)
-            if out_path is None:
-                out_path = case[0]
-            plt.savefig(pjoin(out_path,
+            plt.savefig(pjoin(opts.out_path,
                         '{vc}_prime_rms_{point}.pdf'.format(
                             vc=vc, point=point)))
             plt.close()
@@ -78,8 +68,7 @@ if __name__ == '__main__':
                         default='both',
                         required=False)
     args = parser.parse_args()
+    opts = UserOptions(args.caselist, args.reacting, args.start_time, args.end_time,
+                       args.base_path, args.out_path, args.velocity_component)
 
-    plot(get_cases(args.caselist, args.reacting, args.base_path),
-         args.reacting, args.start_time,
-         args.end_time, args.velocity_component,
-         out_path=args.out_path)
+    plot(opts)
