@@ -171,6 +171,101 @@ class UserOptions(object):
         return self.style.color_map(caseno + 1 if not exp else 0)
 
 
+class Plot(object):
+    def __init__(self, sim_name, opts,
+                 read_exp_kwargs={},
+                 label_names={},
+                 exp_name=None):
+        base_label_names = {'mean': 'Simulation',
+                            'U': 'Normalized axial velocity',
+                            'V': 'Normalized tangential velocity',
+                            'Y': 'y/D',
+                            'X': 'x/D'}
+        base_label_names.update(label_names)
+        self.sim_name = sim_name
+        if exp_name is None:
+            exp_name = sim_name
+        self.exp_name = exp_name
+        self.opts = opts
+
+        self.read_exp_kwargs = read_exp_kwargs.copy()
+        self.label_names = base_label_names.copy()
+
+    def process(self, caseno, case, **kwargs):
+        from read_simulation_data import read_simulation_data
+        # read baseline averaged data
+        simdata = read_simulation_data(case, self.sim_name, self.opts, **kwargs)
+        # normalize / convert simulation data
+        simdata.normalize(simdata)
+        label = self.label(simdata.name, case)
+        col_map = self.simulation_column_map()
+        plt.plot(simdata[:, col_map[0]], simdata[:, col_map[1]],
+                 label=label, color=self.opts.color(caseno))
+
+    def plot(self, **kwargs):
+        for caseno, casename in enumerate(self.opts.cases):
+            self.opts.make_dir(casename)
+            self.process(caseno, casename, **kwargs)
+
+        self.plot_experimental()
+        plt.xlim(self.xlim())
+        plt.ylim(self.ylim())
+        plt.legend(loc=0)
+        plt.title(self.title())
+        plt.gcf().set_figwidth(self.figsize()[0])
+        plt.gcf().set_figheight(self.figsize()[1])
+        plt.tight_layout()
+        plt.savefig(pjoin(self.opts.out_path, self.figname()))
+        plt.close()
+
+    def figname(self):
+        raise NotImplementedError
+
+    def label(self, name, case):
+        label = name
+        if label in self.label_names:
+            label = self.label_names[label]
+        if self.opts.ncases > 1:
+            label += ' ({})'.format(case)
+        return label
+
+    def nice_labelname(self, label):
+        if label in self.label_names:
+            return self.label_names[label]
+        return label
+
+    def title(self):
+        return ""
+
+    def xlim(self):
+        return (None, None)
+
+    def ylim(self):
+        return (None, None)
+
+    def figsize(self):
+        return (6.4, 4.8)
+
+    def plot_experimental(self):
+        from read_experimental_data import read_experimental_data
+        expdata = read_experimental_data(self.exp_name, self.opts.reacting,
+                                         **self.read_exp_kwargs)
+
+        col_map = self.exp_column_map()
+        plt.scatter(expdata[:, col_map[0]], expdata[:, col_map[1]],
+                    label='Experimental',
+                    color=self.opts.color(0, exp=True))
+
+        plt.xlabel(self.nice_labelname(expdata.columns[col_map[0]]))
+        plt.ylabel(self.nice_labelname(expdata.columns[col_map[1]]))
+
+    def simulation_column_map(self):
+        return (0, 1)
+
+    def exp_column_map(self):
+        return (1, 0)
+
+
 def get_default_parsing_args(name, description):
     parser = ArgumentParser('{name}: {description}'.format(
         name=name, description=description))

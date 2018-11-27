@@ -1,51 +1,44 @@
-import matplotlib.pyplot as plt
-
-from read_simulation_data import read_simulation_data
-from read_experimental_data import read_experimental_data
-from common import get_default_parsing_args, UserOptions
-from os.path import join as pjoin
-
-graph_name = 'axialDeficitPlot_{point}'
+from common import get_default_parsing_args, UserOptions, Plot
 
 
-def process(caseno, case, point, velocity_component, opts):
-    name = graph_name.format(point=point)
-    if not caseno:
-        expdata = read_experimental_data(name, opts.reacting,
-                                         velocity_component=velocity_component,
-                                         point=point)
-    # read baseline averaged data
-    simdata = read_simulation_data(case, name, opts,
-                                   velocity_component=velocity_component)
-    # normalize / convert simulation data
-    simdata.normalize(simdata)
+class AxialDeficitPlot(Plot):
+    graph_name = 'axialDeficitPlot_{point}'
 
-    if not caseno:
-        plt.scatter(expdata[:, 1], expdata[:, 0], label=expdata.name,
-                    color=opts.color(caseno, exp=True))
+    def __init__(self, opts, point, velocity_component):
+        super(AxialDeficitPlot, self).__init__(
+            AxialDeficitPlot.graph_name.format(point=point), opts,
+            read_exp_kwargs={'point': point,
+                             'velocity_component': velocity_component},
+            multiplot=True)
+        self.point = point
+        self.velocity_component = velocity_component
 
-    label = simdata.name
-    if opts.ncases > 1:
-        label += ' ({})'.format(case)
-    plt.plot(simdata[:, 1], simdata[:, 0], label=label, color=opts.color(caseno))
-    if not caseno:
-        plt.xlabel(expdata.columns[1])
-        plt.ylabel(expdata.columns[0])
+    def figname(self):
+        return 'axial_deficit_plot_{vc}_{point}.pdf'.format(
+            vc=self.velocity_component,
+            point=self.point)
+
+    def xlim(self):
+        return (-0.5, 2)
+
+    def ylim(self):
+        return (-1.5, 1.5)
+
+    def simulation_column_map(self):
+        return (1, 0)
+
+    def figsize(self):
+        return (3, 9)
+
+    def title(self):
+        return "x/D = {}".format(self.point)
 
 
 def plot(opts):
     for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
         for vc in opts.velocity_component:
-            for caseno, casename in enumerate(opts.cases):
-                opts.make_dir(casename)
-                process(caseno, casename, point, vc, opts)
-                plt.gca().set_xlim([-1, 1] if vc == 'y' else
-                                   [-1, 2])
-            plt.legend(loc=0)
-            plt.savefig(pjoin(opts.out_path,
-                        'axial_deficit_plot_{vc}_{point}.pdf'.format(
-                            vc=vc, point=point)))
-            plt.close()
+            adp = AxialDeficitPlot(opts, point, vc)
+            adp.plot(point=point, velocity_component=vc)
 
 
 if __name__ == '__main__':

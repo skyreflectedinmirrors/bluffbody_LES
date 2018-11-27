@@ -1,59 +1,56 @@
 import matplotlib.pyplot as plt
 
 from read_simulation_data import read_simulation_data
-from read_experimental_data import read_experimental_data
-from common import get_default_parsing_args, UserOptions
-from os.path import join as pjoin
-
-sim_name = 'axialDeficitPlot_{point}'
-exp_name = 'fluctuationVelocity'
+from common import get_default_parsing_args, UserOptions, Plot
 
 
-def process(caseno, case, point, velocity_component, opts):
-    name = sim_name.format(point=point)
-    # first read experimental data
-    if not caseno:
-        expdata = read_experimental_data(exp_name, opts.reacting,
-                                         velocity_component=velocity_component,
-                                         point=point)
-    # read baseline averaged data
-    baseline = read_simulation_data(case, name, opts,
-                                    velocity_component=velocity_component)
-    # read fluctuation data
-    fluct = read_simulation_data(case, name, opts,
-                                 velocity_component=velocity_component,
-                                 collection_type='fluct',
-                                 collection_method='rms',
-                                 baseline=baseline)
-    # normalize / convert simulation data
-    fluct.normalize(opts.reacting)
+class FluctuationVelocityPlot(Plot):
+    sim_name = 'axialDeficitPlot_{point}'
+    exp_name = 'fluctuationVelocity'
 
-    if not caseno:
-        plt.scatter(expdata[:, 1], expdata[:, 0], label=expdata.name,
-                    color=opts.color(caseno, exp=True))
-    label = fluct.name
-    if opts.ncases > 1:
-        label += ' ({})'.format(case)
-    plt.plot(fluct[:, 1], fluct[:, 0], label=label, color=opts.color(caseno))
-    if not caseno:
-        plt.xlabel(expdata.columns[1])
-        plt.ylabel(expdata.columns[0])
+    def __init__(self, opts, point, velocity_component):
+        super(FluctuationVelocityPlot, self).__init__(
+            FluctuationVelocityPlot.sim_name.format(point=point), opts,
+            read_exp_kwargs={'point': point,
+                             'velocity_component': velocity_component},
+            exp_name=FluctuationVelocityPlot.exp_name)
+        self.point = point
+        self.velocity_component = velocity_component
+
+    def figname(self):
+        return '{vc}_prime_rms_{point}.pdf'.format(
+            vc=self.velocity_component,
+            point=self.point)
+
+    def xlim(self):
+        return (0, 2)
+
+    def ylim(self):
+        return (-1.5, 1.5)
+
+    def process(self, caseno, case, **kwargs):
+        # read baseline averaged data
+        baseline = read_simulation_data(case, self.sim_name, self.opts,
+                                        velocity_component=self.velocity_component)
+        # read fluctuation data
+        fluct = read_simulation_data(case, self.sim_name, self.opts,
+                                     velocity_component=self.velocity_component,
+                                     collection_type='fluct',
+                                     collection_method='rms',
+                                     baseline=baseline)
+        # normalize / convert simulation data
+        fluct.normalize(self.opts.reacting)
+        # and plot
+        label = self.label(fluct.name, case)
+        plt.plot(fluct[:, 1], fluct[:, 0], label=label, color=self.opts.color(
+            caseno))
 
 
 def plot(opts):
     for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
         for vc in opts.velocity_component:
-            for caseno, casename in enumerate(opts.cases):
-                opts.make_dir(casename)
-                process(caseno, casename, point, vc, opts)
-
-            plt.gca().set_xlim([-1, 1] if vc == 'y' else
-                               [-1, 2])
-            plt.legend(loc=0)
-            plt.savefig(pjoin(opts.out_path,
-                        '{vc}_prime_rms_{point}.pdf'.format(
-                            vc=vc, point=point)))
-            plt.close()
+            fvp = FluctuationVelocityPlot(opts, point, vc)
+            fvp.plot()
 
 
 if __name__ == '__main__':
