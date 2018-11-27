@@ -32,11 +32,19 @@
 *.app
 
 # data
-processor*/
-*0/
-*0.*/
-*/*/dynamicCode/
+0/
+0.*/
+dynamicCode/
 */*/system/blockMeshDict
 */*/system/meshDims
 */*/constant/polyMesh
 */*/constant/cellToRegion
+
+
+# OpenFOAM time & processor directories
+[0-9]*/
+processor[0-9]*/
+constant/polyMesh
+
+# python directories
+__pycache__/
