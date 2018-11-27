@@ -4,19 +4,14 @@ from common import get_default_parsing_args, UserOptions, Plot
 class AxialDeficitPlot(Plot):
     graph_name = 'axialDeficitPlot_{point}'
 
-    def __init__(self, opts, point, velocity_component):
+    def __init__(self, opts, velocity_component, num_points):
         super(AxialDeficitPlot, self).__init__(
-            AxialDeficitPlot.graph_name.format(point=point), opts,
-            read_exp_kwargs={'point': point,
-                             'velocity_component': velocity_component},
-            multiplot=True)
-        self.point = point
+            AxialDeficitPlot.graph_name, opts,
+            sharey=num_points)
         self.velocity_component = velocity_component
 
     def figname(self):
-        return 'axial_deficit_plot_{vc}_{point}.pdf'.format(
-            vc=self.velocity_component,
-            point=self.point)
+        return 'axial_deficit_plot_{}.pdf'.format(self.velocity_component)
 
     def xlim(self):
         return (-0.5, 2)
@@ -27,26 +22,33 @@ class AxialDeficitPlot(Plot):
     def simulation_column_map(self):
         return (1, 0)
 
-    def figsize(self):
-        return (3, 9)
+    def title(self, point='', **kwargs):
+        p = point.split('p')
+        p = float(p[0]) + float(''.join(p[1:])) / 100.
+        return "x/D = {}".format(p)
 
-    def title(self):
-        return "x/D = {}".format(self.point)
+    def sim_name(self, point='', **kwargs):
+        return AxialDeficitPlot.graph_name.format(point=point)
+
+    def figsize(self):
+        return (20, 8)
 
 
 def plot(opts):
-    for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
-        for vc in opts.velocity_component:
-            adp = AxialDeficitPlot(opts, point, vc)
-            adp.plot(point=point, velocity_component=vc)
+    for vc in opts.velocity_component:
+        points = ['0p375', '0p95', '1p53', '3p75', '9p4']
+        adp = AxialDeficitPlot(opts, vc, len(points))
+        for i, point in enumerate(points):
+            adp.plot(point=point, velocity_component=vc, hold=i)
+        adp.finalize(point=point)
 
 
 if __name__ == '__main__':
     parser = get_default_parsing_args(
-        'mean_axial_velocity.py',
-        'plots the time-averaged, normalized axial velocity '
-        'along the centerline of the Volvo bluff-body experiment, as compared '
-        'to experimental data')
+        'axial_deficit_plot.py',
+        'plots the time-averaged, normalized axial and tangential velocity '
+        'at different axial slices along the centerline of the Volvo bluff-body '
+        'experiment, as compared to experimental data')
     parser.add_argument('-v', '--velocity_component',
                         choices=['z', 'y', 'both'],
                         help='The velocity component to plot',
