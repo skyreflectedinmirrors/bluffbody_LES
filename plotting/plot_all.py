@@ -13,6 +13,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     for plot in plotters:
-        opts = UserOptions(args.caselist, args.reacting, args.start_time, args.end_time,
-                           args.base_path, args.out_path)
+        opts = UserOptions(args.caselist, args.reacting, args.start_time,
+                           args.end_time, args.base_path, args.out_path)
         plot(opts)
