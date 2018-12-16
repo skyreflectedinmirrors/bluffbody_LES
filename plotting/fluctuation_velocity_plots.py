@@ -20,7 +20,10 @@ class FluctuationVelocityPlot(Plot):
             vc=self.velocity_component)
 
     def xlim(self):
-        return (0, 2)
+        if self.velocity_component == 'y':
+            return (0, 1.0)
+        else:
+            return (0, 0.75)
 
     def ylim(self):
         return (-1.5, 1.5)
@@ -51,7 +54,7 @@ class FluctuationVelocityPlot(Plot):
         # and plot
         pltargs = {}
         if not kwargs.get('hold', True):
-            pltargs['label'] = self.label(fluct.name, case)
+            pltargs['label'] = self.label('U' + self.velocity_component + "'", case)
         plt.plot(fluct[:, 1], fluct[:, 0], color=self.opts.color(
             caseno), **pltargs)
 

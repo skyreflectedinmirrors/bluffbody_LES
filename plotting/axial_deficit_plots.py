@@ -14,7 +14,10 @@ class AxialDeficitPlot(Plot):
         return 'axial_deficit_plot_{}.pdf'.format(self.velocity_component)
 
     def xlim(self):
-        return (-0.5, 2)
+        if self.velocity_component == 'y':
+            return (-1, 1)
+        else:
+            return (-0.5, 2)
 
     def ylim(self):
         return (-1.5, 1.5)

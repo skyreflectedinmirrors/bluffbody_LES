@@ -257,33 +257,33 @@ class Plot(object):
             self.finalize(**kwargs)
 
     def finalize(self, **kwargs):
-        legend_font = 18
+        legend_font = 22
         major_font = 22
         minor_font = 14
-        label_size = 28
+        label_size = 18
         if not self.multiplot:
             self.gca.legend(loc=0, fontsize=legend_font)
             self.gca.set_xlim(self.xlim())
             self.gca.set_ylim(self.ylim())
             self.gca.set_title(self.title(**kwargs))
-            self.gca.set_tick_params(axis='both', which='major',
-                                     labelsize=major_font)
-            self.gca.set_tick_params(axis='both', which='minor',
-                                     labelsize=minor_font)
+            self.gca.tick_params(axis='both', which='major',
+                                 labelsize=major_font)
+            self.gca.tick_params(axis='both', which='minor',
+                                 labelsize=minor_font)
             for item in (self.gca.title, self.gca.xaxis.label,
                          self.gca.yaxis.label):
                 item.set_fontsize(label_size)
         else:
             for ax in self.axes:
-                ax.set_tick_params(axis='both', which='major',
-                                   labelsize=major_font)
-                ax.set_tick_params(axis='both', which='minor',
-                                   labelsize=minor_font)
+                ax.tick_params(axis='both', which='major',
+                               labelsize=major_font)
+                ax.tick_params(axis='both', which='minor',
+                               labelsize=minor_font)
                 for item in (ax.title, ax.xaxis.label, ax.yaxis.label):
                     item.set_fontsize(label_size)
             self.fig.legend(bbox_to_anchor=(0, 1.02, 1, 0.2), loc="lower left",
-                            mode="expand", borderaxespad=0, ncol=3,
-                            fontsize=legend_font)
+                            borderaxespad=0, ncol=3, fontsize=legend_font,
+                            labelspacing=8)
         self.fig.tight_layout()
         self.fig.savefig(pjoin(self.opts.out_path, self.figname()),
                          bbox_inches="tight")

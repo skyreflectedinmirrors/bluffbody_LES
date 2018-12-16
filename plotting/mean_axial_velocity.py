@@ -21,7 +21,7 @@ class MeanAxialVelocityPlot(Plot):
         return (0, 1)
 
     def title(self):
-        return "Centerline Mean Axial Velocity Profile"
+        return ""
 
 
 def plot(opts):
