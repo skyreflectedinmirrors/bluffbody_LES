@@ -5,22 +5,19 @@ from common import get_default_parsing_args, UserOptions, Plot
 
 
 class FluctuationVelocityPlot(Plot):
-    sim_name = 'axialDeficitPlot_{point}'
-    exp_name = 'fluctuationVelocity'
+    base_sim_name = 'axialDeficitPlot_{point}'
+    base_exp_name = 'fluctuationVelocity'
 
-    def __init__(self, opts, point, velocity_component):
+    def __init__(self, opts, velocity_component, num_points):
         super(FluctuationVelocityPlot, self).__init__(
-            FluctuationVelocityPlot.sim_name.format(point=point), opts,
-            read_exp_kwargs={'point': point,
-                             'velocity_component': velocity_component},
-            exp_name=FluctuationVelocityPlot.exp_name)
-        self.point = point
+            FluctuationVelocityPlot.base_sim_name, opts,
+            exp_name=FluctuationVelocityPlot.base_exp_name,
+            sharey=num_points)
         self.velocity_component = velocity_component
 
     def figname(self):
-        return '{vc}_prime_rms_{point}.pdf'.format(
-            vc=self.velocity_component,
-            point=self.point)
+        return '{vc}_prime_rms.pdf'.format(
+            vc=self.velocity_component)
 
     def xlim(self):
         return (0, 2)
@@ -28,12 +25,23 @@ class FluctuationVelocityPlot(Plot):
     def ylim(self):
         return (-1.5, 1.5)
 
+    def sim_name(self, point='', **kwargs):
+        return FluctuationVelocityPlot.base_sim_name.format(point=point)
+
+    def title(self, point='', **kwargs):
+        p = point.split('p')
+        p = float(p[0]) + float(''.join(p[1:])) / 100.
+        return "x/D = {}".format(p)
+
+    def figsize(self):
+        return (20, 8)
+
     def process(self, caseno, case, **kwargs):
         # read baseline averaged data
-        baseline = read_simulation_data(case, self.sim_name, self.opts,
+        baseline = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
                                         velocity_component=self.velocity_component)
         # read fluctuation data
-        fluct = read_simulation_data(case, self.sim_name, self.opts,
+        fluct = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
                                      velocity_component=self.velocity_component,
                                      collection_type='fluct',
                                      collection_method='rms',
@@ -41,16 +49,20 @@ class FluctuationVelocityPlot(Plot):
         # normalize / convert simulation data
         fluct.normalize(self.opts.reacting)
         # and plot
-        label = self.label(fluct.name, case)
-        plt.plot(fluct[:, 1], fluct[:, 0], label=label, color=self.opts.color(
-            caseno))
+        pltargs = {}
+        if not kwargs.get('hold', True):
+            pltargs['label'] = self.label(fluct.name, case)
+        plt.plot(fluct[:, 1], fluct[:, 0], color=self.opts.color(
+            caseno), **pltargs)
 
 
 def plot(opts):
-    for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
-        for vc in opts.velocity_component:
-            fvp = FluctuationVelocityPlot(opts, point, vc)
-            fvp.plot()
+    points = ['0p375', '0p95', '1p53', '3p75', '9p4']
+    for vc in opts.velocity_component:
+        fvp = FluctuationVelocityPlot(opts, vc, len(points))
+        for i, point in enumerate(points):
+            fvp.plot(point=point, velocity_component=vc, hold=i)
+        fvp.finalize(point=point)
 
 
 if __name__ == '__main__':
