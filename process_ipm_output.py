@@ -211,10 +211,7 @@ class sum_time(stats):
     def __call__(self, rank, region, rank_walltime, total_walltime, n_steps):
         self.results[rank][region] += rank_walltime
         self._aggregate[region] += rank_walltime
-        if rank not in self._aggregate['total']:
-            self._aggregate['total'][rank] += total_walltime
-        else:
-            assert self._aggregate['total'][rank] == total_walltime
+        self._aggregate['total'][rank] += total_walltime
 
     def rank_result(self, rank, region):
         return region + ' = {}(s)'.format(self.results[rank][region])
