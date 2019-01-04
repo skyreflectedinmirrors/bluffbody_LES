@@ -32,7 +32,7 @@ class dimensions(object):
 
 
 class dataset(object):
-    def __init__(self, columns, data, name, is_simulation=False):
+    def __init__(self, columns, data, name, is_simulation=False, time=None):
         """
         Attributes
         ----------
@@ -50,8 +50,9 @@ class dataset(object):
         self.data = np.copy(data)
         self.name = name
         self.is_simulation = is_simulation
+        self.time = time
 
-        assert len(columns) == data.shape[1]
+        assert len(columns) == data.shape[-1]
 
     @property
     def npoints(self):
@@ -70,7 +71,7 @@ class dataset(object):
     def __setitem__(self, key, value):
         self.data[key] = value
 
-    def normalize(self, reacting=False):
+    def normalize(self, reacting=False, velocity_power=1.0):
         assert self.is_simulation, "I don't know how to normalize experimental data"
 
         dims = dimensions(reacting)
@@ -90,9 +91,21 @@ class dataset(object):
                     # flip axes?
                     flip = getattr(dims, '{}_flip'.format(axis), 1)
                     self.data[:, i] *= flip
-                Ubulk = dims.Ubulk
+                Ubulk = np.power(dims.Ubulk, velocity_power)
                 # and normalize
                 self.data[:, i] /= Ubulk
+
+    def __mul__(self, other):
+        assert isinstance(other, dataset)
+        assert self.is_simulation == other.is_simulation
+        assert np.array_equal(self.time, other.time)
+        data = self.data.copy()
+        slicer = [slice(None) for x in data.shape]
+        slicer[-1] = slice(1, data.shape[-1])
+        data[slicer] *= other.data[slicer]
+        return dataset(self.columns, data,
+                       '{} x {}'.format(self.name, other.name),
+                       self.is_simulation, time=self.time)
 
 
 class PlotStyles(object):
@@ -182,7 +195,9 @@ class Plot(object):
                             'U': 'Normalized axial velocity',
                             'V': 'Normalized tangential velocity',
                             'Y': 'y/D',
-                            'X': 'x/D'}
+                            'X': 'x/D',
+                            'AVG(U\'V\')/(Ubulk)^2 (Reynolds Stress Approx)':
+                                r'Mean $\frac{u^\prime v^\prime}{U^2}$'}
         base_label_names.update(label_names)
         self._sim_name = sim_name
         if exp_name is None:
