@@ -1,0 +1,15 @@
+Notes
+-----
+
+Mesh Creation
+-------------
+
+For coarse LES
+
+>python buildMesh.py -c non-reacting/CASE/ -m 1 -w 0.3 -g 1.1 -uy 1.1 -l 1.05 -uz 1.05
+
+Which corresponds to:
+-a 1mm mesh
+-wall spacing of 0.3mm
+
+This yields a mesh of 10512320 cells
