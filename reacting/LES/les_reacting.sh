@@ -25,6 +25,17 @@ SAFTEY_FACTOR="2.2"
 # cutoff for "minimum" time-step duration, to avoid issues guessing duration
 minimum_timestep="1000" # s
 
+to_run=$(head -n1 times)
+
+if [ -z "$to_run" ]
+then
+    echo "No times found in dictionary 'times'... runs complete or dictionary not found!"
+    exit 10;
+fi
+
+# first, read a time from the "times" dictionary
+bash decompose.sh "$to_run"
+
 # first, reset endtime
 bash -c "foamDictionary -entry \"stopAt\" -set \"endTime\" system/controlDict"
 
@@ -102,4 +113,5 @@ else
     bash -c "sleep $sleep_duration; foamDictionary -entry \"stopAt\" -set \"writeNow\" system/controlDict" &
 fi
 export IPM_NESTED_REGIONS=1
-mpirun reactingFoamIPM -parallel -noFunctionObjects
+# run and remove the completed time from the dictionary
+mpirun reactingFoamIPM -parallel -noFunctionObjects && tail -n +2 "times" > "times.tmp" && mv "times.tmp" "times"
