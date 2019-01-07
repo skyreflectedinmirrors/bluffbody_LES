@@ -1,0 +1,162 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+
+
+/*
+
+Setup for simulation of Volvo flygmotor AB non-reacting flow LES
+
+Nicholas Curtis - 04/10/2018
+
+Based on:
+
+Chalmers: http://www.tfd.chalmers.se/~hani/kurser/OS_CFD_2015/HrvojeJasak/DiscretisationBestPractice.pdf
+Cocks et al: https://arc.aiaa.org/doi/abs/10.2514/6.2013-170
+Wolf: http://www.wolfdynamics.com/wiki/OFtipsandtricks.pdf
+Manual: https://cfd.direct/openfoam/user-guide/fvSchemes/
+
+*/
+
+// time
+ddtSchemes
+{
+    // 2nd ord implicit, backward diff -- from Cocks et al.
+    default         CrankNicolson 0.333;
+}
+
+// gradients
+gradSchemes
+{
+    // Cocks et al. used a green-gauss node-based method, which doesn't appear
+    // to be present by default in OpenFOAM.
+    // The closest method is "Gauss linear" - which is a cell-based version of
+    // the Green-gauss node-based method
+    //
+    // Chalmers states that Gauss gradient is accurate on hex-meshes
+    //
+    // Limit suggestion comes from Wolf
+    default        cellMDLimited Gauss linear 1.0;
+};
+
+// diffusion
+laplacianSchemes
+{
+    // Cocks et al. used a "2nd-order accurate central scheme for discretization of"
+    //                     "the Laplacian terms"
+    //
+    // From the manual (https://cfd.direct/openfoam/user-guide/fvSchemes/#x19-1410004.4):
+    // "to maintain *second-order accuracy*, an explicit non-orthogonal correction "
+    // "can be added to the orthogonal component, known as the corrected scheme"
+    //
+    // Further, maximum orthogonality from checkMesh of the blockMesh output is:
+    //      Mesh non-orthogonality Max: 29.37587877 average: 2.520147965
+    // hence we don't need the "limited" approach
+    //
+    // from Chalmers, may want a cell/face-limited form for bounded variables (
+    // e.g., mass fractions) -- but no need for limited as max non-orthgonality < 70
+    default         Gauss linear corrected;
+};
+
+snGradSchemes
+{
+    // not mentioned in Cocks et al.
+    // use a corrected scheme by default, since that was what was used for the
+    // laplacian
+    default         corrected;
+}
+
+interpolationSchemes
+{
+    // not mentioned in Cocks et al.
+    // use a linear scheme as recommended by the manual
+    // https://cfd.direct/openfoam/user-guide/fvSchemes/#x19-1410004.4
+    default         linear;
+};
+
+divSchemes
+{
+
+    default         none;
+    // Cocks et al. used a 2nd order *bounded* central scheme for inviscid terms
+    //      bounded by "Sweby limiter"
+    // Wolf: accurate & stable numerical scheme -- 2nd order accurate
+    // http://www.wolfdynamics.com/wiki/fvm_crash_intro.pdf
+    // https://link.springer.com/chapter/10.1007%2F978-3-658-11912-6_7
+    //      limitedLinear recommended for LES
+    //
+
+    div(phi,U)      Gauss limitedLinear 0.33;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
+    // use same as U, as inviscid term
+    div(phi,K)      Gauss limitedLinear 1;
+    div(phi,Yi_h)   Gauss multivariateSelection
+    {
+        H2              limitedLinear01 1;
+        H               limitedLinear01 1;
+        O               limitedLinear01 1;
+        O2              limitedLinear01 1;
+        OH              limitedLinear01 1;
+        H2O             limitedLinear01 1;
+        HO2             limitedLinear01 1;
+        H2O2            limitedLinear01 1;
+        C               limitedLinear01 1;
+        CH              limitedLinear01 1;
+        CH2             limitedLinear01 1;
+        CH2S            limitedLinear01 1;
+        CH3             limitedLinear01 1;
+        CH4             limitedLinear01 1;
+        CO              limitedLinear01 1;
+        CO2             limitedLinear01 1;
+        HCO             limitedLinear01 1;
+        CH2O            limitedLinear01 1;
+        CH2OH           limitedLinear01 1;
+        CH3O            limitedLinear01 1;
+        CH3OH           limitedLinear01 1;
+        C2H             limitedLinear01 1;
+        C2H2            limitedLinear01 1;
+        C2H3            limitedLinear01 1;
+        C2H4            limitedLinear01 1;
+        C2H5            limitedLinear01 1;
+        C2H6            limitedLinear01 1;
+        HCCO            limitedLinear01 1;
+        CH2CO           limitedLinear01 1;
+        HCCOH           limitedLinear01 1;
+        N               limitedLinear01 1;
+        NH              limitedLinear01 1;
+        NH2             limitedLinear01 1;
+        NH3             limitedLinear01 1;
+        NNH             limitedLinear01 1;
+        NO              limitedLinear01 1;
+        NO2             limitedLinear01 1;
+        N2O             limitedLinear01 1;
+        HNO             limitedLinear01 1;
+        CN              limitedLinear01 1;
+        HCN             limitedLinear01 1;
+        H2CN            limitedLinear01 1;
+        HCNN            limitedLinear01 1;
+        HCNO            limitedLinear01 1;
+        HOCN            limitedLinear01 1;
+        HNCO            limitedLinear01 1;
+        NCO             limitedLinear01 1;
+        AR              limitedLinear01 1;
+        C3H7            limitedLinear01 1;
+        C3H8            limitedLinear01 1;
+        CH2CHO          limitedLinear01 1;
+        CH3CHO          limitedLinear01 1;
+        N2              limitedLinear01 1;
+        h               limitedLinear 1;
+    };
+}

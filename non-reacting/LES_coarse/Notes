@@ -1,0 +1,24 @@
+Notes
+-----
+
+Mesh Creation
+-------------
+
+For coarse LES
+
+>python buildMesh.py -c non-reacting/CASE/ -m 4 -w 0.85 -g 1.2 -l 1.1 -uy 1.15 -uz 1.2
+
+Which corresponds to:
+-a 4mm mesh
+-wall spacing of 0.85mm ~ 40 * y+ (http://www.pointwise.com/yplus/)
+-geometric expansion ratio (GER) in the y-axis downstream of BB = 1.2
+-GER=1.15 in the y-axis upstream of BB
+-GER=1.2 in z-direction upstream of the BB
+-GER=1.1 in z-direction downstream of the BB
+
+
+This yields a mesh of 266400 cells, which is nice and cheap for simulation
+Additionally:
+    Max aspect ratio = 7.28170268 OK.
+    Mesh non-orthogonality Max: 29.83519797 average: 3.318041845
+    Max skewness = 0.5347861081 OK.
