@@ -1,0 +1,30 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Web:      www.OpenFOAM.org
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+Description
+    Writes graph data for specified fields along a line, specified by start
+    and end points.
+
+\*---------------------------------------------------------------------------*/
+
+#include   "meshDims"
+
+// axial velocity varying along y-direction, useful for monitoring solution
+start   (#calc "0.5 * $width * $convertToMeters"	#calc "0 * $convertToMeters"		#calc "(-1 * $L_TE_upstream - 0.95 * $D) * $convertToMeters");
+end     (#calc "0.5 * $width * $convertToMeters"	#calc "$height * $convertToMeters"	#calc "(-1 * $L_TE_upstream - 0.95 * $D) * $convertToMeters");
+fields  (U);
+
+// Sampling and I/O settings
+#includeEtc "caseDicts/postProcessing/graphs/sampleDict.cfg"
+
+// Override settings here, e.g.
+// setConfig { type lineCell; }
+
+// Must be last entry
+#includeEtc "caseDicts/postProcessing/graphs/graph.cfg"
+
+// ************************************************************************* //

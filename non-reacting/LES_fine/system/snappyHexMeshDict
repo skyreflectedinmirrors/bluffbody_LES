@@ -1,0 +1,162 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      blockMeshDict;
+}
+
+
+/*
+
+Refinement of Volvo flygmotor AB non-reacting flow LES mesh in snappyHexMesh
+
+Nicholas Curtis - 04/09/2018
+
+*/
+
+// incude the block-mesh to get the dimensions
+#include "meshDims"
+
+// expansion ratio of cells
+e_ratio 1.05;
+// wall normal distance from Cocks et al.
+wall_normal #calc "0.03 * $convertToMeters"; // mm
+// number of layers to insert near wall
+num_layers 25;
+// refinement (normal) distance from wall as a percentage of the normal length
+n_dist 0.125;
+// refinement level
+r_level 2;
+
+geometry
+{
+	// bounding box for top wall refinment
+	bounding_box
+	{
+		  type    searchableBox;	// region defined by bounding box
+          min     (0 0 -0.782);
+          max     (0.08 0.12 0);
+	};
+
+};
+
+// we only really need add-layers, as we don't want to introduce non-isometric
+// refinement
+castellatedMesh false;
+snap false;
+addLayers true;
+mergeTolerance 1e-6;
+
+castellatedMeshControls
+{
+	refinementRegions
+	{
+		// create region near top wall
+		top_wall_refinement
+		{
+			mode inside;
+			levels ((1.0 $r_level));
+		}
+	};
+	refinementSurfaces
+	{
+
+	};
+	features
+	(
+
+	);
+	// defaults just to get openfoam to be quiet, we don't actually want to run this
+	maxGlobalCells #calc "(int) 2e6";
+	maxLocalCells #calc "(int) 1e6";
+	minRefinementCells 0;
+	resolveFeatureAngle 30;
+	nCellsBetweenLevels 1;
+	locationInMesh (#calc "0.001 * $width / 2.0"	#calc "0.001 * $height"		#calc "0.001 * -0.5 * $L_total");
+	allowFreeStandingZoneFaces false;
+};
+snapControls
+{
+	// defaults just to get openfoam to be quiet, we don't actually want to run this
+	nSmoothPatch 3;
+	tolerance 2;
+	nSolveIter 50;
+	nRelaxIter 5;
+};
+
+meshQualityControls
+{
+	// base mesh is ~30, so limit to say 40
+	maxNonOrtho 45;
+	// minimal skewed boundary cells
+	maxBoundarySkewness 1.0;
+	// base mesh is ~ 0.66
+	maxInternalSkewness 1.5;
+	// some small number
+	maxConcave 0;
+	// all cells are flat
+	minFlatness 1;
+	// large negative number
+	minTetQuality -1e30;
+	// minumum volume -- turn off
+	minVol -1e-6;
+	minArea -1;
+	// base mesh is ~0.5
+	minDeterminant 0.0001;
+	// base mesh is ~0.5
+	minFaceWeight 0.05;
+	// base mesh is ~0.97
+	minVolRatio 0.75;
+	// turn off
+	minTwist -1;
+	minTriangleTwist -1;
+	// smothing
+	nSmoothScale 4;
+	errorReduction 0.75;
+};
+
+addLayersControls
+{
+	// from https://cfd.direct/openfoam/user-guide/snappyHexMesh/
+	relativeSizes false;
+	firstLayerThickness $wall_normal; // mm
+	expansionRatio $e_ratio;
+	// finalLayerThickness $mesh_size; // mm
+	minThickness $wall_normal; // mm
+	nSmoothSurfaceNormals 50;
+    nSmoothNormals 50;
+    nSmoothThickness 100;
+    maxFaceThicknessRatio 0.8;
+    maxThicknessToMedialRatio 0.9;
+	minMedianAxisAngle 90;
+	nBufferCellsNoExtrude 0;
+	nLayerIter 50;
+	nRelaxedIter 20;
+	nRelaxIter 20;
+
+	// want growth right at the edge of the boundary
+	nGrow 0;
+
+	// our feature angle is 45 degrees for the BB
+	featureAngle 130;
+
+	layers
+	{
+		top_wall
+		{
+          nSurfaceLayers $num_layers;
+      	};
+	}
+
+	debug 0;
+
+};
