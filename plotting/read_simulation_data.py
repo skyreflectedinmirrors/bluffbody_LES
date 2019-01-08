@@ -105,6 +105,14 @@ class fluctuator(object):
         return fluct
 
 
+class dummy(object):
+    def __init__(self, baseline=None):
+        pass
+
+    def __call__(self, data, time, axis=0):
+        return data
+
+
 def read_simulation_data(case, graph_name, opts,
                          collection_type='mean', collection_method='simps',
                          baseline=None, **kwargs):
@@ -163,6 +171,8 @@ def read_simulation_data(case, graph_name, opts,
     elif collection_method == 'fluct':
         assert collection_type == 'fluct'
         collector = fluctuator(baseline)
+    elif collection_method == 'none':
+        collector = dummy(baseline)
     else:
         raise Exception('Unknown collection method: {}'.format(collection_method))
 
@@ -221,13 +231,13 @@ def read_simulation_data(case, graph_name, opts,
     complete_data = np.array(datalist)
 
     def slicer(var):
-        if collection_method == 'fluct':
+        if collection_method in ['fluct', 'none']:
             return (slice(None), slice(None), var)
         else:
             return (slice(None), var)
 
-    final_data = np.zeros(complete_data.shape if collection_method == 'fluct' else
-                          complete_data.shape[1:])
+    final_data = np.zeros(complete_data.shape if collection_method in [
+                          'fluct', 'none'] else complete_data.shape[1:])
     # simply copy in coordinate axes
     assert np.all(np.array_equal(x[:, 0], complete_data[0, :, 0])
                   for x in complete_data)

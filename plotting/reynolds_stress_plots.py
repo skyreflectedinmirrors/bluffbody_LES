@@ -37,33 +37,26 @@ class ReynoldsStressPlot(Plot):
         return (20, 8)
 
     def process(self, caseno, case, **kwargs):
-        out = None
-        for vc in self.velocity_components:
-            # read baseline averaged data
-            baseline = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
-                                            velocity_component=vc)
-            # read fluctuation data
-            fluct = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
-                                         velocity_component=vc,
-                                         collection_type='fluct',
-                                         collection_method='fluct',
-                                         baseline=baseline)
-
-            # multiply the velocity fluctuations
-            if out is None:
-                out = fluct
-            else:
-                out = fluct * out
-
-        vals = np.zeros((out.data.shape[1:]))
+        # read baseline averaged data
+        Ux_mean = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
+                                       velocity_component='x')
+        Uy_mean = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
+                                       velocity_component='y')
+        U_mean = Ux_mean[:] * Uy_mean[:]
+        Ux = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
+                                  velocity_component='x', collection_method='none')
+        Uy = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
+                                  velocity_component='y', collection_method='none')
+        Uxy = Ux * Uy
+        vals = np.zeros((Uxy.data.shape[1:]))
         # copy in yaxis
-        vals[:, 0] = out.data[0, :, 0]
-        # time average
-        for var in range(1, out.data.shape[2]):
-            vals[:, var] = integration_averager()(out.data[:, :, var], out.time)
-
-        to_plot = dataset(out.columns[:], vals, out.name,
-                          is_simulation=out.is_simulation, time=out.time)
+        vals[:, 0] = Uxy.data[0, :, 0]
+        # time average'd uv
+        Uxy = integration_averager()(Uxy.data, Ux.time)
+        # mean(u'v') = mean(uv) - mean(u)mean(v)
+        vals[:, 1] = Uxy[:, 1] - U_mean[:, 1]
+        to_plot = dataset(Ux_mean.columns[:], vals, Ux_mean.name,
+                          is_simulation=Ux_mean.is_simulation, time=Ux_mean.time)
 
         # normalize / convert simulation data twice (for the squared velocity)
         to_plot.normalize(self.opts.reacting, velocity_power=2.0)
@@ -86,17 +79,12 @@ def plot(opts):
 
 if __name__ == '__main__':
     parser = get_default_parsing_args(
-        'fluctuation_velocity_plots.py',
-        'plots the RMS fluctuation velocity at different axial slices '
+        'reynolds_stress_plots.py',
+        'plots the mean Renyolds Stresses at different axial slices '
         'along the centerline of the Volvo bluff-body experiment, as compared '
         'to experimental data')
-    parser.add_argument('-v', '--velocity_component',
-                        choices=['z', 'y', 'both'],
-                        help='The velocity component to plot',
-                        default='both',
-                        required=False)
     args = parser.parse_args()
     opts = UserOptions(args.caselist, args.reacting, args.start_time, args.end_time,
-                       args.base_path, args.out_path, args.velocity_component)
+                       args.base_path, args.out_path)
 
     plot(opts)
