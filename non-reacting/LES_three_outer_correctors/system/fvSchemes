@@ -98,10 +98,10 @@ divSchemes
     //      limitedLinear recommended for LES
     //
 
-    div(phi,U)      Gauss limitedLinear 0.33;
+    div(phi,U)      Gauss linear;
     div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
     // use same as U, as inviscid term
-    div(phi,K)      Gauss limitedLinear 1;
+    div(phi,K)      Gauss linear;
     div(phi,Yi_h)   Gauss multivariateSelection
     {
         H2              limitedLinear01 1;
