@@ -27,8 +27,8 @@ class AxialDeficitPlot(Plot):
 
     def title(self, point='', **kwargs):
         p = point.split('p')
-        p = float(p[0]) + float(''.join(p[1:])) / 100.
-        return "x/D = {}".format(p)
+        p = float(p[0]) + float(''.join(p[1])) / 10**len(p[1])
+        return r"$x/D = {}$".format(p)
 
     def sim_name(self, point='', **kwargs):
         return AxialDeficitPlot.graph_name.format(point=point)
