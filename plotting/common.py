@@ -15,6 +15,8 @@ from os.path import pardir as ppardir
 from os.path import isdir as pisdir
 import numpy as np
 import matplotlib.pyplot as plt
+plt.rc('text', usetex=True)
+plt.rc('text.latex', preamble=r'\usepackage{amsmath}')
 
 script_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -192,12 +194,13 @@ class Plot(object):
                  sharey=False,
                  sharex=False):
         base_label_names = {'mean': 'Simulation',
-                            'U': 'Normalized axial velocity',
-                            'V': 'Normalized tangential velocity',
-                            'Y': 'y/D',
-                            'X': 'x/D',
+                            'U': r'$u/U_{\text{bulk}}$',
+                            'V': r'$v/U_{\text{bulk}}$',
+                            'Y': r'$y/D$',
+                            'X': r'$x/D$',
                             'AVG(U\'V\')/(Ubulk)^2 (Reynolds Stress Approx)':
-                                r'Mean $\frac{u^\prime v^\prime}{U^2}$'}
+                                r'Mean $\frac{u^\prime v^\prime}{U_{\text{bulk}}^2}$'
+                            }
         base_label_names.update(label_names)
         self._sim_name = sim_name
         if exp_name is None:
@@ -272,10 +275,10 @@ class Plot(object):
             self.finalize(**kwargs)
 
     def finalize(self, **kwargs):
-        legend_font = 22
-        major_font = 22
-        minor_font = 14
-        label_size = 18
+        legend_font = 30
+        major_font = 30
+        minor_font = 24
+        label_size = 30
         if not self.multiplot:
             self.gca.legend(loc=0, fontsize=legend_font)
             self.gca.set_xlim(self.xlim())
@@ -296,7 +299,7 @@ class Plot(object):
                                labelsize=minor_font)
                 for item in (ax.title, ax.xaxis.label, ax.yaxis.label):
                     item.set_fontsize(label_size)
-            self.fig.legend(bbox_to_anchor=(0, 1.02, 1, 0.2), loc="lower left",
+            self.fig.legend(bbox_to_anchor=(0.06, 1.02, 1, 0.2), loc="lower left",
                             borderaxespad=0, ncol=3, fontsize=legend_font,
                             labelspacing=8)
         self.fig.tight_layout()
