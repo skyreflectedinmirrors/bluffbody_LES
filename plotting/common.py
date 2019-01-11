@@ -196,6 +196,8 @@ class Plot(object):
         base_label_names = {'mean': 'Simulation',
                             'U': r'$u/U_{\text{bulk}}$',
                             'V': r'$v/U_{\text{bulk}}$',
+                            'U\'rms': r"$u'_{\text{rms}}/U_{\text{bulk}}$",
+                            'V\'rms': r"$v_{\text{rms}}/U_{\text{bulk}}$",
                             'Y': r'$y/D$',
                             'X': r'$x/D$',
                             'AVG(U\'V\')/(Ubulk)^2 (Reynolds Stress Approx)':
