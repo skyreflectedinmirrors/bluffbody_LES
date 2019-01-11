@@ -54,7 +54,7 @@ class FluctuationVelocityPlot(Plot):
         # and plot
         pltargs = {}
         if not kwargs.get('hold', True):
-            pltargs['label'] = self.label('U' + self.velocity_component + "'", case)
+            pltargs['label'] = self.label('Simulation', case)
         plt.plot(fluct[:, 1], fluct[:, 0], color=self.opts.color(
             caseno), **pltargs)
 
