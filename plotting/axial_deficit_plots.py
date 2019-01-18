@@ -1,69 +1,57 @@
-import matplotlib.pyplot as plt
-
-from read_simulation_data import read_simulation_data
-from read_experimental_data import read_experimental_data
-from common import get_default_parsing_args, make_dir, get_cases
-from os.path import join as pjoin
-
-graph_name = 'axialDeficitPlot_{point}'
+from common import get_default_parsing_args, UserOptions, Plot
 
 
-def process(caseno, case, reacting, point, t_start=0, t_end=-1,
-            velocity_component=None, multiple_cases=False):
-    name = graph_name.format(point=point)
-    if not caseno:
-        expdata = read_experimental_data(name, reacting,
-                                         velocity_component=velocity_component,
-                                         point=point)
-    simdata = read_simulation_data(case, name, reacting, t_start,
-                                   t_end, velocity_component=velocity_component)
-    # normalize / convert simulation data
-    simdata.normalize(reacting)
+class AxialDeficitPlot(Plot):
+    graph_name = 'axialDeficitPlot_{point}'
 
-    if not caseno:
-        plt.scatter(expdata[:, 1], expdata[:, 0], label=expdata.name,
-                    color='r')
+    def __init__(self, opts, velocity_component, num_points):
+        super(AxialDeficitPlot, self).__init__(
+            AxialDeficitPlot.graph_name, opts,
+            sharey=num_points)
+        self.velocity_component = velocity_component
 
-    label = simdata.name
-    if multiple_cases:
-        label += ' ({})'.format(case)
-    plt.plot(simdata[:, 1], simdata[:, 0], label=label)
-    if not caseno:
-        plt.xlabel(expdata.columns[1])
-        plt.ylabel(expdata.columns[0])
+    def figname(self):
+        return 'axial_deficit_plot_{}.pdf'.format(self.velocity_component)
+
+    def xlim(self):
+        if self.velocity_component == 'y':
+            return (-1, 1)
+        else:
+            return (-0.5, 2)
+
+    def ylim(self):
+        return (-1.5, 1.5)
+
+    def simulation_column_map(self):
+        return (1, 0)
+
+    def title(self, point='', **kwargs):
+        p = point.split('p')
+        p = float(p[0]) + float(''.join(p[1])) / 10**len(p[1])
+        return r"$x/D = {}$".format(p)
+
+    def sim_name(self, point='', **kwargs):
+        return AxialDeficitPlot.graph_name.format(point=point)
+
+    def figsize(self):
+        return (20, 8)
 
 
-def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both',
-         out_path=None):
-    if velocity_component == 'both':
-        velocity_component = ['z', 'y']
-    else:
-        velocity_component = [velocity_component]
-
-    for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
-        for vc in velocity_component:
-            for caseno, casename in enumerate(case):
-                make_dir(casename)
-                process(caseno, casename, reacting, point, t_start, t_end,
-                        vc, len(case) > 1)
-
-                plt.gca().set_xlim([-1, 1] if velocity_component == 'y' else
-                                   [-1, 2])
-            plt.legend(loc=0)
-            if out_path is None:
-                out_path = case[0]
-            plt.savefig(pjoin(out_path,
-                        'axial_deficit_plot_{vc}_{point}.pdf'.format(
-                            vc=vc, point=point)))
-            plt.close()
+def plot(opts):
+    for vc in opts.velocity_component:
+        points = ['0p375', '0p95', '1p53', '3p75', '9p4']
+        adp = AxialDeficitPlot(opts, vc, len(points))
+        for i, point in enumerate(points):
+            adp.plot(point=point, velocity_component=vc, hold=i)
+        adp.finalize(point=point)
 
 
 if __name__ == '__main__':
     parser = get_default_parsing_args(
-        'mean_axial_velocity.py',
-        'plots the time-averaged, normalized axial velocity '
-        'along the centerline of the Volvo bluff-body experiment, as compared '
-        'to experimental data')
+        'axial_deficit_plot.py',
+        'plots the time-averaged, normalized axial and tangential velocity '
+        'at different axial slices along the centerline of the Volvo bluff-body '
+        'experiment, as compared to experimental data')
     parser.add_argument('-v', '--velocity_component',
                         choices=['z', 'y', 'both'],
                         help='The velocity component to plot',
@@ -71,6 +59,6 @@ if __name__ == '__main__':
                         required=False)
     args = parser.parse_args()
 
-    plot(get_cases(args.caselist, args.reacting, args.base_path),
-         args.reacting, args.start_time,
-         args.end_time, args.velocity_component)
+    opts = UserOptions(args.caselist, args.reacting, args.start_time, args.end_time,
+                       args.base_path, args.out_path, args.velocity_component)
+    plot(opts)

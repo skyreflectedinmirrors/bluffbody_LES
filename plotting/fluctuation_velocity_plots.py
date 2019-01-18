@@ -1,69 +1,71 @@
 import matplotlib.pyplot as plt
 
 from read_simulation_data import read_simulation_data
-from read_experimental_data import read_experimental_data
-from common import get_default_parsing_args, make_dir, get_cases
-from os.path import join as pjoin
-
-sim_name = 'axialDeficitPlot_{point}'
-exp_name = 'fluctuationVelocity'
+from common import get_default_parsing_args, UserOptions, Plot
 
 
-def process(caseno, case, reacting, point, t_start=0, t_end=-1,
-            velocity_component=None, multiple_cases=False):
-    name = sim_name.format(point=point)
-    # first read experimental data
-    if not caseno:
-        expdata = read_experimental_data(exp_name, reacting,
-                                         velocity_component=velocity_component,
-                                         point=point)
-    # read baseline averaged data
-    baseline = read_simulation_data(case, name, reacting, t_start,
-                                    t_end, velocity_component=velocity_component)
-    # read fluctuation data
-    fluct = read_simulation_data(case, name, reacting, t_start,
-                                 t_end, velocity_component=velocity_component,
-                                 collection_type='fluct',
-                                 collection_method='rms',
-                                 baseline=baseline)
-    # normalize / convert simulation data
-    fluct.normalize(reacting)
+class FluctuationVelocityPlot(Plot):
+    base_sim_name = 'axialDeficitPlot_{point}'
+    base_exp_name = 'fluctuationVelocity'
 
-    if not caseno:
-        plt.scatter(expdata[:, 1], expdata[:, 0], label=expdata.name,
-                    color='r')
-    label = fluct.name
-    if multiple_cases:
-        label += ' ({})'.format(case)
-    plt.plot(fluct[:, 1], fluct[:, 0], label=label)
-    if not caseno:
-        plt.xlabel(expdata.columns[1])
-        plt.ylabel(expdata.columns[0])
+    def __init__(self, opts, velocity_component, num_points):
+        super(FluctuationVelocityPlot, self).__init__(
+            FluctuationVelocityPlot.base_sim_name, opts,
+            exp_name=FluctuationVelocityPlot.base_exp_name,
+            sharey=num_points)
+        self.velocity_component = velocity_component
+
+    def figname(self):
+        return '{vc}_prime_rms.pdf'.format(
+            vc=self.velocity_component)
+
+    def xlim(self):
+        if self.velocity_component == 'y':
+            return (0, 1.0)
+        else:
+            return (0, 0.75)
+
+    def ylim(self):
+        return (-1.5, 1.5)
+
+    def sim_name(self, point='', **kwargs):
+        return FluctuationVelocityPlot.base_sim_name.format(point=point)
+
+    def title(self, point='', **kwargs):
+        p = point.split('p')
+        p = float(p[0]) + float(''.join(p[1])) / 10**len(p[1])
+        return r"$x/D = {}$".format(p)
+
+    def figsize(self):
+        return (20, 8)
+
+    def process(self, caseno, case, **kwargs):
+        # read baseline averaged data
+        baseline = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
+                                        velocity_component=self.velocity_component)
+        # read fluctuation data
+        fluct = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
+                                     velocity_component=self.velocity_component,
+                                     collection_type='fluct',
+                                     collection_method='rms',
+                                     baseline=baseline)
+        # normalize / convert simulation data
+        fluct.normalize(self.opts.reacting)
+        # and plot
+        pltargs = {}
+        if not kwargs.get('hold', True):
+            pltargs['label'] = self.label('Simulation', case)
+        plt.plot(fluct[:, 1], fluct[:, 0], color=self.opts.color(
+            caseno), **pltargs)
 
 
-def plot(case, reacting, t_start=0, t_end=-1, velocity_component='both',
-         out_path=None):
-    if velocity_component == 'both':
-        velocity_component = ['z', 'y']
-    else:
-        velocity_component = [velocity_component]
-
-    for point in ['0p375', '0p95', '1p53', '3p75', '9p4']:
-        for vc in velocity_component:
-            for caseno, casename in enumerate(case):
-                make_dir(casename)
-                process(caseno, casename, reacting, point, t_start, t_end,
-                        vc, len(case) > 1)
-
-            plt.gca().set_xlim([-1, 1] if vc == 'y' else
-                               [-1, 2])
-            plt.legend(loc=0)
-            if out_path is None:
-                out_path = case[0]
-            plt.savefig(pjoin(out_path,
-                        '{vc}_prime_rms_{point}.pdf'.format(
-                            vc=vc, point=point)))
-            plt.close()
+def plot(opts):
+    points = ['0p375', '0p95', '1p53', '3p75', '9p4']
+    for vc in opts.velocity_component:
+        fvp = FluctuationVelocityPlot(opts, vc, len(points))
+        for i, point in enumerate(points):
+            fvp.plot(point=point, velocity_component=vc, hold=i)
+        fvp.finalize(point=point)
 
 
 if __name__ == '__main__':
@@ -78,8 +80,7 @@ if __name__ == '__main__':
                         default='both',
                         required=False)
     args = parser.parse_args()
+    opts = UserOptions(args.caselist, args.reacting, args.start_time, args.end_time,
+                       args.base_path, args.out_path, args.velocity_component)
 
-    plot(get_cases(args.caselist, args.reacting, args.base_path),
-         args.reacting, args.start_time,
-         args.end_time, args.velocity_component,
-         out_path=args.out_path)
+    plot(opts)

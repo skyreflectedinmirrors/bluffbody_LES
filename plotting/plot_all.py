@@ -1,5 +1,5 @@
 
-from common import get_default_parsing_args, get_cases
+from common import get_default_parsing_args, UserOptions
 from fluctuation_velocity_plots import plot as fplot
 from mean_axial_velocity import plot as mplot
 from axial_deficit_plots import plot as aplot
@@ -13,6 +13,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     for plot in plotters:
-        plot(get_cases(args.caselist, args.reacting, args.base_path),
-             args.reacting, args.start_time, args.end_time,
-             out_path=args.out_path)
+        opts = UserOptions(args.caselist, args.reacting, args.start_time,
+                           args.end_time, args.base_path, args.out_path)
+        plot(opts)

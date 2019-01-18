@@ -19,7 +19,7 @@ from os.path import basename as pasename
 from scipy.integrate import simps, trapz
 import numpy as np
 
-from common import dataset, get_simulation_path
+from common import dataset
 
 script_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -85,7 +85,35 @@ class RMS(object):
         return np.sqrt(fluct)
 
 
-def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
+class fluctuator(object):
+    """
+    Compute only the fluctuations of a quantity, with respect to a mean value
+    """
+
+    def __init__(self, baseline):
+        self.baseline = baseline
+
+    def __call__(self, data, time, axis=0):
+
+        # the axis supplied corresponds to different time-increments, however unlike
+        # in averaging we want to take the difference over all times
+
+        assert axis == 0
+
+        # fluctuation across space
+        fluct = data - self.baseline[:, 1]
+        return fluct
+
+
+class dummy(object):
+    def __init__(self, baseline=None):
+        pass
+
+    def __call__(self, data, time, axis=0):
+        return data
+
+
+def read_simulation_data(case, graph_name, opts,
                          collection_type='mean', collection_method='simps',
                          baseline=None, **kwargs):
     """
@@ -127,8 +155,8 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
         The time-averaged (or not) simulation data
     """
 
-    assert t_start >= 0, 'Start time < 0 not supported'
-    assert t_end < 0 or t_end > t_start, (
+    assert opts.t_start >= 0, 'Start time < 0 not supported'
+    assert opts.t_end < 0 or opts.t_end > opts.t_start, (
         'End time must be disabled or greater than start time')
 
     # collection type
@@ -140,10 +168,15 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
         assert collection_type == 'fluct'
         assert baseline is not None
         collector = RMS(baseline)
+    elif collection_method == 'fluct':
+        assert collection_type == 'fluct'
+        collector = fluctuator(baseline)
+    elif collection_method == 'none':
+        collector = dummy(baseline)
     else:
         raise Exception('Unknown collection method: {}'.format(collection_method))
 
-    path = get_simulation_path(case, graph_name, reacting)
+    path = opts.get_simulation_path(case, graph_name)
     efile, columns, use_columns = get_graph_columns(graph_name, **kwargs)
 
     datalist = []
@@ -153,7 +186,7 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
         # check that it's a valid time directory
         try:
             time = float(pasename(time_dir))
-            if time < t_start or (t_end > 0 and time > t_end):
+            if time < opts.t_start or (opts.t_end > 0 and time > opts.t_end):
                 # out of range
                 continue
         except ValueError:
@@ -197,14 +230,21 @@ def read_simulation_data(case, graph_name, reacting=False, t_start=0, t_end=-1,
     time = np.array(timelist)
     complete_data = np.array(datalist)
 
-    final_data = np.zeros(complete_data.shape[1:])
+    def slicer(var):
+        if collection_method in ['fluct', 'none']:
+            return (slice(None), slice(None), var)
+        else:
+            return (slice(None), var)
+
+    final_data = np.zeros(complete_data.shape if collection_method in [
+                          'fluct', 'none'] else complete_data.shape[1:])
     # simply copy in coordinate axes
     assert np.all(np.array_equal(x[:, 0], complete_data[0, :, 0])
                   for x in complete_data)
-    final_data[:, 0] = complete_data[0, :, 0]
+    final_data[slicer(0)] = complete_data[0, :, 0]
 
     for var in range(1, complete_data.shape[2]):
         # get collected data
-        final_data[:, var] = collector(complete_data[:, :, var], time, axis=0)
-
-    return dataset(columns, final_data, collection_type, is_simulation=True)
+        final_data[slicer(var)] = collector(complete_data[:, :, var], time, axis=0)
+    return dataset(columns, final_data, collection_type, is_simulation=True,
+                   time=time)
