@@ -14,7 +14,7 @@ class ReynoldsStressPlot(Plot):
             ReynoldsStressPlot.base_sim_name, opts,
             exp_name=ReynoldsStressPlot.base_exp_name,
             sharey=num_points)
-        self.velocity_components = ['x', 'y']
+        self.velocity_components = ['z', 'y']
 
     def figname(self):
         return 'reynolds_stress.pdf'
@@ -38,29 +38,36 @@ class ReynoldsStressPlot(Plot):
 
     def process(self, caseno, case, **kwargs):
         # read baseline averaged data
-        Ux_mean = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
-                                       velocity_component='x')
-        Uy_mean = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
-                                       velocity_component='y')
-        U_mean = Ux_mean[:] * Uy_mean[:]
         Ux = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
-                                  velocity_component='x', collection_method='none')
+                                  velocity_component='z',
+                                  collection_method='none')
         Uy = read_simulation_data(case, self.sim_name(**kwargs), self.opts,
-                                  velocity_component='y', collection_method='none')
+                                  velocity_component='y',
+                                  collection_method='none')
+        # do a dummy normalization to make sure the signs are correct
+        Ux.normalize(self.opts.reacting, velocity_power=0.0)
+        Uy.normalize(self.opts.reacting, velocity_power=0.0)
+
+        # calculate avg(uv)
         Uxy = Ux * Uy
-        vals = np.zeros((Uxy.data.shape[1:]))
-        # copy in yaxis
-        vals[:, 0] = Uxy.data[0, :, 0]
-        # time average'd uv
-        Uxy = integration_averager()(Uxy.data, Ux.time)
+        Uxy_mean = integration_averager()(Uxy.data[:, :, 1], Uxy.time)
+
+        # calculate avg(u) * avg(v)
+        Ux_Uy_mean = integration_averager()(Ux.data[:, :, 1], Ux.time) * \
+            integration_averager()(Uy.data[:, :, 1], Uy.time)
+
         # mean(u'v') = mean(uv) - mean(u)mean(v)
-        vals[:, 1] = Uxy[:, 1] - U_mean[:, 1]
-        to_plot = dataset(Ux_mean.columns[:], vals, Ux_mean.name,
-                          is_simulation=Ux_mean.is_simulation, time=Ux_mean.time)
+        vals = np.zeros(Ux.data.shape[1:])
+        vals[:, 0] = Ux.data[0, :, 0]
+        vals[:, 1] = Uxy_mean - Ux_Uy_mean
 
         # normalize / convert simulation data twice (for the squared velocity)
-        to_plot.normalize(self.opts.reacting, velocity_power=2.0)
+        from common import dimensions
+        dim = dimensions(self.opts.reacting)
+        vals[:, 1] /= (dim.Ubulk * dim.Ubulk)
 
+        to_plot = dataset(Ux.columns[:], vals, Ux.name,
+                          is_simulation=Ux.is_simulation, time=Ux.time)
         # and plot
         pltargs = {}
         if not kwargs.get('hold', True):

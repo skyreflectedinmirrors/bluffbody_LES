@@ -76,26 +76,31 @@ class dataset(object):
     def normalize(self, reacting=False, velocity_power=1.0):
         assert self.is_simulation, "I don't know how to normalize experimental data"
 
+        def _get_slice(i):
+            slicer = [slice(None) for x in self.data.shape]
+            slicer[-1] = i
+            return tuple(slicer)
+
         dims = dimensions(reacting)
         for i, col in enumerate(self.columns):
             if col in ['y', 'z']:
                 # correct dimensions
                 offset = getattr(dims, '{}_offset'.format(col), 0)
-                self.data[:, i] -= offset
+                self.data[_get_slice(i)] -= offset
                 # flip axes?
                 flip = getattr(dims, '{}_flip'.format(col), 1)
-                self.data[:, i] *= flip
+                self.data[_get_slice(i)] *= flip
                 # normalize
-                self.data[:, i] /= dims.D
+                self.data[_get_slice(i)] /= dims.D
             elif col in ['Ux', 'Uy', 'Uz']:
                 axis = col[-1]
                 if 'fluct' not in self.name:
                     # flip axes?
                     flip = getattr(dims, '{}_flip'.format(axis), 1)
-                    self.data[:, i] *= flip
+                    self.data[_get_slice(i)] *= flip
                 Ubulk = np.power(dims.Ubulk, velocity_power)
                 # and normalize
-                self.data[:, i] /= Ubulk
+                self.data[_get_slice(i)] /= Ubulk
 
     def __mul__(self, other):
         assert isinstance(other, dataset)
@@ -104,6 +109,7 @@ class dataset(object):
         data = self.data.copy()
         slicer = [slice(None) for x in data.shape]
         slicer[-1] = slice(1, data.shape[-1])
+        slicer = tuple(slicer)
         data[slicer] *= other.data[slicer]
         return dataset(self.columns, data,
                        '{} x {}'.format(self.name, other.name),
