@@ -34,7 +34,7 @@ class AxialDeficitPlot(Plot):
         return AxialDeficitPlot.graph_name.format(point=point)
 
     def figsize(self):
-        return (20, 8)
+        return (20, 6)
 
 
 def plot(opts):

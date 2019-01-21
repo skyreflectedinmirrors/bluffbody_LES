@@ -37,7 +37,7 @@ class FluctuationVelocityPlot(Plot):
         return r"$x/D = {}$".format(p)
 
     def figsize(self):
-        return (20, 8)
+        return (20, 6)
 
     def process(self, caseno, case, **kwargs):
         # read baseline averaged data
