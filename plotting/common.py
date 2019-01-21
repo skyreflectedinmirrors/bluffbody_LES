@@ -191,6 +191,11 @@ class UserOptions(object):
     def color(self, caseno, exp=False):
         return self.style.color_map(caseno + 1 if not exp else 0)
 
+    def linestyle(self, caseno, exp=False):
+        if exp:
+            return ''
+        return ['-', ':', '-.', '--'][caseno % 4]
+
 
 class Plot(object):
     def __init__(self, sim_name, opts,
@@ -209,6 +214,10 @@ class Plot(object):
                             'AVG(U\'V\')/(Ubulk)^2 (Reynolds Stress Approx)':
                                 r'Mean $\frac{u^\prime v^\prime}{U_{\text{bulk}}^2}$'
                             }
+        self.case_names = {'LES_three_outer_correctors': 'Non-diffusive',
+                           'LES': 'base',
+                           'LES_coarse': 'coarse',
+                           'LES_fine': 'fine'}
         base_label_names.update(label_names)
         self._sim_name = sim_name
         if exp_name is None:
@@ -252,8 +261,12 @@ class Plot(object):
         if (self.multiplot and not kwargs.get('hold', False)) or not self.multiplot:
             pltargs['label'] = self.label(simdata.name, case)
         col_map = self.simulation_column_map()
+        linewidth = 3
         self.gca.plot(simdata[:, col_map[0]], simdata[:, col_map[1]],
-                      color=self.opts.color(caseno), **pltargs)
+                      color=self.opts.color(caseno),
+                      linestyle=self.opts.linestyle(caseno),
+                      linewidth=linewidth,
+                      **pltargs)
 
     def sim_name(self, **kwargs):
         return self._sim_name
@@ -262,22 +275,23 @@ class Plot(object):
         return self._exp_name
 
     def plot(self, hold=None, **kwargs):
+        if self.multiplot:
+            if self.sharex:
+                ax = self.fig.add_subplot(
+                    self.num_plots, 1, hold + 1, sharex=self.shared)
+            else:
+                ax = self.fig.add_subplot(
+                    1, self.num_plots, hold + 1, sharey=self.shared)
+            self.axes.append(ax)
         for caseno, casename in enumerate(self.opts.cases):
-            if self.multiplot:
-                if self.sharex:
-                    ax = self.fig.add_subplot(
-                        self.num_plots, 1, hold + 1, sharex=self.shared)
-                else:
-                    ax = self.fig.add_subplot(
-                        1, self.num_plots, hold + 1, sharey=self.shared)
-                self.axes.append(ax)
             self.opts.make_dir(casename)
             self.process(caseno, casename, hold=hold, **kwargs)
-            self.plot_experimental(hold=hold, **kwargs)
-            if self.multiplot:
-                self.gca.set_title(self.title(**kwargs))
-                self.gca.set_xlim(self.xlim())
-                self.gca.set_ylim(self.ylim())
+            if not caseno:
+                self.plot_experimental(hold=hold, **kwargs)
+                if self.multiplot:
+                    self.gca.set_title(self.title(**kwargs))
+                    self.gca.set_xlim(self.xlim())
+                    self.gca.set_ylim(self.ylim())
 
         if hold is None:
             self.finalize(**kwargs)
@@ -294,6 +308,7 @@ class Plot(object):
             self.gca.set_title(self.title(**kwargs))
             self.gca.tick_params(axis='both', which='major',
                                  labelsize=major_font)
+            self.gca.set_yticks(ticks=self.yticks())
             self.gca.tick_params(axis='both', which='minor',
                                  labelsize=minor_font)
             for item in (self.gca.title, self.gca.xaxis.label,
@@ -305,10 +320,11 @@ class Plot(object):
                                labelsize=major_font)
                 ax.tick_params(axis='both', which='minor',
                                labelsize=minor_font)
+                ax.set_yticks(ticks=self.yticks())
                 for item in (ax.title, ax.xaxis.label, ax.yaxis.label):
                     item.set_fontsize(label_size)
             self.fig.legend(bbox_to_anchor=(0.06, 1.02, 1, 0.2), loc="lower left",
-                            borderaxespad=0, ncol=3, fontsize=legend_font,
+                            borderaxespad=0, ncol=4, fontsize=legend_font,
                             labelspacing=8)
         self.fig.tight_layout()
         self.fig.savefig(pjoin(self.opts.out_path, self.figname()),
@@ -318,12 +334,19 @@ class Plot(object):
     def figname(self):
         raise NotImplementedError
 
+    def yticks(self):
+        return np.arange(-1.5, 1.75, 0.5)
+
     def label(self, name, case):
         label = name
         if label in self.label_names:
             label = self.label_names[label]
         if self.opts.ncases > 1:
-            label += ' ({})'.format(case)
+            base_case = os.path.basename(case)
+            if base_case not in self.case_names:
+                label += ' ({})'.format(base_case)
+            else:
+                label = self.case_names[base_case]
         return label
 
     def nice_labelname(self, label):
