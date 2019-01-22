@@ -51,12 +51,8 @@ class FluctuationVelocityPlot(Plot):
                                      baseline=baseline)
         # normalize / convert simulation data
         fluct.normalize(self.opts.reacting)
-        # and plot
-        pltargs = {}
-        if not kwargs.get('hold', True):
-            pltargs['label'] = self.label('Simulation', case)
-        plt.plot(fluct[:, 1], fluct[:, 0], color=self.opts.color(
-            caseno), **pltargs)
+        plt.plot(fluct[:, 1], fluct[:, 0], **self.get_plotargs(
+                 baseline.name, caseno, case, hold=kwargs.get('hold', None)))
 
 
 def plot(opts):

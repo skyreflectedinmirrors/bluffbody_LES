@@ -69,11 +69,9 @@ class ReynoldsStressPlot(Plot):
         to_plot = dataset(Ux.columns[:], vals, Ux.name,
                           is_simulation=Ux.is_simulation, time=Ux.time)
         # and plot
-        pltargs = {}
-        if not kwargs.get('hold', True):
-            pltargs['label'] = self.label(r'Simulation', case)
-        plt.plot(to_plot[:, 1], to_plot[:, 0], color=self.opts.color(caseno),
-                 **pltargs)
+        plt.plot(to_plot[:, 1], to_plot[:, 0],
+                 **self.get_plotargs(Ux.name, caseno, case,
+                                     hold=kwargs.get('hold', None)))
 
 
 def plot(opts):

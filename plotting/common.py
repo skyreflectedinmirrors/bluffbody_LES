@@ -250,6 +250,17 @@ class Plot(object):
     def shared(self):
         return self.axes[0] if self.axes else None
 
+    def get_plotargs(self, name, caseno, case, hold=None):
+        pltargs = {}
+        if (self.multiplot and not hold) or not self.multiplot:
+            pltargs['label'] = self.label(name, case)
+
+        linewidth = 3
+        pltargs['linewidth'] = linewidth
+        pltargs['color'] = self.opts.color(caseno)
+        pltargs['linestyle'] = self.opts.linestyle(caseno)
+        return pltargs
+
     def process(self, caseno, case, **kwargs):
         from read_simulation_data import read_simulation_data
         # read baseline averaged data
@@ -257,16 +268,11 @@ class Plot(object):
                                        self.opts, **kwargs)
         # normalize / convert simulation data
         simdata.normalize(simdata)
-        pltargs = {}
-        if (self.multiplot and not kwargs.get('hold', False)) or not self.multiplot:
-            pltargs['label'] = self.label(simdata.name, case)
         col_map = self.simulation_column_map()
-        linewidth = 3
+
         self.gca.plot(simdata[:, col_map[0]], simdata[:, col_map[1]],
-                      color=self.opts.color(caseno),
-                      linestyle=self.opts.linestyle(caseno),
-                      linewidth=linewidth,
-                      **pltargs)
+                      **self.get_plotargs(simdata.name, caseno, case,
+                                          hold=kwargs.get('hold', None)))
 
     def sim_name(self, **kwargs):
         return self._sim_name
