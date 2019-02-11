@@ -30,8 +30,8 @@ class ReynoldsStressPlot(Plot):
 
     def title(self, point='', **kwargs):
         p = point.split('p')
-        p = float(p[0]) + float(''.join(p[1:])) / 100.
-        return "x/D = {}".format(p)
+        p = float(p[0]) + float(''.join(p[1])) / 10**len(p[1])
+        return r"$x/D = {}$".format(p)
 
     def figsize(self):
         return (20, 6)
