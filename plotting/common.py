@@ -212,7 +212,7 @@ class Plot(object):
                             'Y': r'$y/D$',
                             'X': r'$x/D$',
                             'AVG(U\'V\')/(Ubulk)^2 (Reynolds Stress Approx)':
-                                r'Mean $\frac{u^\prime v^\prime}{U_{\text{bulk}}^2}$'
+                                r'$\overline{u^\prime v^\prime}/{U_{\text{bulk}}^2}$'
                             }
         self.case_names = {'LES_three_outer_correctors': 'Non-diffusive',
                            'LES': 'base',
