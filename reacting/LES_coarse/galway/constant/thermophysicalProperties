@@ -37,7 +37,7 @@ inertSpecie N2;
 fuel        CH4;
 
 chemistryReader foamChemistryReader;
-foamChemistryThermoFile "$FOAM_CASE/chemkin/galway_foam.dat";
+foamChemistryThermoFile "$FOAM_CASE/chemkin/galway_thermo_foam.dat";
 foamChemistryFile "$FOAM_CASE/chemkin/galway_foam.dat";
 
 // ************************************************************************* //
