@@ -100,4 +100,4 @@ else
     bash -c "sleep $sleep_duration; foamDictionary -entry \"stopAt\" -set \"writeNow\" system/controlDict" &
 fi
 export IPM_NESTED_REGIONS=1
-mpirun reactingFoamIPM -parallel -noFunctionObjects
+mpirun reactingFoamIPM_skeletal -parallel -noFunctionObjects
