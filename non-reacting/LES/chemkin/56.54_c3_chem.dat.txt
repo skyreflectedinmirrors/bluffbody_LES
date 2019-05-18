@@ -1,7 +1,10 @@
 ! the Galway DME/Methane model
-! modified only by moving 'N2' to the final species in the model
-! and converting all species to upper case to match GRI as much as possible
-----------------------------------------------------------------------
+! modified by:
+! moving 'N2' to the final species in the model
+! converting all species to upper case to match GRI as much as possible
+! commenting out all thermo species that don't exist in model (see therm_clean.dat)
+! renaming C#CC*CCJ -> CPCC*CCJ, as the chemkinToFoam lexer doesn't recognize #'s
+!----------------------------------------------------------------------
 ELEMENTS
 C
 H
@@ -1424,7 +1427,7 @@ C3H6OOH1-2=>C2H4+CH2O+OH 1.310E+033 -7.010 48120.0
 C3KET21=>CH2O+CH3CO+OH 1.000E+016 0.000 43000.0
 C3H5O+O2<=>C2H3CHO+HO2 1.000E+012 0.000 6000.0
 C3H5-A+C2H2<=>C*CC*CCJ 1.000E+012 0.000 6883.4
-C3H3+C2H2<=>C#CC*CCJ 4.110E+072 -18.200 45400.0
+C3H3+C2H2<=>CPCC*CCJ 4.110E+072 -18.200 45400.0
 CJ*CC*CC*O<=>C*CC*CCJ*O 4.300E+011 -1.050 4118.0
 CJ*CC*CC*O<=>C2H2+CJ*CC*O 3.000E+013 0.000 43710.0
 CJ*CC*O<=>C2H3CO 1.400E+009 0.980 32100.0
