@@ -6,9 +6,9 @@ reglist = [re.compile('^[ -]\\d\\.\\d+E[+-]\\d+'), re.compile('^\\s*!'),
            re.compile(r'^\s*\n\s*$'), re.compile(r'^( )+'),
            re.compile(r'^\s*THERMO'), re.compile(r'^\s*END')]
 
-gas = ct.Solution('galway.cti')
+gas = ct.Solution('skeletal.cti')
 
-with open('56.54_therm.dat.txt') as file:
+with open('skeletal_therm.dat') as file:
     lines = file.readlines()
 
 do_comment = 0
@@ -22,5 +22,5 @@ for i, line in enumerate(lines):
         lines[i] = '!' + lines[i]
         do_comment -= 1
 
-with open('56.54_therm_clean.dat.txt', 'w') as file:
+with open('skeletal_therm_clean.dat', 'w') as file:
     file.writelines(lines)
