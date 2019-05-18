@@ -1,5 +1,5 @@
 THERMO
-   300.000  1000.000  5000.000
+!   300.000  1000.000  5000.000
 ! GRI-Mech Version 3.0 Thermodynamics released 7/30/99
 ! NASA Polynomial format for CHEMKIN-II
 ! see README file for disclaimer
