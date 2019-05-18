@@ -1,0 +1,27 @@
+ELEMENTS
+O H C N  
+END
+SPECIES
+H2    H     O     O2    
+OH    H2O   HO2   H2O2  
+CH3   CH4   CO    CO2   
+CH2O  CH3OH C2H2  C2H4  
+C2H6  CH2CO N2    
+END
+REACTIONS
+2O = O2                 0.0   0.0   0.0
+H + O = OH              0.0   0.0   0.0
+O + CH3 = H + CH2O      0.0   0.0   0.0
+O + CO = CO2            0.0   0.0   0.0
+H + O2 = HO2            0.0   0.0   0.0
+2H = H2                 0.0   0.0   0.0
+H + OH = H2O            0.0   0.0   0.0
+H + CH3 = CH4           0.0   0.0   0.0
+H + CH2CO = CH3 + CO    0.0   0.0   0.0
+H2 + CO = CH2O          0.0   0.0   0.0
+2OH = H2O2              0.0   0.0   0.0
+OH + CH3 = CH3OH        0.0   0.0   0.0
+2CH3 = C2H6             0.0   0.0   0.0
+C2H4 = H2 + C2H2        0.0   0.0   0.0
+O + C2H2 = CH2CO        0.0   0.0   0.0
+END
