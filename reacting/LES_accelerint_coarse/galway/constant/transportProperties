@@ -18,6 +18,7 @@ FoamFile
 // fitted from Galway Methane model,
 // for T=600K-3000K using foamSutherlandTransport.py
 
+
        H
        {
             transport
@@ -1008,7 +1009,7 @@ FoamFile
             }
        }
 
-       C#CC*CCJ
+       CPCC*CCJ
        {
             transport
             {

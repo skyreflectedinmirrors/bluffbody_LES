@@ -7,6 +7,8 @@
 #SBATCH --mem 100G                   # up to 100 gigs
 #SBATCH -o les_reacting.out
 #SBATCH -e les_reacting.out
+#SBATCH --mail-type=END              # mail
+#SBATCH --mail-user=nicholas.curtis@uconn.edu
 #SBATCH --dependency=singleton
 
 
@@ -21,12 +23,23 @@ output="les_reacting.out"
 # timestep, we can safely take this time-step _and_ the next before ending.
 SAFTEY_FACTOR="2.2"
 # cutoff for "minimum" time-step duration, to avoid issues guessing duration
-minimum_timestep="50" # s
+minimum_timestep="1000" # s
+
+to_run=$(head -n1 times)
+
+if [ -z "$to_run" ]
+then
+    echo "No times found in dictionary 'times'... runs complete or dictionary not found!"
+    exit 10;
+fi
+
+# first, read a time from the "times" dictionary
+bash decompose.sh "$to_run"
 
 # first, reset endtime
 bash -c "foamDictionary -entry \"stopAt\" -set \"endTime\" system/controlDict"
 
-default="300" # s
+default="10000" # s
 c () {
     local a
     (( $# > 0 )) && a="$@" || read -r -p "calc: " a
@@ -100,4 +113,5 @@ else
     bash -c "sleep $sleep_duration; foamDictionary -entry \"stopAt\" -set \"writeNow\" system/controlDict" &
 fi
 export IPM_NESTED_REGIONS=1
-mpirun reactingFoamIPM -parallel -noFunctionObjects
+# run and remove the completed time from the dictionary
+mpirun reactingFoamIPM -parallel -noFunctionObjects && tail -n +2 "times" > "times.tmp" && mv "times.tmp" "times"
