@@ -48,3 +48,11 @@ constant/polyMesh
 
 # python directories
 __pycache__/
+
+# profile runs
+*.xml
+
+# openfoam debris
+*.pvsm
+*.eps
+*.foam
