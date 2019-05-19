@@ -73,7 +73,8 @@ def main(thermo, model, cantera_model):
                     raise Exception('One ATM plog rate not found!')
 
                 # now, replace the lines
-                del out_lines[do_plog + 1: i + 1]
+                for j in range(do_plog + 1, i):
+                    out_lines[j] = None
 
                 # and replace the parameters in the regular reaction string
                 rxn = lines[do_plog]
@@ -91,7 +92,8 @@ Updating PLOG rxn:
 """.format(rxn, old_params, one_atm_params, lines[found_one_atm]))
 
                 # replace
-                out_lines.insert(do_plog, rxn.strip() + ' ' + one_atm_params)
+                new_rxn = (rxn.strip() + ' ' + one_atm_params).strip() + '\n'
+                out_lines[do_plog] = new_rxn
 
                 # turn off plog check
                 do_plog = False
@@ -106,10 +108,11 @@ Updating PLOG rxn:
             if np.isclose(pressure, 1.0):
                 found_one_atm = i
 
+    out_lines = [x for x in out_lines if x is not None]
     suffix = model[model.rindex('.'):]
     with open('{}_clean{}'.format(
             model[:model.index(suffix)], suffix), 'w') as file:
-        file.writelines(lines)
+        file.writelines(out_lines)
 
 
 if __name__ == '__main__':
