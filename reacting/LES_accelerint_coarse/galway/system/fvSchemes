@@ -1,1 +1,222 @@
-../../system/fvSchemes
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+
+
+/*
+
+Setup for simulation of Volvo flygmotor AB non-reacting flow LES
+
+Nicholas Curtis - 04/10/2018
+
+Based on:
+
+Chalmers: http://www.tfd.chalmers.se/~hani/kurser/OS_CFD_2015/HrvojeJasak/DiscretisationBestPractice.pdf
+Cocks et al: https://arc.aiaa.org/doi/abs/10.2514/6.2013-170
+Wolf: http://www.wolfdynamics.com/wiki/OFtipsandtricks.pdf
+Manual: https://cfd.direct/openfoam/user-guide/fvSchemes/
+
+*/
+
+// time
+ddtSchemes
+{
+    // 2nd ord implicit, backward diff -- from Cocks et al.
+    default         CrankNicolson 0.333;
+}
+
+// gradients
+gradSchemes
+{
+    // Cocks et al. used a green-gauss node-based method, which doesn't appear
+    // to be present by default in OpenFOAM.
+    // The closest method is "Gauss linear" - which is a cell-based version of
+    // the Green-gauss node-based method
+    //
+    // Chalmers states that Gauss gradient is accurate on hex-meshes
+    //
+    // Limit suggestion comes from Wolf
+    default        cellMDLimited Gauss linear 1.0;
+};
+
+// diffusion
+laplacianSchemes
+{
+    // Cocks et al. used a "2nd-order accurate central scheme for discretization of"
+    //                     "the Laplacian terms"
+    //
+    // From the manual (https://cfd.direct/openfoam/user-guide/fvSchemes/#x19-1410004.4):
+    // "to maintain *second-order accuracy*, an explicit non-orthogonal correction "
+    // "can be added to the orthogonal component, known as the corrected scheme"
+    //
+    // Further, maximum orthogonality from checkMesh of the blockMesh output is:
+    //      Mesh non-orthogonality Max: 29.37587877 average: 2.520147965
+    // hence we don't need the "limited" approach
+    //
+    // from Chalmers, may want a cell/face-limited form for bounded variables (
+    // e.g., mass fractions) -- but no need for limited as max non-orthgonality < 70
+    default         Gauss linear corrected;
+};
+
+snGradSchemes
+{
+    // not mentioned in Cocks et al.
+    // use a corrected scheme by default, since that was what was used for the
+    // laplacian
+    default         corrected;
+}
+
+interpolationSchemes
+{
+    // not mentioned in Cocks et al.
+    // use a linear scheme as recommended by the manual
+    // https://cfd.direct/openfoam/user-guide/fvSchemes/#x19-1410004.4
+    default         linear;
+};
+
+divSchemes
+{
+
+    default         none;
+    // Cocks et al. used a 2nd order *bounded* central scheme for inviscid terms
+    //      bounded by "Sweby limiter"
+    // Wolf: accurate & stable numerical scheme -- 2nd order accurate
+    // http://www.wolfdynamics.com/wiki/fvm_crash_intro.pdf
+    // https://link.springer.com/chapter/10.1007%2F978-3-658-11912-6_7
+    //      limitedLinear recommended for LES
+    //
+
+    div(phi,U)      Gauss limitedLinear 0.33;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
+    // use same as U, as inviscid term
+    div(phi,K)      Gauss limitedLinear 1;
+    div(phi,Yi_h)   Gauss multivariateSelection
+    {
+        H               limitedLinear01 1;
+        H2              limitedLinear01 1;
+        O               limitedLinear01 1;
+        O2              limitedLinear01 1;
+        OH              limitedLinear01 1;
+        OH*             limitedLinear01 1;
+        H2O             limitedLinear01 1;
+        HO2             limitedLinear01 1;
+        H2O2            limitedLinear01 1;
+        AR              limitedLinear01 1;
+        CO              limitedLinear01 1;
+        CO2             limitedLinear01 1;
+        CH2O            limitedLinear01 1;
+        HCO             limitedLinear01 1;
+        HO2CHO          limitedLinear01 1;
+        HCOH            limitedLinear01 1;
+        O2CHO           limitedLinear01 1;
+        HOCHO           limitedLinear01 1;
+        OCHO            limitedLinear01 1;
+        HOCH2O2H        limitedLinear01 1;
+        HOCH2O2         limitedLinear01 1;
+        OCH2O2H         limitedLinear01 1;
+        HOCH2O          limitedLinear01 1;
+        CH3OH           limitedLinear01 1;
+        CH2OH           limitedLinear01 1;
+        CH3O            limitedLinear01 1;
+        CH3O2H          limitedLinear01 1;
+        CH3O2           limitedLinear01 1;
+        CH4             limitedLinear01 1;
+        CH3             limitedLinear01 1;
+        CH2             limitedLinear01 1;
+        CH2(S)          limitedLinear01 1;
+        C               limitedLinear01 1;
+        CH              limitedLinear01 1;
+        CH*             limitedLinear01 1;
+        C2H6            limitedLinear01 1;
+        C2H5            limitedLinear01 1;
+        C2H4            limitedLinear01 1;
+        C2H3            limitedLinear01 1;
+        C2H2            limitedLinear01 1;
+        C2H             limitedLinear01 1;
+        CH3CHO          limitedLinear01 1;
+        C2H3OH          limitedLinear01 1;
+        C2H2OH          limitedLinear01 1;
+        CH3CO           limitedLinear01 1;
+        CH2CHO          limitedLinear01 1;
+        O2CH2CHO        limitedLinear01 1;
+        HO2CH2CO        limitedLinear01 1;
+        CH2CO           limitedLinear01 1;
+        HCCO            limitedLinear01 1;
+        HCCOH           limitedLinear01 1;
+        CH3CO3H         limitedLinear01 1;
+        CH3CO3          limitedLinear01 1;
+        CH3CO2          limitedLinear01 1;
+        C2H5OH          limitedLinear01 1;
+        C2H5O           limitedLinear01 1;
+        PC2H4OH         limitedLinear01 1;
+        SC2H4OH         limitedLinear01 1;
+        O2C2H4OH        limitedLinear01 1;
+        C2H5O2H         limitedLinear01 1;
+        C2H5O2          limitedLinear01 1;
+        C2H4O2H         limitedLinear01 1;
+        C2H4O1-2        limitedLinear01 1;
+        C2H3O1-2        limitedLinear01 1;
+        CH3COCH3        limitedLinear01 1;
+        CH3COCH2        limitedLinear01 1;
+        CH3COCH2O2      limitedLinear01 1;
+        C3KET21         limitedLinear01 1;
+        C2H3CHO         limitedLinear01 1;
+        C2H3CO          limitedLinear01 1;
+        C2H5CHO         limitedLinear01 1;
+        C2H5CO          limitedLinear01 1;
+        CH3OCH3         limitedLinear01 1;
+        CH3OCH2         limitedLinear01 1;
+        CH3OCH2O2       limitedLinear01 1;
+        CH2OCH2O2H      limitedLinear01 1;
+        CH3OCH2O2H      limitedLinear01 1;
+        CH3OCH2O        limitedLinear01 1;
+        O2CH2OCH2O2H    limitedLinear01 1;
+        HO2CH2OCHO      limitedLinear01 1;
+        OCH2OCHO        limitedLinear01 1;
+        HOCH2OCO        limitedLinear01 1;
+        CH3OCHO         limitedLinear01 1;
+        CH3OCO          limitedLinear01 1;
+        CH2OCHO         limitedLinear01 1;
+        HE              limitedLinear01 1;
+        C3H8            limitedLinear01 1;
+        IC3H7           limitedLinear01 1;
+        NC3H7           limitedLinear01 1;
+        C3H6            limitedLinear01 1;
+        C3H5-A          limitedLinear01 1;
+        C3H5-S          limitedLinear01 1;
+        C3H5-T          limitedLinear01 1;
+        C3H4-P          limitedLinear01 1;
+        C3H4-A          limitedLinear01 1;
+        C3H3            limitedLinear01 1;
+        C3H5O           limitedLinear01 1;
+        C3H6OOH1-2      limitedLinear01 1;
+        C3H6OOH1-3      limitedLinear01 1;
+        CC3H4           limitedLinear01 1;
+        H2CC            limitedLinear01 1;
+        CJ*CC*CC*O      limitedLinear01 1;
+        C*CC*CCJ*O      limitedLinear01 1;
+        CJ*CC*O         limitedLinear01 1;
+        C*CC*CCJ        limitedLinear01 1;
+        C*CC*CC         limitedLinear01 1;
+        C*CC*CCOH       limitedLinear01 1;
+        HOC*CC*O        limitedLinear01 1;
+        HOC*CCJ*O       limitedLinear01 1;
+        H2CCC(S)        limitedLinear01 1;
+        CPCC*CCJ        limitedLinear01 1;
+        HOCO            limitedLinear01 1;
+        N2              limitedLinear01 1;
+        h               limitedLinear 1;
+    };
+}
