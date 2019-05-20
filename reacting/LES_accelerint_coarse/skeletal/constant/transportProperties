@@ -1,1 +1,290 @@
-../../../LES_coarse/skeletal/constant/transportProperties
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "chemkin";
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// fitted from Galway Methane model,
+// for T=600K-3000K using foamSutherlandTransport.py
+
+
+       H2
+       {
+            transport
+            {
+                As              7.8248589373e-07;
+                Ts              258.891879658;
+            }
+       }
+
+       H
+       {
+            transport
+            {
+                As              9.32392809057e-07;
+                Ts              281.801934876;
+            }
+       }
+
+       O
+       {
+            transport
+            {
+                As              2.23571763235e-06;
+                Ts              263.657888682;
+            }
+       }
+
+       O2
+       {
+            transport
+            {
+                As              1.91998949805e-06;
+                Ts              269.39246055;
+            }
+       }
+
+       OH
+       {
+            transport
+            {
+                As              2.30506565978e-06;
+                Ts              263.657888682;
+            }
+       }
+
+       H2O
+       {
+            transport
+            {
+                As              2.32430794037e-06;
+                Ts              1038.92307293;
+            }
+       }
+
+       HO2
+       {
+            transport
+            {
+                As              1.94999421661e-06;
+                Ts              269.39246055;
+            }
+       }
+
+       H2O2
+       {
+            transport
+            {
+                As              1.97954419425e-06;
+                Ts              269.39246055;
+            }
+       }
+
+       C
+       {
+            transport
+            {
+                As              1.36857829022e-06;
+                Ts              262.36734284;
+            }
+       }
+
+       CH
+       {
+            transport
+            {
+                As              2.01675395152e-06;
+                Ts              263.657888682;
+            }
+       }
+
+       CH2
+       {
+            transport
+            {
+                As              1.01316066818e-06;
+                Ts              281.406374559;
+            }
+       }
+
+       CH2(S)
+       {
+            transport
+            {
+                As              1.01316066818e-06;
+                Ts              281.406374559;
+            }
+       }
+
+       CH3
+       {
+            transport
+            {
+                As              1.04893094381e-06;
+                Ts              281.406374559;
+            }
+       }
+
+       CH4
+       {
+            transport
+            {
+                As              1.11753860567e-06;
+                Ts              280.395679649;
+            }
+       }
+
+       CO
+       {
+            transport
+            {
+                As              1.63233083221e-06;
+                Ts              267.138728904;
+            }
+       }
+
+       CO2
+       {
+            transport
+            {
+                As              1.72560699093e-06;
+                Ts              335.123023833;
+            }
+       }
+
+       HCO
+       {
+            transport
+            {
+                As              1.47045024422e-06;
+                Ts              550.201435608;
+            }
+       }
+
+       CH2O
+       {
+            transport
+            {
+                As              1.49576999285e-06;
+                Ts              550.201435608;
+            }
+       }
+
+       CH2OH
+       {
+            transport
+            {
+                As              1.46141595472e-06;
+                Ts              520.87024711;
+            }
+       }
+
+       CH3O
+       {
+            transport
+            {
+                As              1.46141595472e-06;
+                Ts              520.87024711;
+            }
+       }
+
+       CH3OH
+       {
+            transport
+            {
+                As              1.51625826573e-06;
+                Ts              534.416679913;
+            }
+       }
+
+       C2H2
+       {
+            transport
+            {
+                As              1.13558895356e-06;
+                Ts              313.395837692;
+            }
+       }
+
+       C2H3
+       {
+            transport
+            {
+                As              1.15735988515e-06;
+                Ts              313.395837692;
+            }
+       }
+
+       C2H4
+       {
+            transport
+            {
+                As              1.22170038815e-06;
+                Ts              360.68082327;
+            }
+       }
+
+       C2H5
+       {
+            transport
+            {
+                As              1.06952932926e-06;
+                Ts              340.654871542;
+            }
+       }
+
+       C2H6
+       {
+            transport
+            {
+                As              1.08791835786e-06;
+                Ts              340.654871542;
+            }
+       }
+
+       HCCO
+       {
+            transport
+            {
+                As              3.98316883491e-06;
+                Ts              283.828533725;
+            }
+       }
+
+       CH2CO
+       {
+            transport
+            {
+                As              1.45440511922e-06;
+                Ts              490.929761023;
+            }
+       }
+
+       CH2CHO
+       {
+            transport
+            {
+                As              1.47173818046e-06;
+                Ts              490.929761023;
+            }
+       }
+
+       N2
+       {
+            transport
+            {
+                As              1.65999886868e-06;
+                Ts              267.011233257;
+            }
+       }
