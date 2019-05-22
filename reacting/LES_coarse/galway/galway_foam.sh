@@ -114,4 +114,4 @@ else
 fi
 export IPM_NESTED_REGIONS=1
 # run and remove the completed time from the dictionary
-mpirun reactingFoamIPM -parallel -noFunctionObjects && tail -n +2 "times" > "times.tmp" && mv "times.tmp" "times"
+mpirun reactingFoamIPM_galway -parallel -noFunctionObjects && tail -n +2 "times" > "times.tmp" && mv "times.tmp" "times"
