@@ -39,7 +39,7 @@ odeCoeffs
     absTol          1e-10;
     relTol          1e-06;
     maxSteps        1000000;
-    pyjacPath       ~/reactingFoamIPM/include/opencl/;
+    pyjacPath       ~/reactingFoamIPM/skeletal/include/opencl/;
 }
 
 // ************************************************************************* //
