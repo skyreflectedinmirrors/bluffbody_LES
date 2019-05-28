@@ -32,6 +32,7 @@ odeCoeffs
     accSolver       ROS4;
     vectorSize      8;
     platform        intel;
+    pyjacPath       "~/reactingFoamIPM/skeletal/include/opencl/";
 }
 
 // ************************************************************************* //
