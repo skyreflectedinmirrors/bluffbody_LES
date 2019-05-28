@@ -1,18 +1,1 @@
-!---------------------------------------------------------------------------
-!  Chemkin File converted from Solution Object by pyMARS
-!---------------------------------------------------------------------------
-ELEMENTS
-O H C N
-END
-! species
-SPECIES
-O2              H2O             CH4             CO
-CO2             N2
-END
-! reactions
-REACTIONS
-CH4+1.5O2=>CO+2H2O                                 4.9E+09      0.000   35500.00
-FORD / CH4 0.5 /
-FORD / O2 0.65 /
-CO+0.5O2<=>CO2                                     2.00E+08     0.700   12000.00
-END
+../../../../chemkin/pym_CH4_BFER.inp
