@@ -29,7 +29,7 @@ thermoType
 inertSpecie N2;
 
 chemistryReader foamChemistryReader;
-foamChemistryFile "$FOAM_CASE/constant/reactionsGRI";
-foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressibleGasGRI";
+foamChemistryFile "$FOAM_CASE/chemkin/skeletal_foam.dat";
+foamChemistryThermoFile "$FOAM_CASE/chemkin/skeletal_thermo_foam.dat";
 
 // ************************************************************************* //
