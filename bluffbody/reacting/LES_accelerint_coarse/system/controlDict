@@ -32,8 +32,8 @@ startTime       0;
 
 stopAt          endTime;
 
-// ~ equivalent to 10 residence times
-endTime         0.5;
+// 5 ms of timing data
+endTime         0.005;
 
 // reacting time-step from Cocks et al.
 deltaT          3e-7;
