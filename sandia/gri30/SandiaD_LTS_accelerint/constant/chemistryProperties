@@ -33,6 +33,7 @@ odeCoeffs
     vectorSize      8;
     platform        intel;
     pyjacPath       "~/reactingFoamIPM/include/opencl/";
+    maxSteps        1000000;
 }
 
 // ************************************************************************* //
