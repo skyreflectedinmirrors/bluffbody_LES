@@ -9,6 +9,6 @@
 #SBATCH -e les_nonreacting.out
 #SBATCH --mail-type=END              # mail
 #SBATCH --mail-user=nicholas.curtis@uconn.edu
-#SBATCH --dependency=singleton
 
+export num_proc=10
 ./Allrun
