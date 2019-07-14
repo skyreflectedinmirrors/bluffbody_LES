@@ -1,5 +1,5 @@
 units(length='cm', time='s', quantity='mol', act_energy='cal/mol')
-
+# ref http://ignis.usc.edu/Mechanisms/C3-opt/C3-opt.html
 ideal_gas(name='gas',
           elements="N Ar He H O C",
           species="""AR          HE          H           O2
