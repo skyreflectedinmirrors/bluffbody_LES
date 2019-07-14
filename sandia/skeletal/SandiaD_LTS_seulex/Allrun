@@ -11,6 +11,9 @@ export IPM_NESTED_REGIONS=1
 application="mpirun -np $num_proc $(getApplication) -parallel"
 foamDictionary -entry "numberOfSubdomains" -set "$num_proc" system/decomposeParDict
 
+# set application time
+foamDictionary -entry "startTime" -set "0" system/controlDict
+
 runApplication blockMesh
 runApplication setFields
 runApplication decomposePar -time 0
