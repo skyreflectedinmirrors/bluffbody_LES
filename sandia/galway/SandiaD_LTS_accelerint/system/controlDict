@@ -14,7 +14,7 @@ FoamFile
     object          controlDict;
 }
 
-application     reactingFoamIPM_galway;
+application     reactingFoamIPM_uscc3;
 
 startFrom       startTime;
 

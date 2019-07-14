@@ -29,7 +29,7 @@ thermoType
 inertSpecie N2;
 
 chemistryReader foamChemistryReader;
-foamChemistryFile "$FOAM_CASE/chemkin/galway_foam.dat";
-foamChemistryThermoFile "$FOAM_CASE/chemkin/galway_thermo_foam.dat";
+foamChemistryFile "$FOAM_CASE/chemkin/uscc3mech_foam.dat";
+foamChemistryThermoFile "$FOAM_CASE/chemkin/uscc3_thermo_foam.dat";
 
 // ************************************************************************* //
