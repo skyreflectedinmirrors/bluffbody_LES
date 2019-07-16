@@ -7717,6 +7717,6 @@ reactions
     }
 }
 
-Tlow            298.15;
+Tlow            250;
 Thigh           3000;
 
