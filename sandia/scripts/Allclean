@@ -3,6 +3,7 @@
 # clean times
 foamListTimes -rm
 foamListTimes -rm -processor
+rm -r processor*
 
 # clean logs
 rm log.*
