@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# clean times
+foamListTimes -rm
+foamListTimes -rm -processor
+
+# clean logs
+rm log.*
+
+# remove xml logs
+rm *.xml
+
+#------------------------------------------------------------------------------
